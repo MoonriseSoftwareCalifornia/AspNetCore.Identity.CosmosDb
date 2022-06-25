@@ -1,0 +1,96 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="PieroDeTomi.EntityFrameworkCore.Identity.Tests" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="CosmosUserStoreTests" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.CosmosUserStoreTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="CosmosUserStoreTest" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.CreateAsyncTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="CreateAsyncTest" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.SetEmailAsyncTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetEmailAsyncTest" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.SetEmailConfirmedAsyncTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetEmailConfirmedAsyncTest" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.SetNormalizedEmailAsyncTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetNormalizedEmailAsyncTest" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.SetNormalizedUserNameAsyncTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetNormalizedUserNameAsyncTest" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.SetPasswordHashAsyncTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetPasswordHashAsyncTest" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.SetPhoneNumberAsyncTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetPhoneNumberAsyncTest" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.SetPhoneNumberConfirmedAsyncTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetPhoneNumberConfirmedAsyncTest" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.SetUserNameAsyncTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetUserNameAsyncTest" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.UpdateAsyncTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="UpdateAsyncTest" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests.CosmosUserStoreTests.X1_AddLoginAsyncTest" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="X1_AddLoginAsyncTest" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>

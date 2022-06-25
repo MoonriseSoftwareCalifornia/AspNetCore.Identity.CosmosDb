@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Version>1.0.6</Version>
+    <Authors>Piero De Tomi</Authors>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>aspnet, efcore, cosmos, cosmosdb, identity, provider</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>PieroDeTomi.EntityFrameworkCore.Identity.Cosmos</PackageId>
+    <RepositoryUrl>https://github.com/pierodetomi/efcore-identity-cosmos</RepositoryUrl>
+    <AssemblyVersion>1.0.6.0</AssemblyVersion>
+    <FileVersion>1.0.6.0</FileVersion>
+    <PackageProjectUrl>https://github.com/pierodetomi/efcore-identity-cosmos</PackageProjectUrl>
+    <PackageIcon>nuget-icon.png</PackageIcon>
+    <Description>A Cosmos DB implementation of an Identity provider for .NET Core 5. You can use this package to easily bootstrap an ASP.NET Core Web Application using Identity/IdentityServer backed by a CosmosDb database and EF Core, in place of SQL Server.</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <ApplicationIcon>_res\icons\nuget-icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="6.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </Content>
+    <Content Include="_res\icons\nuget-icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="_res\icons\nuget-icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
