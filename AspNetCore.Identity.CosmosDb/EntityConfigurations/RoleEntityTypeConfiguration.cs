@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.EntityConfigurations
+namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
 {
     public class RoleEntityTypeConfiguration : IEntityTypeConfiguration<IdentityRole>
     {

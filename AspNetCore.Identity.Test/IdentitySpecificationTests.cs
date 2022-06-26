@@ -6,26 +6,23 @@ using Microsoft.AspNetCore.Identity.Test;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Extensions;
+using AspNetCore.Identity.CosmosDb;
+using AspNetCore.Identity.CosmosDb.Extensions;
 using System;
 using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
+using AspNetCore.Identity.CosmosDb.Tests.Shared;
 
 namespace AspNetCore.Identity.Test
 {
     public class IdentitySpecificationTests : IdentitySpecificationTestBase<IdentityUser, IdentityRole, string>
     {
-        private IConfigurationRoot _configuration;
-        public const string DATABASENAME = "cosmosdb";
-
-        public IdentitySpecificationTests()
-        {
-
-        }
 
         #region COSMOS DB CONFIG DB OPTIONS DB CONTEXT
+
+        private IConfigurationRoot _configuration;
+        public const string DATABASENAME = "cosmosdb";
 
         /// <summary>
         /// Gets the configuration
@@ -68,7 +65,7 @@ namespace AspNetCore.Identity.Test
         /// </summary>
         /// <param name="services"></param>
         /// <param name="context"></param>
-        protected override void AddCosmosDbContext(IServiceCollection services, object context)
+        protected override void AddDbContext(IServiceCollection services, object context)
         {
             var config = GetConfig();
             var connectionString = config.GetConnectionString("ApplicationDbContextConnection");
@@ -82,7 +79,7 @@ namespace AspNetCore.Identity.Test
         /// </summary>
         /// <param name="services"></param>
         /// <param name="context"></param>
-        protected override void AddCosmosIdentity(IServiceCollection services, object context)
+        protected override void AddIdentity(IServiceCollection services, object context)
         {
             services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, IdentityUser, IdentityRole>(
             options =>
@@ -101,52 +98,67 @@ namespace AspNetCore.Identity.Test
         /// <exception cref="NotImplementedException"></exception>
         protected override void AddRoleStore(IServiceCollection services, object context = null)
         {
-            throw new NotImplementedException();
+            // Nothing to do here.
         }
 
         protected override void AddUserStore(IServiceCollection services, object context = null)
         {
-            throw new NotImplementedException();
+            // Nothing to do here.
         }
 
         protected override object CreateTestContext()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            return null;
         }
 
         protected override IdentityRole CreateTestRole(string roleNamePrefix = "", bool useRoleNamePrefixAsRoleName = false)
         {
-            throw new NotImplementedException();
+            if (useRoleNamePrefixAsRoleName)
+                return new IdentityRole(roleNamePrefix);
+
+            return new IdentityRole($"{roleNamePrefix}NewRole");
         }
 
         protected override IdentityUser CreateTestUser(string namePrefix = "", string email = "", string phoneNumber = "", bool lockoutEnabled = false, DateTimeOffset? lockoutEnd = null, bool useNamePrefixAsUserName = false)
         {
-            throw new NotImplementedException();
+            if (useNamePrefixAsUserName)
+                return new IdentityUser(namePrefix)
+                {
+                    Email = email,
+                    PhoneNumber = phoneNumber,
+                    LockoutEnabled = lockoutEnabled,
+                    LockoutEnd = lockoutEnd
+                };
+
+            return new IdentityUser($"{namePrefix}{email}");
         }
 
         protected override Expression<Func<IdentityRole, bool>> RoleNameEqualsPredicate(string roleName)
         {
-            throw new NotImplementedException();
+            return identityRole => identityRole.Name.Equals(roleName, StringComparison.CurrentCultureIgnoreCase);
         }
 
         protected override Expression<Func<IdentityRole, bool>> RoleNameStartsWithPredicate(string roleName)
         {
-            throw new NotImplementedException();
+            return identityRole => identityRole.Name.StartsWith(roleName);
         }
 
         protected override void SetUserPasswordHash(IdentityUser user, string hashedPassword)
         {
-            throw new NotImplementedException();
+            var utils = new TestUtilities();
+            var userStore = utils.GetUserStore();
+            userStore.SetPasswordHashAsync(user, hashedPassword).Wait();
         }
 
         protected override Expression<Func<IdentityUser, bool>> UserNameEqualsPredicate(string userName)
         {
-            throw new NotImplementedException();
+            return identityUser => identityUser.UserName.Equals(userName);
         }
 
         protected override Expression<Func<IdentityUser, bool>> UserNameStartsWithPredicate(string userName)
         {
-            throw new NotImplementedException();
+            return identityUser => identityUser.UserName.StartsWith(userName);
         }
     }
 }

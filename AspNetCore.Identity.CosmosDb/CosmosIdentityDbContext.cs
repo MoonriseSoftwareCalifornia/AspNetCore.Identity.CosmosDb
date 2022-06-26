@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AspNetCore.Identity.CosmosDb.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Extensions;
 
-namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos
+namespace AspNetCore.Identity.CosmosDb
 {
     /// <summary>
     /// Cosmos Identity Database Context

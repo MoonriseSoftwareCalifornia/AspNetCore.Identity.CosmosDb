@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Contracts
+namespace AspNetCore.Identity.CosmosDb.Contracts
 {
     public interface IRepository
     {

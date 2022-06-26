@@ -1,15 +1,35 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Contracts;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Repositories;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores;
+using AspNetCore.Identity.CosmosDb.Contracts;
+using AspNetCore.Identity.CosmosDb.Repositories;
+using AspNetCore.Identity.CosmosDb.Stores;
 using System;
 
-namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Extensions
+namespace AspNetCore.Identity.CosmosDb.Extensions
 {
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Adds the Cosmos DB Identity.
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <typeparam name="TUserEntity"></typeparam>
+        /// <typeparam name="TRoleEntity"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="identityOptions"></param>
+        /// <param name="dbContextOptions">Optional</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// <para>The Cosmos DbContext be automatically added dbContextOptions are set. Otherwise add DbContext prior to this service.</para>
+        /// <para>Adds the following to services in order:</para>
+        /// <list type="number">
+        /// <item>CosmosIdentityDbContext</item>
+        /// <item>CosmosUserStore</item>
+        /// <item>CosmosRoleStore</item>
+        /// <item>CosmosIdentityRepository</item>
+        /// </list>
+        /// </remarks>
         public static IdentityBuilder AddCosmosIdentity<TDbContext, TUserEntity, TRoleEntity>(
             this IServiceCollection services,
             Action<IdentityOptions> identityOptions,
@@ -26,9 +46,7 @@ namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Extensions
                 .AddIdentityCore<TUserEntity>(identityOptions)
                 .AddEntityFrameworkStores<TDbContext>();
 
-            // The following is not available in .Net 6
-            //if (addDefaultTokenProviders)
-            //    builder.AddDefaultTokenProviders();
+            builder.AddDefaultTokenProviders();
 
             // Add custom Identity stores
             services.AddTransient<IUserStore<TUserEntity>, CosmosUserStore<TUserEntity>>();

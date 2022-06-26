@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AspNetCore.Identity.CosmosDb.Containers;
+using AspNetCore.Identity.CosmosDb.Repositories;
+using AspNetCore.Identity.CosmosDb.Stores;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Containers;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Repositories;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores;
 using System.Reflection;
 
-namespace PieroDeTomi.EntityFrameworkCore.Identity.Tests
+namespace AspNetCore.Identity.CosmosDb.Tests.Shared
 {
     public class TestUtilities
     {

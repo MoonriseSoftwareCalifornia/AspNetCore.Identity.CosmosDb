@@ -1,12 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores.Tests
+﻿namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 {
     [TestClass()]
     public class CosmosRoleStoreTests

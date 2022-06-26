@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-
-namespace AspNetCore.Identity.Test
+﻿namespace AspNetCore.Identity.CosmosDb.Tests.Shared
 {
 
     //https://stackoverflow.com/questions/1563191/cleanest-way-to-write-retry-logic

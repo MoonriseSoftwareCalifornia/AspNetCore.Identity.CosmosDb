@@ -52,13 +52,11 @@ public abstract class IdentitySpecificationTestBase<TUser, TRole, TKey> : UserMa
             options.Password.RequireUppercase = false;
             options.User.AllowedUserNameCharacters = null;
         }).AddDefaultTokenProviders();
-        AddCosmosDbContext(services, context);
-        AddCosmosIdentity(services, context);
-        //AddUserStore(services, context);
-        //AddRoleStore(services, context);
+        AddUserStore(services, context);
+        AddRoleStore(services, context);
         services.AddLogging();
-        //services.AddSingleton<ILogger<UserManager<TUser>>>(new TestLogger<UserManager<TUser>>());
-        //services.AddSingleton<ILogger<RoleManager<TRole>>>(new TestLogger<RoleManager<TRole>>());
+        services.AddSingleton<ILogger<UserManager<TUser>>>(new TestLogger<UserManager<TUser>>());
+        services.AddSingleton<ILogger<RoleManager<TRole>>>(new TestLogger<RoleManager<TRole>>());
     }
 
     /// <summary>
@@ -66,14 +64,14 @@ public abstract class IdentitySpecificationTestBase<TUser, TRole, TKey> : UserMa
     /// </summary>
     /// <param name="services"></param>
     /// <param name="context"></param>
-    protected abstract void AddCosmosIdentity(IServiceCollection services, object context);
+    protected abstract void AddIdentity(IServiceCollection services, object context);
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="services"></param>
     /// <param name="context"></param>
-    protected abstract void AddCosmosDbContext(IServiceCollection services, object context);
+    protected abstract void AddDbContext(IServiceCollection services, object context);
 
     /// <summary>
     /// Setup the IdentityBuilder

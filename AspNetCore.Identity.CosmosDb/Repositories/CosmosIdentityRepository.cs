@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Contracts;
+using AspNetCore.Identity.CosmosDb.Contracts;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Repositories
+namespace AspNetCore.Identity.CosmosDb.Repositories
 {
     public class CosmosIdentityRepository<TDbContext, TUserEntity> : IRepository
         where TDbContext : CosmosIdentityDbContext<TUserEntity>

@@ -2,42 +2,42 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>1.0.6</Version>
-    <Authors>Piero De Tomi</Authors>
+    <Version>2.0.0-alpha</Version>
+    <Authors>Piero De Tomi, Eric Kauffman</Authors>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, efcore, cosmos, cosmosdb, identity, provider</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>PieroDeTomi.EntityFrameworkCore.Identity.Cosmos</PackageId>
-    <RepositoryUrl>https://github.com/pierodetomi/efcore-identity-cosmos</RepositoryUrl>
-    <AssemblyVersion>1.0.6.0</AssemblyVersion>
-    <FileVersion>1.0.6.0</FileVersion>
-    <PackageProjectUrl>https://github.com/pierodetomi/efcore-identity-cosmos</PackageProjectUrl>
+    <PackageId>AspNetCore.Identity.CosmosDb</PackageId>
+    <RepositoryUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</RepositoryUrl>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <PackageProjectUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</PackageProjectUrl>
     <PackageIcon>nuget-icon.png</PackageIcon>
-    <Description>A Cosmos DB implementation of an Identity provider for .NET Core 5. You can use this package to easily bootstrap an ASP.NET Core Web Application using Identity/IdentityServer backed by a CosmosDb database and EF Core, in place of SQL Server.</Description>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <RepositoryType>git</RepositoryType>
+    <Description>A Cosmos DB implementation of an Identity provider for .NET 6. You can use this package to easily bootstrap an ASP.NET Core Web Application by a CosmosDb database and EF Core, in place of SQL Server.</Description>
     <ApplicationIcon>_res\icons\nuget-icon.ico</ApplicationIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Duende.IdentityServer" Version="6.1.1" />
+    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="6.1.1" />
+    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="6.0.6" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.6" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <Content Include="..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </Content>
     <Content Include="_res\icons\nuget-icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
     <None Include="_res\icons\nuget-icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

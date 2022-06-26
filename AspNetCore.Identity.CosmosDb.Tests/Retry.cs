@@ -1,4 +1,4 @@
-﻿namespace PieroDeTomi.EntityFrameworkCore.Identity.Tests
+﻿namespace AspNetCore.Identity.CosmosDb.Tests
 {
 
     //https://stackoverflow.com/questions/1563191/cleanest-way-to-write-retry-logic

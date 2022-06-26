@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.EntityConfigurations;
+using AspNetCore.Identity.CosmosDb.EntityConfigurations;
 
-namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Extensions
+namespace AspNetCore.Identity.CosmosDb.Extensions
 {
     public static class ModelBuilderExtensions
     {
@@ -15,11 +15,10 @@ namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Extensions
             builder.ApplyConfiguration(new UserClaimEntityTypeConfiguration { });
             builder.ApplyConfiguration(new UserLoginEntityTypeConfiguration { });
             builder.ApplyConfiguration(new UserTokensEntityTypeConfiguration { });
-            // The following is no longer true open source. May required a license for production.
+            // The following may required a license for production.
             // See: https://modlogix.com/blog/identityserver4-alternatives-best-options-and-the-near-future-of-identityserver/
-
-            //builder.ApplyConfiguration(new DeviceFlowCodesEntityTypeConfiguration { });
-            //builder.ApplyConfiguration(new PersistedGrantEntityTypeConfiguration { });
+            builder.ApplyConfiguration(new DeviceFlowCodesEntityTypeConfiguration { });
+            builder.ApplyConfiguration(new PersistedGrantEntityTypeConfiguration { });
 
             return builder;
         }

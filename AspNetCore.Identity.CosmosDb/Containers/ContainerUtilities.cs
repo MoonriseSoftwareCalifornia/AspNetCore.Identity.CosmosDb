@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Containers
+namespace AspNetCore.Identity.CosmosDb.Containers
 {
     /// <summary>
     /// Utilities for creating Cosmos DB Containers

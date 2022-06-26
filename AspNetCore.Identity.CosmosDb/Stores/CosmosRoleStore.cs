@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Contracts;
+using AspNetCore.Identity.CosmosDb.Contracts;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Stores
+namespace AspNetCore.Identity.CosmosDb.Stores
 {
     /// <summary>
     /// Cosmos DB Role Store

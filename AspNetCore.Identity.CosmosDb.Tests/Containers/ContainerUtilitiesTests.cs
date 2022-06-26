@@ -1,13 +1,14 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Containers;
-using PieroDeTomi.EntityFrameworkCore.Identity.Tests;
+using AspNetCore.Identity.CosmosDb.Containers;
+using AspNetCore.Identity.CosmosDb.Tests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AspNetCore.Identity.CosmosDb.Tests.Shared;
 
-namespace PieroDeTomi.EntityFrameworkCore.Identity.Cosmos.Containers.Tests
+namespace AspNetCore.Identity.CosmosDb.Containers.Tests
 {
     [TestClass()]
     public class ContainerUtilitiesTests
