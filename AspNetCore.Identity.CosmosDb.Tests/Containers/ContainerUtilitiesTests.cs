@@ -69,19 +69,6 @@ namespace AspNetCore.Identity.CosmosDb.Containers.Tests
             Assert.IsTrue(result.StatusCode == System.Net.HttpStatusCode.OK || result.StatusCode == System.Net.HttpStatusCode.NoContent || result.StatusCode == System.Net.HttpStatusCode.Created);
         }
 
-        /// <summary>
-        /// Removes all containers after tests have run.
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod()]
-        public async Task A4_RemoveAllRequiredContainersTest()
-        {
-            Assert.IsNotNull(containerUtilities);
-
-            // Get rid of all the containers if they exist.
-            await containerUtilities.DeleteRequiredContainers();
-        }
-
         ///// <summary>
         ///// Establishes the utilities class can be created.
         ///// </summary>
