@@ -11,7 +11,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         private static CosmosUserStore<IdentityUser>? _userStore;
         private static CosmosRoleStore<IdentityRole>? _roleStore;
         private static string phoneNumber = "0000000000";
-        private static Random _random;
+        private static Random? _random;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -51,10 +51,12 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         private async Task<IdentityRole> GetMockRandomRoleAsync()
         {
             var role = new IdentityRole(GetNextRandomNumber(1000, 9999).ToString());
+            role.NormalizedName = role.Name.ToUpper();
+
             var result = await _roleStore.CreateAsync(role);
-            Assert.IsTrue(result.Succeeded);//Confirm success
             role = await _roleStore.FindByIdAsync(role.Id);
             return role;
+            Assert.IsTrue(result.Succeeded);//Confirm success
         }
 
         /// <summary>
@@ -65,9 +67,13 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
             var randomEmail = $"{GetNextRandomNumber(1000, 9999)}@{GetNextRandomNumber(10000, 99999)}.com";
             var user = new IdentityUser(randomEmail) { Email = randomEmail, Id = Guid.NewGuid().ToString() };
+
+            user.NormalizedUserName = user.UserName.ToUpper();
+            user.NormalizedEmail = user.Email.ToUpper();
+
             var result = await _userStore.CreateAsync(user);
             Assert.IsTrue(result.Succeeded);//Confirm success
-            user = await _userStore.FindByNameAsync(user.UserName);
+            user = await _userStore.FindByNameAsync(user.UserName.ToUpper());
             return user;
         }
 
@@ -95,6 +101,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 
             // Arrange - setup the new user
             var user = new IdentityUser(TestUtilities.IDENUSER1EMAIL) { Email = TestUtilities.IDENUSER1EMAIL };
+            user.NormalizedUserName = user.UserName.ToUpper();
+            user.NormalizedEmail = user.Email.ToUpper();
 
             user.Id = TestUtilities.IDENUSER1ID;
 
@@ -111,8 +119,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             Assert.IsNotNull(user2);
             Assert.AreEqual(user2.UserName, TestUtilities.IDENUSER1EMAIL);
             Assert.AreEqual(user2.Email, TestUtilities.IDENUSER1EMAIL);
-            Assert.AreEqual(user2.NormalizedUserName, TestUtilities.IDENUSER1EMAIL.ToLower());
-            Assert.AreEqual(user2.NormalizedEmail, TestUtilities.IDENUSER1EMAIL.ToLower());
+            Assert.AreEqual(user2.NormalizedUserName, TestUtilities.IDENUSER1EMAIL.ToUpper());
+            Assert.AreEqual(user2.NormalizedEmail, TestUtilities.IDENUSER1EMAIL.ToUpper());
         }
 
         [TestMethod()]
@@ -138,7 +146,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             var user = await GetMockRandomUserAsync();
 
             // Act
-            var user1 = await _userStore.FindByEmailAsync(user.Email);
+            var user1 = await _userStore.FindByEmailAsync(user.Email.ToUpper());
 
             // Assert
             Assert.IsNotNull(user1);
@@ -166,7 +174,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             var user = await GetMockRandomUserAsync();
 
             // Act
-            var user1 = await _userStore.FindByNameAsync(user.UserName);
+            var user1 = await _userStore.FindByNameAsync(user.UserName.ToUpper());
 
             // Assert
             Assert.IsNotNull(user);
@@ -366,7 +374,6 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 
             Assert.IsNotNull(user2);
             Assert.AreEqual(TestUtilities.IDENUSER2EMAIL, user2.Email);
-            Assert.AreEqual(TestUtilities.IDENUSER2EMAIL.ToLower(), user2.NormalizedEmail);
 
             Assert.AreEqual(user.UserName, user2.UserName);
         }
@@ -397,11 +404,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             var newEmail = $"A{GetNextRandomNumber(111, 9999).ToString()}@foo.com";
 
             // Act
-            await _userStore.SetNormalizedEmailAsync(user, newEmail);
+            await _userStore.SetNormalizedEmailAsync(user, newEmail.ToUpper());
 
             // Assert
             user = await _userStore.FindByIdAsync(user.Id);
-            Assert.AreEqual(newEmail.ToLower(), user.NormalizedEmail);
+            Assert.AreEqual(newEmail.ToUpper(), user.NormalizedEmail);
         }
 
         // This method is tested with SetUserNameAsync().
@@ -413,11 +420,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             var newEmail = $"A{GetNextRandomNumber(111, 9999).ToString()}@foo.com";
 
             // Act
-            await _userStore.SetNormalizedUserNameAsync(user, newEmail);
+            await _userStore.SetNormalizedUserNameAsync(user, newEmail.ToUpper());
 
             // Assert
             var user2 = await _userStore.FindByIdAsync(user.Id);
-            Assert.AreEqual(newEmail.ToLower(), user2.NormalizedUserName);
+            Assert.AreEqual(newEmail.ToUpper(), user2.NormalizedUserName);
         }
 
         [TestMethod()]
@@ -481,7 +488,6 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             // Assert
             user = await _userStore.FindByIdAsync(user.Id);
             Assert.AreEqual(newUserName, user.UserName);
-            Assert.AreEqual(newUserName.ToLower(), user.NormalizedUserName);
 
         }
 
@@ -495,7 +501,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 
             // Act
             user.Email = TestUtilities.IDENUSER1EMAIL;
-            user.NormalizedEmail = TestUtilities.IDENUSER1EMAIL.ToLower();
+            user.NormalizedEmail = TestUtilities.IDENUSER1EMAIL.ToUpper();
             user.PhoneNumber = phoneNumber;
 
             var result = await _userStore.UpdateAsync(user);
@@ -507,7 +513,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             var user1 = await _userStore.FindByIdAsync(user.Id);
 
             Assert.AreEqual(TestUtilities.IDENUSER1EMAIL, user1.Email);
-            Assert.AreEqual(TestUtilities.IDENUSER1EMAIL.ToLower(), user1.NormalizedEmail);
+            Assert.AreEqual(TestUtilities.IDENUSER1EMAIL.ToUpper(), user1.NormalizedEmail);
             Assert.AreEqual(phoneNumber, user1.PhoneNumber);
 
         }

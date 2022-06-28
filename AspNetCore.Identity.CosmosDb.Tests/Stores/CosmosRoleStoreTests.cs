@@ -51,6 +51,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         private async Task<IdentityRole> GetMockRandomRoleAsync()
         {
             var role = new IdentityRole($"HUB{GetNextRandomNumber(1000, 9999)}");
+            role.NormalizedName = role.Name.ToUpper();
+
             var result = await _roleStore.CreateAsync(role);
             Assert.IsTrue(result.Succeeded);
             return role;
@@ -107,7 +109,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             var role = await GetMockRandomRoleAsync();
 
             // Act
-            var r = await _roleStore.FindByNameAsync(role.Name);
+            var r = await _roleStore.FindByNameAsync(role.Name.ToUpper());
 
             // Assert
             Assert.AreEqual(role.Id, r.Id);
@@ -120,7 +122,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             var role = await GetMockRandomRoleAsync();
 
             // Act
-            var r = await _roleStore.FindByNameAsync(role.Name);
+            var r = await _roleStore.FindByNameAsync(role.Name.ToUpper());
 
             // Assert
             Assert.AreEqual(role.Id, r.Id);
@@ -160,11 +162,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             var newName = $"WOW{Guid.NewGuid().ToString()}";
 
             // Act
-            await _roleStore.SetNormalizedRoleNameAsync(role, newName);
+            await _roleStore.SetNormalizedRoleNameAsync(role, newName.ToUpper());
 
             // Assert
             var result = await _roleStore.GetNormalizedRoleNameAsync(role);
-            Assert.AreEqual(newName.ToLower(), result);
+            Assert.AreEqual(newName.ToUpper(), result);
         }
 
         [TestMethod()]
@@ -179,10 +181,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 
             // Assert
             var result1 = await _roleStore.GetRoleNameAsync(role);
-            var result2 = await _roleStore.GetNormalizedRoleNameAsync(role);
 
             Assert.AreEqual(newName, result1);
-            Assert.AreEqual(newName.ToLower(), result2);
         }
 
         [TestMethod()]

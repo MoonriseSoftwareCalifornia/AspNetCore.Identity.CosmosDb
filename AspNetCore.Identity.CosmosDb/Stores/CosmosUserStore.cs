@@ -32,13 +32,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             _repo = repo;
         }
 
-        /// <summary>
-        /// Create a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <inheritdoc/>
         public async Task<IdentityResult> CreateAsync(TUserEntity user, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -54,9 +48,6 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             try
             {
-                user.NormalizedEmail = user.Email.ToLower();
-                user.NormalizedUserName = user.UserName.ToLower();
-
                 _repo.Add(user);
                 await _repo.SaveChangesAsync();
 
@@ -68,13 +59,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return IdentityResult.Success;
         }
 
-        /// <summary>
-        /// Delete a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        // <inheritdoc />
         public async Task<IdentityResult> DeleteAsync(TUserEntity user, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -95,33 +80,21 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return IdentityResult.Success;
         }
 
-        /// <summary>
-        /// Find a user by a email address
-        /// </summary>
-        /// <param name="emailAddress"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public async Task<TUserEntity> FindByEmailAsync(string emailAddress, CancellationToken cancellationToken = default(CancellationToken))
+        // <inheritdoc />
+        public async Task<TUserEntity> FindByEmailAsync(string normalizedEmailName, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (string.IsNullOrEmpty(emailAddress))
-                throw new ArgumentNullException(nameof(emailAddress));
+            if (string.IsNullOrEmpty(normalizedEmailName))
+                throw new ArgumentNullException(nameof(normalizedEmailName));
 
             var user = await _repo.Table<TUserEntity>()
-                .SingleOrDefaultAsync(_ => _.NormalizedEmail == emailAddress.ToLower(), cancellationToken: cancellationToken);
+                .SingleOrDefaultAsync(_ => _.NormalizedEmail == normalizedEmailName, cancellationToken: cancellationToken);
 
             return user;
         }
 
-        /// <summary>
-        /// Find a user by user ID
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        // <inheritdoc />
         public async Task<TUserEntity> FindByIdAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -136,113 +109,68 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return user;
         }
 
-        /// <summary>
-        /// Find a user by user name
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public async Task<TUserEntity> FindByNameAsync(string userName, CancellationToken cancellationToken = default(CancellationToken))
+        // <inheritdoc />
+        public async Task<TUserEntity> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (string.IsNullOrEmpty(userName))
-                throw new ArgumentNullException(nameof(userName));
+            if (string.IsNullOrEmpty(normalizedUserName))
+                throw new ArgumentNullException(nameof(normalizedUserName));
 
-            return await _repo.Table<TUserEntity>().SingleOrDefaultAsync(_ => _.NormalizedUserName == userName.ToLower());
+            return await _repo.Table<TUserEntity>().SingleOrDefaultAsync(_ => _.NormalizedUserName == normalizedUserName);
         }
 
-        /// <summary>
-        /// Get email address for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        // <inheritdoc />
         public Task<string> GetEmailAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(
                 GetUserProperty(user, user => user.Email, cancellationToken));
         }
 
-        /// <summary>
-        /// Get a user's email confirmation status
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        // <inheritdoc />
         public Task<bool> GetEmailConfirmedAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(
                 GetUserProperty(user, user => user.EmailConfirmed, cancellationToken));
         }
 
-        /// <summary>
-        /// Get a normalized email address for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        // <inheritdoc />
         public Task<string> GetNormalizedEmailAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(
                 GetUserProperty(user, user => user.NormalizedEmail, cancellationToken));
         }
 
-        /// <summary>
-        /// Get a normalized user name for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        // <inheritdoc />
         public Task<string> GetNormalizedUserNameAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(
                 GetUserProperty(user, user => user.NormalizedUserName, cancellationToken));
         }
 
-        /// <summary>
-        /// Get the password hash for a user.
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        // <inheritdoc />
         public Task<string> GetPasswordHashAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(
                 GetUserProperty(user, user => user.PasswordHash, cancellationToken));
         }
 
-        /// <summary>
-        /// Get the telephone number for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        // <inheritdoc />
         public Task<string> GetPhoneNumberAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(
                 GetUserProperty(user, user => user.PhoneNumber, cancellationToken));
         }
 
-        /// <summary>
-        /// Get a user's telephone number confirmation status
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        // <inheritdoc />
         public Task<bool> GetPhoneNumberConfirmedAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(
                 GetUserProperty(user, user => user.PhoneNumberConfirmed, cancellationToken));
         }
 
-        /// <summary>
-        /// Get the User ID for a user.
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+
+        // <inheritdoc />
         public Task<string> GetUserIdAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(
@@ -287,9 +215,6 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             SetUserProperty(user, emailAddress, (u, m) => u.Email = emailAddress, cancellationToken);
 
-            // Always keep the normalized email address in sync
-            await SetNormalizedEmailAsync(user, emailAddress, cancellationToken);
-
         }
 
         /// <summary>
@@ -305,105 +230,59 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Sets the normalized email address for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="emailAddress"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public Task SetNormalizedEmailAsync(TUserEntity user, string emailAddress, CancellationToken cancellationToken = default)
+        // <inheritdoc />
+        public Task SetNormalizedEmailAsync(TUserEntity user, string normalizedEmail, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(emailAddress))
-                throw new ArgumentNullException(nameof(emailAddress));
+            if (string.IsNullOrEmpty(normalizedEmail))
+                throw new ArgumentNullException(nameof(normalizedEmail));
 
-            SetUserProperty(user, emailAddress, (u, m) => u.NormalizedEmail = emailAddress.ToLower(), cancellationToken);
+            SetUserProperty(user, normalizedEmail, (u, m) => u.NormalizedEmail = normalizedEmail, cancellationToken);
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Sets the normalized user name for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="userName"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public Task SetNormalizedUserNameAsync(TUserEntity user, string userName, CancellationToken cancellationToken = default)
+        // <inheritdoc />
+        public Task SetNormalizedUserNameAsync(TUserEntity user, string normalizedName, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(userName))
-                throw new ArgumentNullException(nameof(userName));
+            if (string.IsNullOrEmpty(normalizedName))
+                throw new ArgumentNullException(nameof(normalizedName));
 
-            SetUserProperty(user, userName, (u, m) => u.NormalizedUserName = userName.ToLower(), cancellationToken);
+            SetUserProperty(user, normalizedName, (u, m) => u.NormalizedUserName = normalizedName, cancellationToken);
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Sets the password hash for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="passwordHash"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        // <inheritdoc />
         public Task SetPasswordHashAsync(TUserEntity user, string passwordHash, CancellationToken cancellationToken = default)
         {
             SetUserProperty(user, passwordHash, (u, m) => u.PasswordHash = passwordHash, cancellationToken);
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Sets the phone number for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="phoneNumber"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        // <inheritdoc />
         public Task SetPhoneNumberAsync(TUserEntity user, string phoneNumber, CancellationToken cancellationToken = default)
         {
             SetUserProperty(user, phoneNumber, (u, v) => user.PhoneNumber = v, cancellationToken);
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Sets the confirmation status of a user's phone number
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="confirmed"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        // <inheritdoc />
         public Task SetPhoneNumberConfirmedAsync(TUserEntity user, bool confirmed, CancellationToken cancellationToken = default)
         {
             SetUserProperty(user, confirmed, (u, v) => user.PhoneNumberConfirmed = v, cancellationToken);
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Sets the user name for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="userName"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public async Task SetUserNameAsync(TUserEntity user, string userName, CancellationToken cancellationToken = default)
+        // <inheritdoc />
+        public Task SetUserNameAsync(TUserEntity user, string userName, CancellationToken cancellationToken = default)
         {
             SetUserProperty(user, userName, (u, m) => u.UserName = userName, cancellationToken);
-            // Always keep the normalized user name in sync.
-            await SetNormalizedUserNameAsync(user, userName, cancellationToken);
+            return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Updates an identity user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        // <inheritdoc />
         public async Task<IdentityResult> UpdateAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             try
             {
-                // Keep these things in sync just as with CreateAsync() method.
-                user.NormalizedEmail = user.Email.ToLower();
-                //user.NormalizedUserName = user.UserName.ToLower();
-
                 _repo.Update(user);
 
                 await _repo.SaveChangesAsync();
@@ -436,14 +315,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             setter(user, value);
         }
 
-        /// <summary>
-        /// Add a login for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="login"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        // <inheritdoc />
         public async Task AddLoginAsync(TUserEntity user, UserLoginInfo login, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -472,15 +344,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             }
         }
 
-        /// <summary>
-        /// Removes a login for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="loginProvider"></param>
-        /// <param name="providerKey"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        // <inheritdoc />
         public async Task RemoveLoginAsync(TUserEntity user, string loginProvider, string providerKey, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -507,13 +371,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             catch { }
         }
 
-        /// <summary>
-        /// Gets the logins for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        // <inheritdoc />
         public Task<IList<UserLoginInfo>> GetLoginsAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -533,14 +391,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return Task.FromResult(res);
         }
 
-        /// <summary>
-        /// Find a user by a login
-        /// </summary>
-        /// <param name="loginProvider"></param>
-        /// <param name="providerKey"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        // <inheritdoc />
         public async Task<TUserEntity> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -557,24 +408,16 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 : await FindByIdAsync(userId, cancellationToken);
         }
 
-        /// <summary>
-        /// Add a user to a role
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="roleName"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        public async Task AddToRoleAsync(TUserEntity user, string roleName, CancellationToken cancellationToken = default)
+        // <inheritdoc />
+        public async Task AddToRoleAsync(TUserEntity user, string normalizedRoleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             if (user == null) throw new ArgumentNullException(nameof(user));
-            if (string.IsNullOrWhiteSpace(roleName)) throw new ArgumentNullException(nameof(roleName));
+            if (string.IsNullOrWhiteSpace(normalizedRoleName)) throw new ArgumentNullException(nameof(normalizedRoleName));
 
             var role = await _repo.Table<IdentityRole>()
-                .SingleOrDefaultAsync(_ => _.NormalizedName == roleName.ToLower(), cancellationToken: cancellationToken);
+                .SingleOrDefaultAsync(_ => _.NormalizedName == normalizedRoleName, cancellationToken: cancellationToken);
 
             if (role == null) throw new InvalidOperationException("Role not found.");
 
@@ -592,14 +435,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             catch { }
         }
 
-        /// <summary>
-        /// Removes a user from a role
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="roleName"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <inheritdoc/>>
         public async Task RemoveFromRoleAsync(TUserEntity user, string roleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -621,13 +457,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             }
         }
 
-        /// <summary>
-        /// Gets the roles for a user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        // <inheritdoc />
         public async Task<IList<string>> GetRolesAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -650,14 +480,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return res;
         }
 
-        /// <summary>
-        /// Determines if a user is in a role
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="roleName"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        // <inheritdoc />
         public async Task<bool> IsInRoleAsync(TUserEntity user, string roleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -679,13 +502,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return false;
         }
 
-        /// <summary>
-        /// Gets a list of users in a role
-        /// </summary>
-        /// <param name="roleName"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        // <inheritdoc />
         public async Task<IList<TUserEntity>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -712,9 +529,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return new List<TUserEntity>();
         }
 
-        /// <summary>
-        /// Disposes this class
-        /// </summary>
+        // <inheritdoc />
         public void Dispose()
         { 
             // IUserStore requires a dispose method, but
