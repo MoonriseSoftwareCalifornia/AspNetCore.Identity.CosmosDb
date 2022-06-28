@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AspNetCore.Identity.CosmosDb.Tests.Shared;
 
 namespace AspNetCore.Identity.CosmosDb.Containers.Tests
 {

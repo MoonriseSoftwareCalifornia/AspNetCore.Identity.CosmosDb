@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Reflection;
 
-namespace AspNetCore.Identity.CosmosDb.Tests.Shared
+namespace AspNetCore.Identity.CosmosDb.Tests
 {
     public class TestUtilities
     {
@@ -81,8 +81,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Shared
         /// <summary>
         /// Get Cosmos DB Options
         /// </summary>
+        /// <param name="connectionName"></param>
         /// <returns></returns>
-        public DbContextOptions GetDbOptions()
+        public DbContextOptions GetDbOptions(string connectionName = "ApplicationDbContextConnection")
         {
             var config = GetConfig();
             var connectionString = config.GetConnectionString("ApplicationDbContextConnection");
@@ -95,11 +96,12 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Shared
         /// <summary>
         /// Gets an instance of the container utilities
         /// </summary>
+        /// <param name="connectionName"></param>
         /// <returns></returns>
-        public ContainerUtilities GetContainerUtilities()
+        public ContainerUtilities GetContainerUtilities(string connectionName = "ApplicationDbContextConnection")
         {
             var config = GetConfig();
-            var connectionString = config.GetConnectionString("ApplicationDbContextConnection");
+            var connectionString = config.GetConnectionString(connectionName);
             var utilities = new ContainerUtilities(connectionString, TestUtilities.DATABASENAME);
             return utilities;
         }
@@ -107,18 +109,20 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Shared
         /// <summary>
         /// Get an instance of the Cosmos DB context.
         /// </summary>
+        /// <param name="connectionName"></param>
         /// <returns></returns>
-        public CosmosIdentityDbContext<IdentityUser> GetDbContext()
+        public CosmosIdentityDbContext<IdentityUser> GetDbContext(string connectionName = "ApplicationDbContextConnection")
         {
-            var dbContext = new CosmosIdentityDbContext<IdentityUser>(GetDbOptions());
+            var dbContext = new CosmosIdentityDbContext<IdentityUser>(GetDbOptions(connectionName));
             return dbContext;
         }
 
         /// <summary>
         /// Get an instance of the Cosmos DB user store.
         /// </summary>
+        /// <param name="connectionName"></param>
         /// <returns></returns>
-        public CosmosUserStore<IdentityUser> GetUserStore()
+        public CosmosUserStore<IdentityUser> GetUserStore(string connectionName = "ApplicationDbContextConnection")
         {
 
             var repository = new CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser>, IdentityUser>(GetDbContext());

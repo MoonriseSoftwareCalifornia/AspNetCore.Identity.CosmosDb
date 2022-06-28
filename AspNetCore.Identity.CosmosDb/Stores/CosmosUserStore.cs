@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AspNetCore.Identity.CosmosDb.Contracts;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using AspNetCore.Identity.CosmosDb.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
     /// Cosmos DB User store
     /// </summary>
     /// <typeparam name="TUserEntity"></typeparam>
-    public class CosmosUserStore<TUserEntity> :
+    public class CosmosUserStore<TUserEntity> : IdentityStoreBase,
         IUserStore<TUserEntity>,
         IUserRoleStore<TUserEntity>,
         IUserEmailStore<TUserEntity>,
@@ -27,7 +27,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// Constructor
         /// </summary>
         /// <param name="repo"></param>
-        public CosmosUserStore(IRepository repo)
+        public CosmosUserStore(IRepository repo) : base(repo)
         {
             _repo = repo;
         }
@@ -59,12 +59,12 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
                 _repo.Add(user);
                 await _repo.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                return IdentityResult.Failed(new IdentityError { Description = ex.Message });
-            }
 
+            } catch (Exception e)
+            {
+                return ProcessExceptions(e);
+            }
+            
             return IdentityResult.Success;
         }
 
@@ -87,9 +87,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 _repo.Delete(user);
                 await _repo.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return IdentityResult.Failed(new IdentityError { Description = ex.Message });
+                return ProcessExceptions(e);
             }
 
             return IdentityResult.Success;
@@ -178,7 +178,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         /// <summary>
-        /// Get a normailized email address for a user
+        /// Get a normalized email address for a user
         /// </summary>
         /// <param name="user"></param>
         /// <param name="cancellationToken"></param>
@@ -190,7 +190,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         /// <summary>
-        /// Get a normailized user name for a user
+        /// Get a normalized user name for a user
         /// </summary>
         /// <param name="user"></param>
         /// <param name="cancellationToken"></param>
@@ -283,13 +283,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task SetEmailAsync(TUserEntity user, string emailAddress, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(emailAddress))
-            {
                 throw new ArgumentNullException(nameof(emailAddress));
-            }
 
             SetUserProperty(user, emailAddress, (u, m) => u.Email = emailAddress, cancellationToken);
 
-            // Always keep the normalized email address in synch
+            // Always keep the normalized email address in sync
             await SetNormalizedEmailAsync(user, emailAddress, cancellationToken);
 
         }
@@ -308,7 +306,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         /// <summary>
-        /// Sets the normailized email address for a user
+        /// Sets the normalized email address for a user
         /// </summary>
         /// <param name="user"></param>
         /// <param name="emailAddress"></param>
@@ -317,9 +315,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public Task SetNormalizedEmailAsync(TUserEntity user, string emailAddress, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(emailAddress))
-            {
                 throw new ArgumentNullException(nameof(emailAddress));
-            }
+
             SetUserProperty(user, emailAddress, (u, m) => u.NormalizedEmail = emailAddress.ToLower(), cancellationToken);
             return Task.CompletedTask;
         }
@@ -334,9 +331,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public Task SetNormalizedUserNameAsync(TUserEntity user, string userName, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(userName))
-            {
                 throw new ArgumentNullException(nameof(userName));
-            }
 
             SetUserProperty(user, userName, (u, m) => u.NormalizedUserName = userName.ToLower(), cancellationToken);
             return Task.CompletedTask;
@@ -391,7 +386,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task SetUserNameAsync(TUserEntity user, string userName, CancellationToken cancellationToken = default)
         {
             SetUserProperty(user, userName, (u, m) => u.UserName = userName, cancellationToken);
-            // Always keep the normalized user name in synch.
+            // Always keep the normalized user name in sync.
             await SetNormalizedUserNameAsync(user, userName, cancellationToken);
         }
 
@@ -413,9 +408,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
                 await _repo.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return IdentityResult.Failed(new IdentityError { Description = ex.Message });
+                return ProcessExceptions(e);
             }
 
             return IdentityResult.Success;
@@ -472,7 +467,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             catch (Exception e)
             {
                 // Debugging purposes.
-                var x = e;
+                //var x = e;
+                throw;
             }
         }
 
@@ -720,6 +716,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// Disposes this class
         /// </summary>
         public void Dispose()
-        { }
+        { 
+            // IUserStore requires a dispose method, but
+            // in this case it is not needed.
+        }
     }
 }

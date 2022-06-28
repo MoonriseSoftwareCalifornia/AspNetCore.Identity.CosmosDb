@@ -31,7 +31,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public async Task<IdentityResult> CreateAsync(TRoleEntity role, CancellationToken cancellationToken)
+        public async Task<IdentityResult> CreateAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -59,7 +59,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public async Task<IdentityResult> DeleteAsync(TRoleEntity role, CancellationToken cancellationToken)
+        public async Task<IdentityResult> DeleteAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -88,7 +88,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public async Task<TRoleEntity> FindByIdAsync(string roleId, CancellationToken cancellationToken)
+        public async Task<TRoleEntity> FindByIdAsync(string roleId, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -104,19 +104,19 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <summary>
         /// Find a role by normalized name
         /// </summary>
-        /// <param name="normalizedRoleName"></param>
+        /// <param name="roleName"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public async Task<TRoleEntity> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
+        public async Task<TRoleEntity> FindByNameAsync(string roleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (string.IsNullOrEmpty(normalizedRoleName) || string.IsNullOrWhiteSpace(normalizedRoleName))
-                throw new ArgumentNullException(nameof(normalizedRoleName));
+            if (string.IsNullOrEmpty(roleName) || string.IsNullOrWhiteSpace(roleName))
+                throw new ArgumentNullException(nameof(roleName));
 
             var role = await _repo.Table<TRoleEntity>()
-                .SingleOrDefaultAsync(_ => _.NormalizedName == normalizedRoleName, cancellationToken: cancellationToken);
+                .SingleOrDefaultAsync(_ => _.NormalizedName == roleName.ToLower(), cancellationToken: cancellationToken);
 
             return role;
         }
@@ -128,7 +128,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public Task<string> GetNormalizedRoleNameAsync(TRoleEntity role, CancellationToken cancellationToken)
+        public Task<string> GetNormalizedRoleNameAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -147,7 +147,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public Task<string> GetRoleIdAsync(TRoleEntity role, CancellationToken cancellationToken)
+        public Task<string> GetRoleIdAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -166,7 +166,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public Task<string> GetRoleNameAsync(TRoleEntity role, CancellationToken cancellationToken)
+        public Task<string> GetRoleNameAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -186,7 +186,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public Task SetNormalizedRoleNameAsync(TRoleEntity role, string normalizedName, CancellationToken cancellationToken)
+        public async Task SetNormalizedRoleNameAsync(TRoleEntity role, string normalizedName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -195,9 +195,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 throw new ArgumentNullException(nameof(role));
             }
 
-            role.NormalizedName = normalizedName;
-
-            return Task.CompletedTask;
+            role.NormalizedName = normalizedName.ToLower();
+            _repo.Update(role);
+            await _repo.SaveChangesAsync();
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public Task SetRoleNameAsync(TRoleEntity role, string roleName, CancellationToken cancellationToken)
+        public async Task SetRoleNameAsync(TRoleEntity role, string roleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -218,8 +218,10 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             }
 
             role.Name = roleName;
+            role.NormalizedName = roleName.ToLower();
+            _repo.Update(role);
+            await _repo.SaveChangesAsync();
 
-            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -229,7 +231,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public async Task<IdentityResult> UpdateAsync(TRoleEntity role, CancellationToken cancellationToken)
+        public async Task<IdentityResult> UpdateAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

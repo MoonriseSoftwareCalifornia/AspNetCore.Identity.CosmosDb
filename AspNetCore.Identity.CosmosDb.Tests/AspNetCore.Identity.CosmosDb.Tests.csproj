@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AspNetCore.Identity.CosmosDb.Tests.Shared\AspNetCore.Identity.CosmosDb.Tests.Shared.csproj" />
     <ProjectReference Include="..\AspNetCore.Identity.CosmosDb\AspNetCore.Identity.CosmosDb.csproj" />
   </ItemGroup>
 
