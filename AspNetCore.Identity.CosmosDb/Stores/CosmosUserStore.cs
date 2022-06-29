@@ -23,6 +23,19 @@ namespace AspNetCore.Identity.CosmosDb.Stores
     {
         private readonly IRepository _repo;
 
+        private bool _disposed;
+
+        /// <summary>
+        /// Throws if this class has been disposed.
+        /// </summary>
+        protected void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().Name);
+            }
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -36,6 +49,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<IdentityResult> CreateAsync(TUserEntity user, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -63,6 +77,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<IdentityResult> DeleteAsync(TUserEntity user, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -84,6 +99,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<TUserEntity> FindByEmailAsync(string normalizedEmailName, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (string.IsNullOrEmpty(normalizedEmailName))
                 throw new ArgumentNullException(nameof(normalizedEmailName));
@@ -98,6 +114,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<TUserEntity> FindByIdAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (userId == null)
                 throw new ArgumentNullException(nameof(userId));
@@ -113,6 +130,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<TUserEntity> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (string.IsNullOrEmpty(normalizedUserName))
                 throw new ArgumentNullException(nameof(normalizedUserName));
@@ -123,6 +141,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public Task<string> GetEmailAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             return Task.FromResult(
                 GetUserProperty(user, user => user.Email, cancellationToken));
         }
@@ -130,6 +151,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public Task<bool> GetEmailConfirmedAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             return Task.FromResult(
                 GetUserProperty(user, user => user.EmailConfirmed, cancellationToken));
         }
@@ -137,6 +161,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public Task<string> GetNormalizedEmailAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             return Task.FromResult(
                 GetUserProperty(user, user => user.NormalizedEmail, cancellationToken));
         }
@@ -151,6 +178,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public Task<string> GetPasswordHashAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             return Task.FromResult(
                 GetUserProperty(user, user => user.PasswordHash, cancellationToken));
         }
@@ -158,6 +188,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public Task<string> GetPhoneNumberAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             return Task.FromResult(
                 GetUserProperty(user, user => user.PhoneNumber, cancellationToken));
         }
@@ -165,6 +198,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public Task<bool> GetPhoneNumberConfirmedAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             return Task.FromResult(
                 GetUserProperty(user, user => user.PhoneNumberConfirmed, cancellationToken));
         }
@@ -173,6 +209,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public Task<string> GetUserIdAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             return Task.FromResult(
                  GetUserProperty(user, user => user.Id.ToString(), cancellationToken));
         }
@@ -185,6 +224,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <returns></returns>
         public Task<string> GetUserNameAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             return Task.FromResult(
                 GetUserProperty(user, user => user.UserName, cancellationToken));
         }
@@ -197,6 +239,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <returns></returns>
         public Task<bool> HasPasswordAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             return Task.FromResult(
                 GetUserProperty(user, user => !string.IsNullOrEmpty(user.PasswordHash), cancellationToken));
         }
@@ -213,6 +258,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (string.IsNullOrEmpty(emailAddress))
                 throw new ArgumentNullException(nameof(emailAddress));
 
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             SetUserProperty(user, emailAddress, (u, m) => u.Email = emailAddress, cancellationToken);
 
         }
@@ -226,6 +274,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <returns></returns>
         public Task SetEmailConfirmedAsync(TUserEntity user, bool confirmed, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             SetUserProperty(user, confirmed, (u, m) => u.EmailConfirmed = confirmed, cancellationToken);
             return Task.CompletedTask;
         }
@@ -235,6 +286,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         {
             if (string.IsNullOrEmpty(normalizedEmail))
                 throw new ArgumentNullException(nameof(normalizedEmail));
+
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             SetUserProperty(user, normalizedEmail, (u, m) => u.NormalizedEmail = normalizedEmail, cancellationToken);
             return Task.CompletedTask;
@@ -246,6 +300,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (string.IsNullOrEmpty(normalizedName))
                 throw new ArgumentNullException(nameof(normalizedName));
 
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             SetUserProperty(user, normalizedName, (u, m) => u.NormalizedUserName = normalizedName, cancellationToken);
             return Task.CompletedTask;
         }
@@ -253,6 +310,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public Task SetPasswordHashAsync(TUserEntity user, string passwordHash, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             SetUserProperty(user, passwordHash, (u, m) => u.PasswordHash = passwordHash, cancellationToken);
             return Task.CompletedTask;
         }
@@ -260,6 +320,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public Task SetPhoneNumberAsync(TUserEntity user, string phoneNumber, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             SetUserProperty(user, phoneNumber, (u, v) => user.PhoneNumber = v, cancellationToken);
             return Task.CompletedTask;
         }
@@ -267,6 +330,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public Task SetPhoneNumberConfirmedAsync(TUserEntity user, bool confirmed, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             SetUserProperty(user, confirmed, (u, v) => user.PhoneNumberConfirmed = v, cancellationToken);
             return Task.CompletedTask;
         }
@@ -274,6 +340,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public Task SetUserNameAsync(TUserEntity user, string userName, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             SetUserProperty(user, userName, (u, m) => u.UserName = userName, cancellationToken);
             return Task.CompletedTask;
         }
@@ -281,6 +350,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public async Task<IdentityResult> UpdateAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
             try
             {
                 _repo.Update(user);
@@ -298,6 +370,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         private T GetUserProperty<T>(TUserEntity user, Func<TUserEntity, T> accessor, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -308,6 +381,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         private void SetUserProperty<T>(TUserEntity user, T value, Action<TUserEntity, T> setter, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (user == null) throw new ArgumentNullException(nameof(user));
             if (value == null) throw new ArgumentNullException(nameof(value));
@@ -319,6 +393,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task AddLoginAsync(TUserEntity user, UserLoginInfo login, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (user == null) throw new ArgumentNullException(nameof(user));
             if (login == null) throw new ArgumentNullException(nameof(login));
@@ -348,6 +423,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task RemoveLoginAsync(TUserEntity user, string loginProvider, string providerKey, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (user == null) throw new ArgumentNullException(nameof(user));
             if (loginProvider == null) throw new ArgumentNullException(nameof(loginProvider));
@@ -375,6 +451,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public Task<IList<UserLoginInfo>> GetLoginsAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -395,6 +472,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<TUserEntity> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (loginProvider == null) throw new ArgumentNullException(nameof(loginProvider));
             if (providerKey == null) throw new ArgumentNullException(nameof(providerKey));
@@ -412,6 +490,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task AddToRoleAsync(TUserEntity user, string normalizedRoleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (user == null) throw new ArgumentNullException(nameof(user));
             if (string.IsNullOrWhiteSpace(normalizedRoleName)) throw new ArgumentNullException(nameof(normalizedRoleName));
@@ -439,6 +518,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task RemoveFromRoleAsync(TUserEntity user, string roleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (user == null) throw new ArgumentNullException(nameof(user));
             if (string.IsNullOrWhiteSpace(roleName)) throw new ArgumentNullException(nameof(roleName));
@@ -461,6 +541,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<IList<string>> GetRolesAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -484,6 +565,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<bool> IsInRoleAsync(TUserEntity user, string roleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (user == null) throw new ArgumentNullException(nameof(user));
             if (string.IsNullOrWhiteSpace(roleName)) throw new ArgumentNullException(nameof(roleName));
@@ -506,6 +588,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<IList<TUserEntity>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (string.IsNullOrWhiteSpace(roleName)) throw new ArgumentNullException(nameof(roleName));
 
@@ -531,9 +614,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
         // <inheritdoc />
         public void Dispose()
-        { 
-            // IUserStore requires a dispose method, but
-            // in this case it is not needed.
+        {
+            _disposed = true;
         }
     }
 }

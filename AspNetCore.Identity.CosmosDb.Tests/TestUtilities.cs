@@ -157,19 +157,6 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         }
 
         /// <summary>
-        /// Get and instance of the user manager
-        /// </summary>
-        /// <param name="dbContext"></param>
-        /// <returns></returns>
-        public UserManager<IdentityUser> GetUserManager()
-        {
-            var userStore = GetUserStore();
-            var userManager = new UserManager<IdentityUser>(userStore, null, new PasswordHasher<IdentityUser>(), null,
-                null, null, null, null, GetLogger<UserManager<IdentityUser>>());
-            return userManager;
-        }
-
-        /// <summary>
         /// Get a mock logger
         /// </summary>
         /// <typeparam name="T"></typeparam>

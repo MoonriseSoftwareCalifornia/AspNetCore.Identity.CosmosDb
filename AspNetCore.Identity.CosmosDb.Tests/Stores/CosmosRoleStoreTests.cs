@@ -4,44 +4,17 @@ using Microsoft.AspNetCore.Identity;
 namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 {
     [TestClass()]
-    public class CosmosRoleStoreTests
+    public class CosmosRoleStoreTests : CosmosIdentityTestsBase
     {
-
-
-        private static TestUtilities? utils;
-        private static CosmosUserStore<IdentityUser>? _userStore;
-        private static CosmosRoleStore<IdentityRole>? _roleStore;
-        private static Random _random;
+        //private static TestUtilities? utils;
+        //private static CosmosUserStore<IdentityUser>? _userStore;
+        //private static CosmosRoleStore<IdentityRole>? _roleStore;
+        //private static Random _random;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            //
-            // Setup context.
-            //
-            utils = new TestUtilities();
-            _userStore = utils.GetUserStore();
-            _roleStore = utils.GetRoleStore();
-            _random = new Random();
-
-            // Arrange class - remove prior data
-            using var dbContext = utils.GetDbContext();
-            dbContext.UserRoles.RemoveRange(dbContext.UserRoles.ToList());
-            dbContext.Roles.RemoveRange(dbContext.Roles.ToList());
-            dbContext.UserLogins.RemoveRange(dbContext.UserLogins.ToList());
-            dbContext.Users.RemoveRange(dbContext.Users.ToList());
-            var result = dbContext.SaveChanges();
-        }
-
-        /// <summary>
-        /// Gets a random number
-        /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
-        private int GetNextRandomNumber(int min, int max)
-        {
-            return _random.Next(min, max);
+            InitializeClass();
         }
 
         /// <summary>
@@ -69,7 +42,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             }
 
             // Assert
-            using var dbContext = utils.GetDbContext();
+            using var dbContext = _testUtilities.GetDbContext();
             Assert.AreEqual(35, dbContext.Roles.Count());
 
         }
@@ -78,7 +51,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task DeleteAsyncTest()
         {
             // Arrange
-            using var dbContext = utils.GetDbContext();
+            using var dbContext = _testUtilities.GetDbContext();
             var role = await GetMockRandomRoleAsync();
 
             // Act

@@ -14,6 +14,18 @@ namespace AspNetCore.Identity.CosmosDb.Stores
     public class CosmosRoleStore<TRoleEntity> : IRoleStore<TRoleEntity> where TRoleEntity : IdentityRole, new()
     {
         private readonly IRepository _repo;
+        private bool _disposed;
+
+        /// <summary>
+        /// Throws if this class has been disposed.
+        /// </summary>
+        protected void ThrowIfDisposed()
+        {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().Name);
+            }
+        }
 
         /// <summary>
         /// Constructor
@@ -29,6 +41,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<IdentityResult> CreateAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
@@ -50,6 +63,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<IdentityResult> DeleteAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (role == null)
             {
@@ -73,6 +87,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<TRoleEntity> FindByIdAsync(string roleId, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (string.IsNullOrEmpty(roleId) || string.IsNullOrWhiteSpace(roleId))
                 throw new ArgumentNullException(nameof(roleId));
@@ -87,6 +102,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<TRoleEntity> FindByNameAsync(string normalizedName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (string.IsNullOrEmpty(normalizedName) || string.IsNullOrWhiteSpace(normalizedName))
                 throw new ArgumentNullException(nameof(normalizedName));
@@ -101,6 +117,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public Task<string> GetNormalizedRoleNameAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (role == null)
             {
@@ -114,6 +131,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public Task<string> GetRoleIdAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (role == null)
             {
@@ -127,6 +145,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public Task<string> GetRoleNameAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (role == null)
             {
@@ -140,6 +159,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task SetNormalizedRoleNameAsync(TRoleEntity role, string normalizedName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (role == null)
             {
@@ -156,6 +176,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task SetRoleNameAsync(TRoleEntity role, string roleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (role == null)
             {
@@ -173,6 +194,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public async Task<IdentityResult> UpdateAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
 
             if (role == null)
             {
@@ -197,6 +219,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public void Dispose()
         {
+            _disposed = true;
         }
     }
 }

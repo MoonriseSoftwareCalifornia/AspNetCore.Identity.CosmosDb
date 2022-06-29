@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Identity;
 namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 {
     [TestClass()]
-    public class CosmosUserStoreTests
+    public class CosmosUserStoreTests : CosmosIdentityTestsBase
     {
 
-        private static TestUtilities? utils;
-        private static CosmosUserStore<IdentityUser>? _userStore;
-        private static CosmosRoleStore<IdentityRole>? _roleStore;
+        //private static TestUtilities? utils;
+        //private static CosmosUserStore<IdentityUser>? _userStore;
+        //private static CosmosRoleStore<IdentityRole>? _roleStore;
         private static string phoneNumber = "0000000000";
-        private static Random? _random;
+        //private static Random? _random;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -19,71 +19,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             //
             // Setup context.
             //
-            utils = new TestUtilities();
-            _userStore = utils.GetUserStore();
-            _roleStore = utils.GetRoleStore();
-            _random = new Random();
-
-            // Arrange class - remove prior data
-            using var dbContext = utils.GetDbContext();
-            dbContext.UserRoles.RemoveRange(dbContext.UserRoles.ToList());
-            dbContext.Roles.RemoveRange(dbContext.Roles.ToList());
-            dbContext.UserLogins.RemoveRange(dbContext.UserLogins.ToList());
-            dbContext.Users.RemoveRange(dbContext.Users.ToList());
-            var result = dbContext.SaveChanges();
-        }
-
-        /// <summary>
-        /// Gets a random number
-        /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
-        /// <returns></returns>
-        private int GetNextRandomNumber(int min, int max)
-        {
-            return _random.Next(min, max);
-        }
-
-        /// <summary>
-        /// Gets a mock <see cref="IdentityRole"/> for unit testing purposes
-        /// </summary>
-        /// <returns></returns>
-        private async Task<IdentityRole> GetMockRandomRoleAsync()
-        {
-            var role = new IdentityRole(GetNextRandomNumber(1000, 9999).ToString());
-            role.NormalizedName = role.Name.ToUpper();
-
-            var result = await _roleStore.CreateAsync(role);
-            role = await _roleStore.FindByIdAsync(role.Id);
-            return role;
-            Assert.IsTrue(result.Succeeded);//Confirm success
-        }
-
-        /// <summary>
-        /// Gets a mock <see cref="IdentityUser"/> for unit testing purposes
-        /// </summary>
-        /// <returns></returns>
-        private async Task<IdentityUser> GetMockRandomUserAsync()
-        {
-            var randomEmail = $"{GetNextRandomNumber(1000, 9999)}@{GetNextRandomNumber(10000, 99999)}.com";
-            var user = new IdentityUser(randomEmail) { Email = randomEmail, Id = Guid.NewGuid().ToString() };
-
-            user.NormalizedUserName = user.UserName.ToUpper();
-            user.NormalizedEmail = user.Email.ToUpper();
-
-            var result = await _userStore.CreateAsync(user);
-            Assert.IsTrue(result.Succeeded);//Confirm success
-            user = await _userStore.FindByNameAsync(user.UserName.ToUpper());
-            return user;
-        }
-
-        /// <summary>
-        /// Gets a mock login info for testing purposes
-        /// </summary>
-        /// <returns></returns>
-        private UserLoginInfo GetMockLoginInfoAsync()
-        {
-            return new UserLoginInfo("Twitter", Guid.NewGuid().ToString(), "Twitter");
+            InitializeClass();
         }
 
         /// <summary>
@@ -128,7 +64,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
 
             // Arrange - setup the new user
-            using var dbContext = utils.GetDbContext();
+            using var dbContext = _testUtilities.GetDbContext();
             var user = await GetMockRandomUserAsync();
 
             // Act
