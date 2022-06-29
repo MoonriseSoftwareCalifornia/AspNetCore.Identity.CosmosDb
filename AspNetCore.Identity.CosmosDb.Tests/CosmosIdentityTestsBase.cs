@@ -48,14 +48,17 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// Gets a mock <see cref="IdentityRole"/> for unit testing purposes
         /// </summary>
         /// <returns></returns>
-        protected async Task<IdentityRole> GetMockRandomRoleAsync()
+        protected async Task<IdentityRole> GetMockRandomRoleAsync(bool saveToDatabase = true)
         {
             var role = new IdentityRole(GetNextRandomNumber(1000, 9999).ToString());
             role.NormalizedName = role.Name.ToUpper();
 
-            var result = await _roleStore.CreateAsync(role);
-            role = await _roleStore.FindByIdAsync(role.Id);
-            Assert.IsTrue(result.Succeeded);//Confirm success
+            if (saveToDatabase)
+            {
+                var result = await _roleStore.CreateAsync(role);
+                role = await _roleStore.FindByIdAsync(role.Id);
+                Assert.IsTrue(result.Succeeded);//Confirm success
+            }
             return role;
         }
 
@@ -88,7 +91,6 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         {
             return new UserLoginInfo("Twitter", Guid.NewGuid().ToString(), "Twitter");
         }
-
         public UserManager<TUser> GetTestUserManager<TUser>(IUserStore<TUser> store) where TUser : class
         {
             store = store ?? new Mock<IUserStore<TUser>>().Object;
@@ -109,7 +111,15 @@ namespace AspNetCore.Identity.CosmosDb.Tests
                 .Returns(Task.FromResult(IdentityResult.Success)).Verifiable();
             return userManager;
         }
-
+        public RoleManager<TRole> GetTestRoleManager<TRole>(IRoleStore<TRole> store) where TRole : class
+        {
+            store = store ?? new Mock<IRoleStore<TRole>>().Object;
+            var roles = new List<IRoleValidator<TRole>>();
+            roles.Add(new RoleValidator<TRole>());
+            var roleManager = new RoleManager<TRole>(store, roles, MockLookupNormalizer(),
+                new IdentityErrorDescriber(), null);
+            return roleManager;
+        }
         public ILookupNormalizer MockLookupNormalizer()
         {
             var normalizerFunc = new Func<string, string>(i =>

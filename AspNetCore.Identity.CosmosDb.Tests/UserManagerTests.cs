@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace AspNetCore.Identity.CosmosDb.Tests
 {
@@ -429,78 +430,233 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         [TestMethod]
         public async Task AddClaimAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var claim = new Claim("1", "1");
 
+            // Act
+            var result = await userManager.AddClaimAsync(user, claim);
+
+            // Assert
+            Assert.IsTrue(result.Succeeded);
+            var result2 = (await userManager.GetClaimsAsync(user));
+            Assert.AreEqual(2, result2.Count);
         }
 
         [TestMethod]
         public async Task AddClaimsAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
 
+            // Act
+            var result = await userManager.AddClaimsAsync(user, claims);
+
+            // Assert
+            Assert.IsTrue(result.Succeeded);
+            claims = (await userManager.GetClaimsAsync(user)).ToArray();
+            Assert.AreEqual(3, claims.Count());
         }
 
         [TestMethod]
         public async Task ReplaceClaimAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var claim = new Claim("1", "1");
+            var newClaim = new Claim("1", "2");
+            var result1 = await userManager.AddClaimAsync(user, claim);
+            Assert.IsTrue(result1.Succeeded);
 
+            // Act
+            var result2 = await userManager.ReplaceClaimAsync(user, claim, newClaim);
+
+            // Assert
+            Assert.IsTrue(result2.Succeeded);
+            var result3 = await userManager.GetClaimsAsync(user);
+            Assert.AreEqual(1, result3.Count);
         }
 
         [TestMethod]
         public async Task RemoveClaimAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var claim = new Claim("1", "1");
+            var result1 = await userManager.AddClaimAsync(user, claim);
+            Assert.IsTrue(result1.Succeeded);
 
+            // Act
+            var result2 = await userManager.RemoveClaimAsync(user, claim);
+
+            // Assert
+            Assert.IsTrue(result2.Succeeded);
+            var result3 = await userManager.GetClaimsAsync(user);
+            Assert.AreEqual(0, result3.Count);
         }
 
         [TestMethod]
         public async Task RemoveClaimsAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
+            var result1 = await userManager.AddClaimsAsync(user, claims);
+            Assert.IsTrue(result1.Succeeded);
 
+            // Act
+            var result2 = await userManager.RemoveClaimsAsync(user, claims);
+
+            // Assert
+            Assert.IsTrue(result2.Succeeded);
+            claims = (await userManager.GetClaimsAsync(user)).ToArray();
+            Assert.AreEqual(0, claims.Count());
         }
 
         [TestMethod]
         public async Task GetClaimsAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
+            var result1 = await userManager.AddClaimsAsync(user, claims);
+            Assert.IsTrue(result1.Succeeded);
+
+            // Act
+            var result2 = await userManager.GetClaimsAsync(user);
+
+            // Assert
+            Assert.AreEqual(3, result2.Count);
+
 
         }
 
         [TestMethod]
         public async Task AddToRoleAsyncTest()
         {
+            // Arrange
+            using var roleManager = GetTestRoleManager(_roleStore);
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var role = await GetMockRandomRoleAsync(false);
+            var result1 = await roleManager.CreateAsync(role);
+            Assert.IsTrue(result1.Succeeded);
 
+            // Act
+            var result2 = await userManager.AddToRoleAsync(user, role.Name);
+
+            // Assert
+            Assert.IsTrue(result2.Succeeded);
+            var result3 = await userManager.GetRolesAsync(user);
+            Assert.AreEqual(1, result3.Count);
         }
 
         [TestMethod]
         public async Task AddToRolesAsyncTest()
         {
+            // Arrange
+            using var roleManager = GetTestRoleManager(_roleStore);
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var role1 = await GetMockRandomRoleAsync(false);
+            var role2 = await GetMockRandomRoleAsync(false);
+            var role3 = await GetMockRandomRoleAsync(false);
+            var result1 = await roleManager.CreateAsync(role1);
+            Assert.IsTrue(result1.Succeeded);
+            var result2 = await roleManager.CreateAsync(role2);
+            Assert.IsTrue(result2.Succeeded);
+            var result3 = await roleManager.CreateAsync(role3);
+            Assert.IsTrue(result3.Succeeded);
+            var roles = new string[] { role1.Name, role2.Name, role3.Name };
 
+            // Act
+            var result4 = await userManager.AddToRolesAsync(user, roles);
+
+            // Assert
+            Assert.IsTrue(result2.Succeeded);
+            var result5 = await userManager.GetRolesAsync(user);
+            Assert.AreEqual(3, result5.Count);
         }
 
         [TestMethod]
         public async Task RemoveFromRoleAsyncTest()
         {
+            // Arrange
+            using var roleManager = GetTestRoleManager(_roleStore);
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var role = await GetMockRandomRoleAsync(false);
+            var result1 = await roleManager.CreateAsync(role);
+            Assert.IsTrue(result1.Succeeded);
 
+            // Act
+            var result2 = await userManager.RemoveFromRoleAsync(user, role.Name);
+
+            // Assert
+            Assert.IsTrue(result2.Succeeded);
+            var result3 = await userManager.GetRolesAsync(user);
+            Assert.AreEqual(0, result3.Count);
         }
 
         [TestMethod]
         public async Task RemoveFromRolesAsyncTest()
         {
-            using var userManager = GetTestUserManager(_userStore);
 
+            // Arrange
+            using var roleManager = GetTestRoleManager(_roleStore);
+            using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var role1 = await GetMockRandomRoleAsync(false);
+            var role2 = await GetMockRandomRoleAsync(false);
+            var role3 = await GetMockRandomRoleAsync(false);
+            var result1 = await roleManager.CreateAsync(role1);
+            Assert.IsTrue(result1.Succeeded);
+            var result2 = await roleManager.CreateAsync(role2);
+            Assert.IsTrue(result2.Succeeded);
+            var result3 = await roleManager.CreateAsync(role3);
+            Assert.IsTrue(result3.Succeeded);
+            var roles = new string[] { role1.Name, role2.Name, role3.Name };
+
+            // Act
+            var result5 = await userManager.RemoveFromRolesAsync(user, roles);
+
+            // Assert
+            Assert.IsTrue(result2.Succeeded);
+            var result6 = await userManager.GetRolesAsync(user);
+            Assert.AreEqual(0, result6.Count);
         }
 
         [TestMethod]
         public async Task GetRolesAsyncTest()
         {
-            using var userManager = GetTestUserManager(_userStore);
 
+            // Arrange
+            using var roleManager = GetTestRoleManager(_roleStore);
+            using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var role1 = await GetMockRandomRoleAsync(false);
+            var role2 = await GetMockRandomRoleAsync(false);
+            var role3 = await GetMockRandomRoleAsync(false);
+            var result1 = await roleManager.CreateAsync(role1);
+            Assert.IsTrue(result1.Succeeded);
+            var result2 = await roleManager.CreateAsync(role2);
+            Assert.IsTrue(result2.Succeeded);
+            var result3 = await roleManager.CreateAsync(role3);
+            Assert.IsTrue(result3.Succeeded);
+            var roles = new string[] { role1.Name, role2.Name, role3.Name };
+
+            // Act
+            var result5 = await userManager.GetRolesAsync(user);
+
+            // Assert
+            Assert.AreEqual(3, result5.Count);
         }
 
         [TestMethod]
