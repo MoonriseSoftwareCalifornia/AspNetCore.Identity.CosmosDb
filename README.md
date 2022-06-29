@@ -1,7 +1,7 @@
 ![Logo](https://raw.githubusercontent.com/pierodetomi/efcore-identity-cosmos/main/PieroDeTomi.EntityFrameworkCore.Identity.Cosmos/_res/icons/nuget-icon.png)
 
 # EF Core Cosmos DB Identity Provider
-This is a **Cosmos DB** implementation of an Identity provider for .NET Core 5, using the official [EF Core Azure Cosmos DB Provider](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
+This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that was forked from [](https://github.com/pierodetomi/efcore-identity-cosmos). It uses the official [EF Core Azure Cosmos DB Provider](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
 You can use this package to easily bootstrap an ASP.NET **Identity Server** backed by a CosmosDb database and EF Core, in place of SQL Server.
 
