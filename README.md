@@ -169,10 +169,8 @@ Just for your information, here is a summary of the available methods in the IRe
 ## v1.0.4
 - Introduced support for `IUserEmailStore<TUser>` in User Store
 
-## v2.0.0
+## v2.0.0-alpha
 - Forked from source repository [pierodetomi/efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos).
-- Dropped support for IdentityServer4 in favor for support for Duende.IdentityServer ([see blog post why](https://modlogix.com/blog/identityserver4-alternatives-best-options-and-the-near-future-of-identityserver/)).
 - Refactored for .Net 6 LTS.
-- Added `UserStore` and `RoleStore` unit tests.
-- Added the [test suite for ASP.NET Core Identity store implementations](https://github.com/dotnet/aspnetcore/tree/main/src/Identity#readme) to validate adherance to specification.
-- Namespace changed to `AspNetCore.Identity.CosmosDb`
+- Added `UserStore` and`RoleStore` unit tests, and `UserManager` integration tests.
+- Namespace changed to one more generic: `AspNetCore.Identity.CosmosDb`
