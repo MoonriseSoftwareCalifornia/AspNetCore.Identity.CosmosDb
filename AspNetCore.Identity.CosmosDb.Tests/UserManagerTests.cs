@@ -6,10 +6,14 @@ namespace AspNetCore.Identity.CosmosDb.Tests
     public class UserManagerTests : CosmosIdentityTestsBase
     {
         // Creates a new test user with a hashed password, using the mock UserManager to do so
-        private async Task<IdentityUser> GetTestUser(UserManager<IdentityUser> userManager)
+        private async Task<IdentityUser> GetTestUser(UserManager<IdentityUser> userManager, string password = "")
         {
             var user = await GetMockRandomUserAsync(false);
-            var result = await userManager.CreateAsync(user, $"A1a{Guid.NewGuid()}");
+
+            if (string.IsNullOrEmpty(password))
+                password = $"A1a{Guid.NewGuid()}";
+
+            var result = await userManager.CreateAsync(user, password);
 
             Assert.IsTrue(result.Succeeded);
             return await userManager.FindByIdAsync(user.Id);
@@ -207,99 +211,219 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         [TestMethod]
         public async Task CheckPasswordAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var originalPassword = $"A1a{Guid.NewGuid()}";
+            var user = await GetTestUser(userManager, originalPassword);
 
+            // Act - fail
+            var result = await userManager.ChangePasswordAsync(user, originalPassword, Guid.NewGuid().ToString());
+
+            // Assert - fail
+            Assert.IsFalse(result.Succeeded);
+
+            // Act - succeed
+            result = await userManager.ChangePasswordAsync(user, originalPassword, $"A1a{Guid.NewGuid()}");
+
+            // Assert - succeed
+            Assert.IsTrue(result.Succeeded);
         }
 
         [TestMethod]
         public async Task HasPasswordAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
 
+            // Act
+            var result = await userManager.HasPasswordAsync(user);
+
+            // Assert
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
         public async Task AddPasswordAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
 
+            // Act
+            var result = await userManager.AddPasswordAsync(user, $"A1a{Guid.NewGuid()}");
+
+            // Assert
+            Assert.IsTrue(result.Succeeded);
         }
 
         [TestMethod]
         public async Task ChangePasswordAsyncTest()
         {
             using var userManager = GetTestUserManager(_userStore);
+            var originalPassword = $"A1a{Guid.NewGuid()}";
+            var user = await GetTestUser(userManager, originalPassword);
 
+            // Act
+            var result = await userManager.ChangePasswordAsync(user, originalPassword, $"A1a{Guid.NewGuid()}");
+
+            // Assert
+            Assert.IsTrue(result.Succeeded);
         }
 
         [TestMethod]
         public async Task RemovePasswordAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            Assert.IsTrue(await userManager.HasPasswordAsync(user));
 
-        }
+            // Act
+            var result = await userManager.RemovePasswordAsync(user);
 
-        [TestMethod]
-        public async Task VerifyPasswordAsyncTest()
-        {
-            using var userManager = GetTestUserManager(_userStore);
-
+            // Assert
+            Assert.IsTrue(result.Succeeded);
+            Assert.IsFalse(await userManager.HasPasswordAsync(user));
         }
 
         [TestMethod]
         public async Task GetSecurityStampAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
 
+            // Act
+            var result = await userManager.GetSecurityStampAsync(user);
+
+            // Assert
+            Assert.IsFalse(string.IsNullOrEmpty(result));
+            Assert.AreEqual(result, user.SecurityStamp);
         }
 
         [TestMethod]
         public async Task UpdateSecurityStampAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var stamp1 = user.SecurityStamp;
 
+            // Act
+            var result = await userManager.UpdateSecurityStampAsync(user);
+
+            // Assert
+            user = await userManager.FindByIdAsync(user.Id);
+            Assert.IsTrue(result.Succeeded);
+            Assert.AreNotEqual(stamp1, user.SecurityStamp);
         }
 
         [TestMethod]
         public async Task GeneratePasswordResetTokenAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
 
+            // Act
+            var result = await userManager.GeneratePasswordResetTokenAsync(user);
+
+            // Assert
+            Assert.IsFalse(string.IsNullOrEmpty(result));
         }
 
         [TestMethod]
         public async Task ResetPasswordAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var password = $"A1a{Guid.NewGuid()}";
 
+            // Act
+            var result = await userManager.ResetPasswordAsync(user, token, password);
+
+            // Assert
+            Assert.IsTrue(result.Succeeded);
         }
 
         [TestMethod]
         public async Task FindByLoginAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var loginInfo = GetMockLoginInfoAsync();
+            await userManager.AddLoginAsync(user, loginInfo);
+            var logins = await userManager.GetLoginsAsync(user);
+            Assert.AreEqual(1, logins.Count);
+            Assert.IsTrue(logins.Any(a => a.LoginProvider.Equals("Twitter")));
+
+            // Act
+            var user2 = await userManager.FindByLoginAsync("Twitter", loginInfo.ProviderKey);
+
+            // Assert
+            Assert.AreEqual(user.Id, user2.Id);
 
         }
 
         [TestMethod]
         public async Task RemoveLoginAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var loginInfo = GetMockLoginInfoAsync();
+            await userManager.AddLoginAsync(user, loginInfo);
+            var logins = await userManager.GetLoginsAsync(user);
+            Assert.AreEqual(1, logins.Count);
+            Assert.IsTrue(logins.Any(a => a.LoginProvider.Equals("Twitter")));
+            var user2 = await userManager.FindByLoginAsync("Twitter", loginInfo.ProviderKey);
+            Assert.AreEqual(user.Id, user2.Id);
 
+            // Act
+            var result = await userManager.RemoveLoginAsync(user, "Twitter", loginInfo.ProviderKey);
+
+            // Assert
+            Assert.IsTrue(result.Succeeded);
+            logins = await userManager.GetLoginsAsync(user);
+            Assert.AreEqual(0, logins.Count);
         }
 
         [TestMethod]
         public async Task AddLoginAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var loginInfo = GetMockLoginInfoAsync();
 
+            // Act
+            await userManager.AddLoginAsync(user, loginInfo);
+
+            // Assert
+            var logins = await userManager.GetLoginsAsync(user);
+            Assert.AreEqual(1, logins.Count);
+            Assert.IsTrue(logins.Any(a => a.LoginProvider.Equals("Twitter")));
         }
 
         [TestMethod]
         public async Task GetLoginsAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var loginInfo = GetMockLoginInfoAsync();
+            await userManager.AddLoginAsync(user, loginInfo);
 
+            // Act
+            var logins = await userManager.GetLoginsAsync(user);
+
+            // Assert
+            Assert.AreEqual(1, logins.Count);
+            Assert.IsTrue(logins.Any(a => a.LoginProvider.Equals("Twitter")));
         }
 
         [TestMethod]
