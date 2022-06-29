@@ -3,8 +3,11 @@ using System.Security.Claims;
 
 namespace AspNetCore.Identity.CosmosDb.Tests
 {
+    /// <summary>
+    /// Tests the <see cref="UserManager{TUser}"/> when hooked up to Cosmos user and role stores.
+    /// </summary>
     [TestClass]
-    public class UserManagerTests : CosmosIdentityTestsBase
+    public class UserManagerInterOperabilityTests : CosmosIdentityTestsBase
     {
         // Creates a new test user with a hashed password, using the mock UserManager to do so
         private async Task<IdentityUser> GetTestUser(UserManager<IdentityUser> userManager, string password = "")
@@ -662,322 +665,580 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         [TestMethod]
         public async Task IsInRoleAsyncTest()
         {
+            // Arrange
+            using var roleManager = GetTestRoleManager(_roleStore);
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var role = await GetMockRandomRoleAsync(false);
+            var result1 = await roleManager.CreateAsync(role);
+            Assert.IsTrue(result1.Succeeded);
 
+            // Act
+            var result2 = await userManager.IsInRoleAsync(user, role.Name);
+
+            // Assert
+            Assert.IsTrue(result2);
+            var result3 = await userManager.GetRolesAsync(user);
+            Assert.AreEqual(1, result3.Count);
         }
 
         [TestMethod]
         public async Task GetEmailAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
+            var result1 = await userManager.GetEmailAsync(user);
+
+            // Assert
+            Assert.AreEqual(user.Email, result1);
 
         }
 
         [TestMethod]
         public async Task SetEmailAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var emailAddress = "bb" + user.Email;
 
+            // Act
+            var result1 = await userManager.SetEmailAsync(user, emailAddress);
+
+            // Assert
+            Assert.IsTrue(result1.Succeeded);
+            var user2 = await userManager.FindByIdAsync(user.Id);
+            Assert.AreEqual(emailAddress, user2.Email);
         }
 
         [TestMethod]
         public async Task FindByEmailAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
 
+            // Act
+            var result1 = await userManager.FindByEmailAsync(user.Email);
+
+            // Assert
+            Assert.AreEqual(user.Id, result1.Id);
         }
 
         [TestMethod]
         public async Task UpdateNormalizedEmailAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var emailAddress = "Bb" + user.Email;
+            user.Email = emailAddress;
 
+            // Act
+            await userManager.UpdateNormalizedEmailAsync(user);
+
+            // Assert
+            var user2 = await userManager.FindByIdAsync(user.Id);
+            Assert.AreEqual(emailAddress.ToUpperInvariant(), user2.NormalizedEmail);
         }
 
         [TestMethod]
         public async Task GenerateEmailConfirmationTokenAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
 
+            // Act
+            var result1 = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            // Assert
+            Assert.IsFalse(string.IsNullOrEmpty(result1));
         }
 
         [TestMethod]
         public async Task ConfirmEmailAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var result1 = await userManager.IsEmailConfirmedAsync(user);
+            Assert.IsFalse(result1);
 
+            // Act
+            var result2 = await userManager.ConfirmEmailAsync(user, token);
+
+            // Assert
+            Assert.IsTrue(result2.Succeeded);
+            var result3 = await userManager.IsEmailConfirmedAsync(user);
+            Assert.IsTrue(result3);
         }
 
         [TestMethod]
         public async Task IsEmailConfirmedAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var result1 = await userManager.IsEmailConfirmedAsync(user);
+            Assert.IsFalse(result1);
+            var result2 = await userManager.ConfirmEmailAsync(user, token);
 
+            // Act
+            var result3 = await userManager.IsEmailConfirmedAsync(user);
+
+            // Assert
+            Assert.IsTrue(result3);
         }
 
         [TestMethod]
         public async Task GenerateChangeEmailTokenAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var id = user.Id;
+            var result1 = await userManager.IsEmailConfirmedAsync(user);
+            var emailAddress = $"Ty{user.Email}";
+            Assert.IsFalse(result1);
 
+            // Act
+            var token = await userManager.GenerateChangeEmailTokenAsync(user, emailAddress);
+
+            // Assert
+            var result2 = await userManager.ChangeEmailAsync(user, emailAddress, token);
+            var result3 = await userManager.FindByEmailAsync(emailAddress);
+            Assert.AreEqual(id, result3.Id);
+            var result4 = await userManager.IsEmailConfirmedAsync(user);
+            Assert.IsTrue(result4);
         }
 
         [TestMethod]
         public async Task ChangeEmailAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var emailAddress = "Bb" + user.Email;
+
+            // Act
+            var result1 = await userManager.ChangeEmailAsync(user, emailAddress, token);
+
+            // Assert
+            Assert.IsTrue(result1.Succeeded);
+            var result2 = await userManager.GetEmailAsync(user);
+            Assert.AreEqual(emailAddress, result2);
+            var result3 = await userManager.FindByIdAsync(user.Id);
+            Assert.AreEqual(emailAddress.ToLowerInvariant(), result3.NormalizedEmail);
 
         }
 
         [TestMethod]
         public async Task GetPhoneNumberAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var phoneNumber = "3334445555";
+            var result1 = await userManager.SetPhoneNumberAsync(user, phoneNumber);
+            Assert.IsTrue(result1.Succeeded);
 
+            // Act
+            var result2 = await userManager.GetPhoneNumberAsync(user);
+
+            // Assert
+            Assert.AreEqual(phoneNumber, result2);
         }
 
         [TestMethod]
         public async Task SetPhoneNumberAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var phoneNumber = "3334445555";
+            
+            // Act
+            var result1 = await userManager.SetPhoneNumberAsync(user, phoneNumber);
 
+            // Act
+            Assert.IsTrue(result1.Succeeded);
+            var result2 = await userManager.GetPhoneNumberAsync(user);
+            Assert.AreEqual(phoneNumber, result2);
         }
 
         [TestMethod]
         public async Task ChangePhoneNumberAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var phoneNumber1 = "3334445555";
+            var phoneNumber2 = "1114445555";
+            var token = await userManager.GenerateChangePhoneNumberTokenAsync(user, phoneNumber2);
+            var result1 = await userManager.SetPhoneNumberAsync(user, phoneNumber1);
+            Assert.IsTrue(result1.Succeeded);
+            var result2 = await userManager.GetPhoneNumberAsync(user);
+            Assert.AreEqual(phoneNumber1, result2);
 
+            // Act
+            var result3 = await userManager.ChangePhoneNumberAsync(user, phoneNumber2, token);
         }
 
         [TestMethod]
         public async Task IsPhoneNumberConfirmedAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task GenerateChangePhoneNumberTokenAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task VerifyChangePhoneNumberTokenAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
-        [TestMethod]
-        public async Task VerifyUserTokenAsyncTest()
-        {
-            using var userManager = GetTestUserManager(_userStore);
+        //[TestMethod]
+        //public async Task VerifyUserTokenAsyncTest()
+        //{
+        //}
 
-        }
+        //[TestMethod]
+        //public async Task GenerateUserTokenAsyncTest()
+        //{
+        //}
 
-        [TestMethod]
-        public async Task GenerateUserTokenAsyncTest()
-        {
-            using var userManager = GetTestUserManager(_userStore);
+        //[TestMethod]
+        //public async Task RegisterTokenProviderTest()
+        //{
+           
+        //}
 
-        }
+        //[TestMethod]
+        //public async Task GetValidTwoFactorProvidersAsyncTest()
+        //{
+        //}
 
-        [TestMethod]
-        public async Task RegisterTokenProviderTest()
-        {
-            using var userManager = GetTestUserManager(_userStore);
+        //[TestMethod]
+        //public async Task VerifyTwoFactorTokenAsyncTest()
+        //{
+        //}
 
-        }
-
-        [TestMethod]
-        public async Task GetValidTwoFactorProvidersAsyncTest()
-        {
-            using var userManager = GetTestUserManager(_userStore);
-
-        }
-
-        [TestMethod]
-        public async Task VerifyTwoFactorTokenAsyncTest()
-        {
-            using var userManager = GetTestUserManager(_userStore);
-
-        }
-
-        [TestMethod]
-        public async Task GenerateTwoFactorTokenAsyncTest()
-        {
-            using var userManager = GetTestUserManager(_userStore);
-
-        }
+        //[TestMethod]
+        //public async Task GenerateTwoFactorTokenAsyncTest()
+        //{
+        //}
 
         [TestMethod]
         public async Task GetTwoFactorEnabledAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
 
+            // Act
+            var result1 = await userManager.GetTwoFactorEnabledAsync(user);
+
+            // Assert
+            Assert.IsFalse(result1);
         }
 
         [TestMethod]
         public async Task SetTwoFactorEnabledAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
+            var result = await userManager.SetTwoFactorEnabledAsync(user, true);
+
+            // Assert
+            Assert.IsTrue(result.Succeeded);
+            var result2 = await userManager.GetTwoFactorEnabledAsync(user);
+            Assert.IsTrue(result2);
+
 
         }
 
         [TestMethod]
         public async Task IsLockedOutAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
 
+            // Act
+            var result = await userManager.IsLockedOutAsync(user);
+
+            // Assert
+            Assert.IsFalse(false);
         }
 
         [TestMethod]
         public async Task SetLockoutEnabledAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
 
+            // Act
+            var result1 = await userManager.SetLockoutEnabledAsync(user, true);
+
+            // Assert
+            Assert.IsTrue(result1.Succeeded);
+            var result2 = await userManager.GetLockoutEnabledAsync(user);
+            Assert.IsTrue(result2);
         }
 
         [TestMethod]
         public async Task GetLockoutEnabledAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var result1 = await userManager.SetLockoutEnabledAsync(user, true);
+            Assert.IsTrue(result1.Succeeded);
 
+            // Act
+            var result2 = await userManager.GetLockoutEnabledAsync(user);
+
+            // Assert
+            Assert.IsTrue(result2);
         }
 
         [TestMethod]
         public async Task GetLockoutEndDateAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task SetLockoutEndDateAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+            var dateTime = DateTimeOffset.Now.AddMinutes(15);
 
+            // Act
+            var result1 = await userManager.SetLockoutEndDateAsync(user, dateTime);
+
+            // Assert
+            Assert.IsTrue(result1.Succeeded);
+            var result2 = await userManager.GetLockoutEndDateAsync(user);
+            Assert.AreEqual(dateTime, result2);
         }
 
         [TestMethod]
         public async Task AccessFailedAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task ResetAccessFailedCountAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task GetAccessFailedCountAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
-        [TestMethod]
-        public async Task GetUsersForClaimAsyncTest()
-        {
-            using var userManager = GetTestUserManager(_userStore);
-
-        }
+        //[TestMethod]
+        //public async Task GetUsersForClaimAsyncTest()
+        //{
+        //}
 
         [TestMethod]
         public async Task GetUsersInRoleAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task GetAuthenticationTokenAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task SetAuthenticationTokenAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task RemoveAuthenticationTokenAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task GetAuthenticatorKeyAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task ResetAuthenticatorKeyAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task GenerateNewAuthenticatorKeyTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
-        [TestMethod]
-        public async Task GenerateNewTwoFactorRecoveryCodesAsyncTest()
-        {
-            using var userManager = GetTestUserManager(_userStore);
+        //[TestMethod]
+        //public async Task GenerateNewTwoFactorRecoveryCodesAsyncTest()
+        //{
+        //    // Arrange
+        //    using var userManager = GetTestUserManager(_userStore);
+        //    var user = await GetTestUser(userManager);
 
-        }
+        //    // Act
 
-        [TestMethod]
-        public async Task RedeemTwoFactorRecoveryCodeAsyncTest()
-        {
-            using var userManager = GetTestUserManager(_userStore);
+        //}
 
-        }
+        //[TestMethod]
+        //public async Task RedeemTwoFactorRecoveryCodeAsyncTest()
+        //{
+        //    // Arrange
+        //    using var userManager = GetTestUserManager(_userStore);
+        //    var user = await GetTestUser(userManager);
 
-        [TestMethod]
-        public async Task CountRecoveryCodesAsyncTest()
-        {
-            using var userManager = GetTestUserManager(_userStore);
+        //    // Act
 
-        }
+        //}
+
+        //[TestMethod]
+        //public async Task CountRecoveryCodesAsyncTest()
+        //{
+        //    // Arrange
+        //    using var userManager = GetTestUserManager(_userStore);
+        //    var user = await GetTestUser(userManager);
+
+        //    // Act
+
+        //}
 
         [TestMethod]
         public async Task ValidateUserAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task ValidatePasswordAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
         [TestMethod]
         public async Task UpdateUserAsyncTest()
         {
+            // Arrange
             using var userManager = GetTestUserManager(_userStore);
+            var user = await GetTestUser(userManager);
+
+            // Act
 
         }
 
