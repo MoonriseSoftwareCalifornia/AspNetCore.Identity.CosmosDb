@@ -174,3 +174,4 @@ Just for your information, here is a summary of the available methods in the IRe
 - Refactored for .Net 6 LTS.
 - Added `UserStore` and`RoleStore` unit tests, and `UserManager` integration tests.
 - Namespace changed to one more generic: `AspNetCore.Identity.CosmosDb`
+- Implemented `IUserLockoutStore` interface for `UserStore`

@@ -4,6 +4,9 @@ using AspNetCore.Identity.CosmosDb.Contracts;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Linq;
 
 namespace AspNetCore.Identity.CosmosDb.Stores
 {
@@ -11,7 +14,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
     /// Cosmos DB Role Store
     /// </summary>
     /// <typeparam name="TRoleEntity"></typeparam>
-    public class CosmosRoleStore<TRoleEntity> : IRoleStore<TRoleEntity> where TRoleEntity : IdentityRole, new()
+    public class CosmosRoleStore<TRoleEntity> : IRoleStore<TRoleEntity>,
+        IRoleClaimStore<TRoleEntity> where TRoleEntity : IdentityRole, new()
     {
         private readonly IRepository _repo;
         private bool _disposed;
@@ -179,9 +183,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             ThrowIfDisposed();
 
             if (role == null)
-            {
                 throw new ArgumentNullException(nameof(role));
-            }
 
             role.Name = roleName;
 
@@ -195,6 +197,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
+            if (role == null)
+                throw new ArgumentNullException(nameof(role));
 
             if (role == null)
             {
@@ -221,5 +225,73 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         {
             _disposed = true;
         }
+
+        #region Methods that implement IRoleClaimStore<TRoleEntity>
+
+        // <inheritdoc />
+        public async Task<IList<Claim>> GetClaimsAsync(TRoleEntity role, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (role == null)
+                throw new ArgumentNullException(nameof(role));
+
+            var claims = await _repo.Table<IdentityRoleClaim<string>>().Where(c => c.RoleId == role.Id).ToListAsync(cancellationToken);
+
+            return claims.Select(c => c.ToClaim()).ToList();
+
+        }
+
+        // <inheritdoc />
+        public async Task AddClaimAsync(TRoleEntity role, Claim claim, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (role == null)
+                throw new ArgumentNullException(nameof(role));
+            if (claim == null)
+                throw new ArgumentNullException(nameof(claim));
+
+            var nextId = 1;
+
+            try
+            {
+                nextId = (await _repo.Table<IdentityRoleClaim<string>>().MaxAsync(m => m.Id)) + 1;
+            }
+            catch (Exception e)
+            {
+                var t = e; // for debugging
+            }
+
+            var identityRoleClaim = new IdentityRoleClaim<string>()
+            {
+                ClaimType = claim.Type,
+                ClaimValue = claim.Value,
+                RoleId = role.Id,
+                Id = nextId
+            };
+
+            _repo.Add(identityRoleClaim);
+            await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
+        }
+
+        // <inheritdoc />
+        public async Task RemoveClaimAsync(TRoleEntity role, Claim claim, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (role == null)
+                throw new ArgumentNullException(nameof(role));
+            if (claim == null)
+                throw new ArgumentNullException(nameof(claim));
+
+            var doomed = await _repo.Table<IdentityRoleClaim<string>>()
+                .FirstOrDefaultAsync(c => c.RoleId == role.Id &&
+                    c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType, cancellationToken);
+
+            _repo.Delete(doomed);
+        }
+
+        #endregion
     }
 }

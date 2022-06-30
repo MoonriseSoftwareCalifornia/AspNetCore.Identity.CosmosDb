@@ -33,7 +33,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetUserNameTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -44,23 +44,18 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetUserIdTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
             var result2 = await userManager.GetUserIdAsync(user);
         }
 
-        //[TestMethod]
-        //public async Task GetUserAsync_FromClaim_Test()
-        //{
-        //}
-
         [TestMethod]
         public async Task CreateAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetMockRandomUserAsync(false);
 
             // Act
@@ -75,7 +70,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task UpdateAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             user.PhoneNumber = "9998884444";
 
@@ -92,7 +87,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task DeleteAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var id = user.Id;
             user = await userManager.FindByIdAsync(id);
@@ -111,7 +106,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task FindByIdAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -125,7 +120,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task FindByNameAsync()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -139,7 +134,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task CreateAsync_WithPassword_Test()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
 
             // Act
             var user = await GetTestUser(userManager);
@@ -155,7 +150,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task UpdateNormalizedUserNameAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var userName = "Az" + user.UserName;
             user.UserName = userName;
@@ -172,7 +167,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetUserNameAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -186,7 +181,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task SetUserNameAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var userName = "Az" + user.UserName;
 
@@ -202,7 +197,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetUserIdAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -216,7 +211,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task CheckPasswordAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var originalPassword = $"A1a{Guid.NewGuid()}";
             var user = await GetTestUser(userManager, originalPassword);
 
@@ -237,7 +232,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task HasPasswordAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -250,21 +245,32 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         [TestMethod]
         public async Task AddPasswordAsyncTest()
         {
-            // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            // Arrange - fail
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
             var result = await userManager.AddPasswordAsync(user, $"A1a{Guid.NewGuid()}");
 
             // Assert
-            Assert.IsTrue(result.Succeeded);
+            Assert.IsFalse(result.Succeeded); // Already has a password
+
+            // Arrange - success
+            user.PasswordHash = null;
+            var result2 = await userManager.UpdateAsync(user);
+            user = await userManager.FindByIdAsync(user.Id);
+
+            // Act
+            var result3 = await userManager.AddPasswordAsync(user, $"A1a{Guid.NewGuid()}");
+
+            // Assert
+            Assert.IsTrue(result3.Succeeded); // Already has a password
         }
 
         [TestMethod]
         public async Task ChangePasswordAsyncTest()
         {
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var originalPassword = $"A1a{Guid.NewGuid()}";
             var user = await GetTestUser(userManager, originalPassword);
 
@@ -279,7 +285,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task RemovePasswordAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             Assert.IsTrue(await userManager.HasPasswordAsync(user));
 
@@ -295,7 +301,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetSecurityStampAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -310,7 +316,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task UpdateSecurityStampAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var stamp1 = user.SecurityStamp;
 
@@ -327,7 +333,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GeneratePasswordResetTokenAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -341,7 +347,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task ResetPasswordAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
             var password = $"A1a{Guid.NewGuid()}";
@@ -357,7 +363,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task FindByLoginAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var loginInfo = GetMockLoginInfoAsync();
             await userManager.AddLoginAsync(user, loginInfo);
@@ -377,7 +383,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task RemoveLoginAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var loginInfo = GetMockLoginInfoAsync();
             await userManager.AddLoginAsync(user, loginInfo);
@@ -400,7 +406,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task AddLoginAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var loginInfo = GetMockLoginInfoAsync();
 
@@ -417,7 +423,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetLoginsAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var loginInfo = GetMockLoginInfoAsync();
             await userManager.AddLoginAsync(user, loginInfo);
@@ -434,7 +440,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task AddClaimAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var claim = new Claim("1", "1");
 
@@ -443,15 +449,15 @@ namespace AspNetCore.Identity.CosmosDb.Tests
 
             // Assert
             Assert.IsTrue(result.Succeeded);
-            var result2 = (await userManager.GetClaimsAsync(user));
-            Assert.AreEqual(2, result2.Count);
+            var result2 = await userManager.GetClaimsAsync(user);
+            Assert.AreEqual(1, result2.Count);
         }
 
         [TestMethod]
         public async Task AddClaimsAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
 
@@ -468,7 +474,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task ReplaceClaimAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var claim = new Claim("1", "1");
             var newClaim = new Claim("1", "2");
@@ -488,7 +494,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task RemoveClaimAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var claim = new Claim("1", "1");
             var result1 = await userManager.AddClaimAsync(user, claim);
@@ -507,7 +513,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task RemoveClaimsAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
             var result1 = await userManager.AddClaimsAsync(user, claims);
@@ -526,7 +532,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetClaimsAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
             var result1 = await userManager.AddClaimsAsync(user, claims);
@@ -537,16 +543,14 @@ namespace AspNetCore.Identity.CosmosDb.Tests
 
             // Assert
             Assert.AreEqual(3, result2.Count);
-
-
         }
 
         [TestMethod]
         public async Task AddToRoleAsyncTest()
         {
             // Arrange
-            using var roleManager = GetTestRoleManager(_roleStore);
-            using var userManager = GetTestUserManager(_userStore);
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var role = await GetMockRandomRoleAsync(false);
             var result1 = await roleManager.CreateAsync(role);
@@ -566,11 +570,11 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         {
             // Arrange
             using var roleManager = GetTestRoleManager(_roleStore);
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
-            var role1 = await GetMockRandomRoleAsync(false);
-            var role2 = await GetMockRandomRoleAsync(false);
-            var role3 = await GetMockRandomRoleAsync(false);
+            var role1 = await GetMockRandomRoleAsync();
+            var role2 = await GetMockRandomRoleAsync();
+            var role3 = await GetMockRandomRoleAsync();
             var result1 = await roleManager.CreateAsync(role1);
             Assert.IsTrue(result1.Succeeded);
             var result2 = await roleManager.CreateAsync(role2);
@@ -593,7 +597,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         {
             // Arrange
             using var roleManager = GetTestRoleManager(_roleStore);
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var role = await GetMockRandomRoleAsync(false);
             var result1 = await roleManager.CreateAsync(role);
@@ -614,7 +618,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
 
             // Arrange
             using var roleManager = GetTestRoleManager(_roleStore);
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var role1 = await GetMockRandomRoleAsync(false);
             var role2 = await GetMockRandomRoleAsync(false);
@@ -642,7 +646,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
 
             // Arrange
             using var roleManager = GetTestRoleManager(_roleStore);
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var role1 = await GetMockRandomRoleAsync(false);
             var role2 = await GetMockRandomRoleAsync(false);
@@ -667,7 +671,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         {
             // Arrange
             using var roleManager = GetTestRoleManager(_roleStore);
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var role = await GetMockRandomRoleAsync(false);
             var result1 = await roleManager.CreateAsync(role);
@@ -686,7 +690,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetEmailAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -701,7 +705,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task SetEmailAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var emailAddress = "bb" + user.Email;
 
@@ -718,7 +722,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task FindByEmailAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -732,7 +736,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task UpdateNormalizedEmailAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var emailAddress = "Bb" + user.Email;
             user.Email = emailAddress;
@@ -749,7 +753,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GenerateEmailConfirmationTokenAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -763,7 +767,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task ConfirmEmailAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
             var result1 = await userManager.IsEmailConfirmedAsync(user);
@@ -782,7 +786,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task IsEmailConfirmedAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
             var result1 = await userManager.IsEmailConfirmedAsync(user);
@@ -800,7 +804,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GenerateChangeEmailTokenAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var id = user.Id;
             var result1 = await userManager.IsEmailConfirmedAsync(user);
@@ -822,7 +826,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task ChangeEmailAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
             var emailAddress = "Bb" + user.Email;
@@ -843,7 +847,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetPhoneNumberAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var phoneNumber = "3334445555";
             var result1 = await userManager.SetPhoneNumberAsync(user, phoneNumber);
@@ -860,7 +864,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task SetPhoneNumberAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var phoneNumber = "3334445555";
             
@@ -877,7 +881,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task ChangePhoneNumberAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var phoneNumber1 = "3334445555";
             var phoneNumber2 = "1114445555";
@@ -895,7 +899,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task IsPhoneNumberConfirmedAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -906,7 +910,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GenerateChangePhoneNumberTokenAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -917,7 +921,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task VerifyChangePhoneNumberTokenAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -959,7 +963,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetTwoFactorEnabledAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -973,7 +977,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task SetTwoFactorEnabledAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -991,7 +995,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task IsLockedOutAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -1005,7 +1009,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task SetLockoutEnabledAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -1021,7 +1025,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetLockoutEnabledAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var result1 = await userManager.SetLockoutEnabledAsync(user, true);
             Assert.IsTrue(result1.Succeeded);
@@ -1037,7 +1041,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task GetLockoutEndDateAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
@@ -1048,7 +1052,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task SetLockoutEndDateAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
             var dateTime = DateTimeOffset.Now.AddMinutes(15);
 
@@ -1065,180 +1069,60 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task AccessFailedAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
 
             // Act
+            var result1 = await userManager.AccessFailedAsync(user);
+            var result2 = await userManager.AccessFailedAsync(user);
 
+            // Assert
+            var result3 = await userManager.GetAccessFailedCountAsync(user);
+            Assert.AreEqual(2, result3);
         }
 
         [TestMethod]
         public async Task ResetAccessFailedCountAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
+            var result1 = await userManager.AccessFailedAsync(user);
+            var result2 = await userManager.AccessFailedAsync(user);
+            var result3 = await userManager.GetAccessFailedCountAsync(user);
+            Assert.AreEqual(2, result3);
 
             // Act
+            var result4 = await userManager.ResetAccessFailedCountAsync(user);
+
+            // Assert
+            Assert.IsTrue(result4.Succeeded);
+            var result5 = await userManager.GetAccessFailedCountAsync(user);
+            Assert.AreEqual(0, result5);
 
         }
-
-        [TestMethod]
-        public async Task GetAccessFailedCountAsyncTest()
-        {
-            // Arrange
-            using var userManager = GetTestUserManager(_userStore);
-            var user = await GetTestUser(userManager);
-
-            // Act
-
-        }
-
-        //[TestMethod]
-        //public async Task GetUsersForClaimAsyncTest()
-        //{
-        //}
 
         [TestMethod]
         public async Task GetUsersInRoleAsyncTest()
         {
             // Arrange
-            using var userManager = GetTestUserManager(_userStore);
-            var user = await GetTestUser(userManager);
+            using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
+            var user1 = await GetTestUser(userManager);
+            var user2 = await GetTestUser(userManager);
+            var user3 = await GetTestUser(userManager);
+            var role = await GetMockRandomRoleAsync(true);
+            var result1 = await userManager.AddToRoleAsync(user1, role.Name);
+            Assert.IsTrue(result1.Succeeded);
+            var result2 = await userManager.AddToRoleAsync(user2, role.Name);
+            Assert.IsTrue(result2.Succeeded);
+            var result3 = await userManager.AddToRoleAsync(user3, role.Name);
+            Assert.IsTrue(result3.Succeeded);
 
             // Act
+            var result4 = await userManager.GetUsersInRoleAsync(role.Name);
 
-        }
-
-        [TestMethod]
-        public async Task GetAuthenticationTokenAsyncTest()
-        {
-            // Arrange
-            using var userManager = GetTestUserManager(_userStore);
-            var user = await GetTestUser(userManager);
-
-            // Act
-
-        }
-
-        [TestMethod]
-        public async Task SetAuthenticationTokenAsyncTest()
-        {
-            // Arrange
-            using var userManager = GetTestUserManager(_userStore);
-            var user = await GetTestUser(userManager);
-
-            // Act
-
-        }
-
-        [TestMethod]
-        public async Task RemoveAuthenticationTokenAsyncTest()
-        {
-            // Arrange
-            using var userManager = GetTestUserManager(_userStore);
-            var user = await GetTestUser(userManager);
-
-            // Act
-
-        }
-
-        [TestMethod]
-        public async Task GetAuthenticatorKeyAsyncTest()
-        {
-            // Arrange
-            using var userManager = GetTestUserManager(_userStore);
-            var user = await GetTestUser(userManager);
-
-            // Act
-
-        }
-
-        [TestMethod]
-        public async Task ResetAuthenticatorKeyAsyncTest()
-        {
-            // Arrange
-            using var userManager = GetTestUserManager(_userStore);
-            var user = await GetTestUser(userManager);
-
-            // Act
-
-        }
-
-        [TestMethod]
-        public async Task GenerateNewAuthenticatorKeyTest()
-        {
-            // Arrange
-            using var userManager = GetTestUserManager(_userStore);
-            var user = await GetTestUser(userManager);
-
-            // Act
-
-        }
-
-        //[TestMethod]
-        //public async Task GenerateNewTwoFactorRecoveryCodesAsyncTest()
-        //{
-        //    // Arrange
-        //    using var userManager = GetTestUserManager(_userStore);
-        //    var user = await GetTestUser(userManager);
-
-        //    // Act
-
-        //}
-
-        //[TestMethod]
-        //public async Task RedeemTwoFactorRecoveryCodeAsyncTest()
-        //{
-        //    // Arrange
-        //    using var userManager = GetTestUserManager(_userStore);
-        //    var user = await GetTestUser(userManager);
-
-        //    // Act
-
-        //}
-
-        //[TestMethod]
-        //public async Task CountRecoveryCodesAsyncTest()
-        //{
-        //    // Arrange
-        //    using var userManager = GetTestUserManager(_userStore);
-        //    var user = await GetTestUser(userManager);
-
-        //    // Act
-
-        //}
-
-        [TestMethod]
-        public async Task ValidateUserAsyncTest()
-        {
-            // Arrange
-            using var userManager = GetTestUserManager(_userStore);
-            var user = await GetTestUser(userManager);
-
-            // Act
-
-        }
-
-        [TestMethod]
-        public async Task ValidatePasswordAsyncTest()
-        {
-            // Arrange
-            using var userManager = GetTestUserManager(_userStore);
-            var user = await GetTestUser(userManager);
-
-            // Act
-
-        }
-
-        [TestMethod]
-        public async Task UpdateUserAsyncTest()
-        {
-            // Arrange
-            using var userManager = GetTestUserManager(_userStore);
-            var user = await GetTestUser(userManager);
-
-            // Act
+            // Assert
+            Assert.AreEqual(3, result4.Count());
 
         }
 

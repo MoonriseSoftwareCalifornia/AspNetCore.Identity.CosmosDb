@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,10 +20,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         IUserEmailStore<TUserEntity>,
         IUserPasswordStore<TUserEntity>,
         IUserPhoneNumberStore<TUserEntity>,
+        IUserLockoutStore<TUserEntity>,
+        IUserClaimStore<TUserEntity>,
         IUserLoginStore<TUserEntity> where TUserEntity : IdentityUser, new()
     {
         private readonly IRepository _repo;
-
         private bool _disposed;
 
         /// <summary>
@@ -65,11 +67,12 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 _repo.Add(user);
                 await _repo.SaveChangesAsync();
 
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 return ProcessExceptions(e);
             }
-            
+
             return IdentityResult.Success;
         }
 
@@ -617,5 +620,224 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         {
             _disposed = true;
         }
+
+        #region IUserLockoutStore methods
+
+        // <inheritdoc />
+        public async Task<DateTimeOffset?> GetLockoutEndDateAsync(TUserEntity user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            var entity = await _repo.Table<TUserEntity>()
+                .FirstOrDefaultAsync(m => m.Id == user.Id, cancellationToken);
+
+            return entity.LockoutEnd;
+        }
+
+        // <inheritdoc />
+        public Task SetLockoutEndDateAsync(TUserEntity user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            SetUserProperty(user, lockoutEnd, (u, v) => user.LockoutEnd = v, cancellationToken);
+            return Task.CompletedTask;
+        }
+
+        // <inheritdoc />
+        public async Task<int> IncrementAccessFailedCountAsync(TUserEntity user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            var entity = await _repo.Table<TUserEntity>()
+                .FirstOrDefaultAsync(m => m.Id == user.Id, cancellationToken);
+
+            var count = entity.AccessFailedCount + 1;
+            SetUserProperty(user, count, (u, v) => user.AccessFailedCount = v, cancellationToken);
+
+            return count;
+        }
+
+        // <inheritdoc />
+        public Task ResetAccessFailedCountAsync(TUserEntity user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            SetUserProperty(user, 0, (u, v) => user.AccessFailedCount = v, cancellationToken);
+
+            return Task.CompletedTask;
+        }
+
+        // <inheritdoc />
+        public Task<int> GetAccessFailedCountAsync(TUserEntity user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            return Task.FromResult(
+                GetUserProperty(user, user => user.AccessFailedCount, cancellationToken));
+        }
+
+        // <inheritdoc />
+        public Task<bool> GetLockoutEnabledAsync(TUserEntity user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            return Task.FromResult(
+                GetUserProperty(user, user => user.LockoutEnabled, cancellationToken));
+        }
+
+        // <inheritdoc />
+        public Task SetLockoutEnabledAsync(TUserEntity user, bool enabled, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            SetUserProperty(user, enabled, (u, v) => user.LockoutEnabled = v, cancellationToken);
+
+            return Task.CompletedTask;
+        }
+
+        #endregion
+
+        #region methods implementing IUserClaimStore<TUserEntity>
+
+        // <inheritdoc />
+        public async Task<IList<Claim>> GetClaimsAsync(TUserEntity user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            var claims = await _repo.Table<IdentityUserClaim<string>>().Where(c => c.UserId == user.Id).ToListAsync(cancellationToken);
+
+            return claims.Select(c => c.ToClaim()).ToList();
+
+        }
+
+        // <inheritdoc />
+        public async Task AddClaimsAsync(TUserEntity user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            if (claims == null || claims.Any() == false)
+                throw new ArgumentNullException(nameof(claims));
+
+            foreach (var claim in claims)
+            {
+                var nextId = 1;
+
+                try
+                {
+                    nextId = (await _repo.Table<IdentityUserClaim<string>>().MaxAsync(m => m.Id)) + 1;
+                }
+                catch (Exception e)
+                {
+                    var t = e; // for debugging
+                }
+
+                var identityUserClaim = new IdentityUserClaim<string>()
+                {
+                    ClaimType = claim.Type,
+                    ClaimValue = claim.Value,
+                    UserId = user.Id,
+                    Id = nextId
+                };
+
+                _repo.Add(identityUserClaim);
+                await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
+            }
+
+        }
+
+        // <inheritdoc />
+        public async Task ReplaceClaimAsync(TUserEntity user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            if (claim == null)
+                throw new ArgumentNullException(nameof(claim));
+            if (newClaim == null)
+                throw new ArgumentNullException(nameof(claim));
+
+            var doomed = await _repo.Table<IdentityUserClaim<string>>()
+                .FirstOrDefaultAsync(c => c.UserId == user.Id &&
+                    c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType, cancellationToken);
+
+            _repo.Delete<IdentityUserClaim<string>>(doomed);
+            _repo.Add<IdentityUserClaim<string>>(new IdentityUserClaim<string>()
+            {
+                ClaimType = newClaim.Type,
+                ClaimValue = newClaim.Value,
+                UserId = user.Id
+            });
+
+            await _repo.SaveChangesAsync().WaitAsync(cancellationToken); ;
+        }
+
+        // <inheritdoc />
+        public async Task RemoveClaimsAsync(TUserEntity user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            if (claims == null || claims.Any() == false)
+                throw new ArgumentNullException(nameof(claims));
+
+            foreach(var claim in claims)
+            {
+                var doomed = await _repo.Table<IdentityUserClaim<string>>()
+                .FirstOrDefaultAsync(c => c.UserId == user.Id &&
+                    c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType, cancellationToken);
+
+                _repo.Delete(doomed);
+            }
+            
+            await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
+        }
+
+        // <inheritdoc />
+        public async Task<IList<TUserEntity>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+        {
+            var userIds = await _repo.Table<IdentityUserClaim<string>>()
+                .Where(c => c.ClaimType == claim.Type && c.ClaimValue == claim.Value)
+                .Select(s => s.UserId).ToArrayAsync(cancellationToken);
+
+            var users = await _repo.Table<TUserEntity>()
+                .Where(w => userIds.Contains(w.Id)).ToListAsync(cancellationToken);
+
+            return (IList<TUserEntity>)users;
+        }
+
+        #endregion
     }
 }

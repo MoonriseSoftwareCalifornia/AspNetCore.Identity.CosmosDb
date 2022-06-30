@@ -1,5 +1,6 @@
 ﻿using AspNetCore.Identity.CosmosDb.Tests;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 {
@@ -633,5 +634,94 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 
         }
 
+        #region methods implementing IUserClaimStore<TUserEntity>
+
+        [TestMethod()]
+        public async Task GetClaimsAsyncTest()
+        {
+            // Arrange
+            var user1 = await GetMockRandomUserAsync();
+            var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
+            await _userStore.AddClaimsAsync(user1, claims, default);
+
+            // Act
+            var result2 = await _userStore.GetClaimsAsync(user1, default);
+
+            // Assert
+            Assert.AreEqual(3, result2.Count);
+        }
+
+        [TestMethod()]
+        public async Task AddClaimsAsyncTest()
+        {
+            // Arrange
+            var user1 = await GetMockRandomUserAsync();
+            var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
+
+            // Act
+            await _userStore.AddClaimsAsync(user1, claims, default);
+
+            // Assert;
+            var result2 = await _userStore.GetClaimsAsync(user1, default);
+            Assert.AreEqual(3, result2.Count);
+        }
+
+        [TestMethod()]
+        public async Task ReplaceClaimAsyncTest()
+        {
+            // Arrange
+            var user1 = await GetMockRandomUserAsync();
+            var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
+            var newClaim = new Claim("4", "4");
+            await _userStore.AddClaimsAsync(user1, claims, default);
+            var result2 = await _userStore.GetClaimsAsync(user1, default);
+            Assert.AreEqual(3, result2.Count);
+
+            // Act
+            await _userStore.ReplaceClaimAsync(user1, claims.FirstOrDefault(), newClaim, default);
+
+            // Assert
+            var result3 = await _userStore.GetClaimsAsync(user1, default);
+            Assert.IsFalse(result3.Any(a => a.Type == "1"));
+            Assert.IsTrue(result3.Any(a => a.Type == "4"));
+        }
+
+        [TestMethod()]
+        public async Task RemoveClaimsAsyncTest()
+        {
+            // Arrange
+            var user1 = await GetMockRandomUserAsync();
+            var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
+            var newClaim = new Claim("4", "4");
+            await _userStore.AddClaimsAsync(user1, claims, default);
+            var result2 = await _userStore.GetClaimsAsync(user1, default);
+            Assert.AreEqual(3, result2.Count);
+
+            // Act
+            await _userStore.RemoveClaimsAsync(user1, claims, default);
+
+            // Assert
+            var result3 = await _userStore.GetClaimsAsync(user1, default);
+            Assert.IsFalse(result3.Any());
+        }
+
+        [TestMethod()]
+        public async Task GetUsersForClaimAsyncTest()
+        {
+            var user1 = await GetMockRandomUserAsync();
+            var user2 = await GetMockRandomUserAsync();
+            var val = Guid.NewGuid().ToString();
+            var claims = new Claim[] { new Claim(val, val) };
+            await _userStore.AddClaimsAsync(user1, claims, default);
+            await _userStore.AddClaimsAsync(user2, claims, default);
+
+            // Act
+            var result1 = await _userStore.GetUsersForClaimAsync(claims.FirstOrDefault(), default);
+
+            // Assert
+            Assert.AreEqual(2, result1.Count);
+        }
+
+        #endregion
     }
 }

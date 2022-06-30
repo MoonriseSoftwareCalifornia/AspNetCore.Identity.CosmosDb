@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using System.Text;
 
 namespace AspNetCore.Identity.CosmosDb.Tests
 {
@@ -28,6 +27,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests
             using var dbContext = _testUtilities.GetDbContext();
             dbContext.UserRoles.RemoveRange(dbContext.UserRoles.ToList());
             dbContext.Roles.RemoveRange(dbContext.Roles.ToList());
+            dbContext.RoleClaims.RemoveRange(dbContext.RoleClaims.ToList());
+            dbContext.UserClaims.RemoveRange(dbContext.UserClaims.ToList());
             dbContext.UserLogins.RemoveRange(dbContext.UserLogins.ToList());
             dbContext.Users.RemoveRange(dbContext.Users.ToList());
             var result = dbContext.SaveChanges();
