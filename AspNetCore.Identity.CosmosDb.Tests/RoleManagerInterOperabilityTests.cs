@@ -47,53 +47,53 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         }
 
         [TestMethod]
-        public virtual Task CreateAsyncTest()
+        public Task CreateAsyncTest()
         {
 
         }
 
         [TestMethod]
-        public virtual Task DeleteAsyncTest()
+        public Task DeleteAsyncTest()
         {
 
         }
         [TestMethod]
-        public virtual Task FindByIdAsyncTest()
-        {
-
-        }
-
-        [TestMethod]
-        public virtual Task FindByNameAsyncTest()
-        {
-
-        }
-        [TestMethod]
-        public virtual Task GetClaimsAsyncTest()
+        public Task FindByIdAsyncTest()
         {
 
         }
 
         [TestMethod]
-        public virtual Task GetRoleIdAsyncTest()
+        public Task FindByNameAsyncTest()
+        {
+
+        }
+        [TestMethod]
+        public Task GetClaimsAsyncTest()
         {
 
         }
 
         [TestMethod]
-        public virtual Task GetRoleNameAsyncTest()
+        public Task GetRoleIdAsyncTest()
         {
 
         }
 
         [TestMethod]
-        public virtual string NormalizeKeyTest()
+        public Task GetRoleNameAsyncTest()
         {
 
         }
 
         [TestMethod]
-        public virtual Task RemoveClaimAsyncTest()
+        public Task NormalizeKeyTest()
+        {
+
+        }
+
+        [TestMethod]
+        public Task RemoveClaimAsyncTest()
         {
 
         }
@@ -105,7 +105,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         }
 
         [TestMethod]
-        public virtual Task SetRoleNameAsyncTest()
+        public Task SetRoleNameAsyncTest()
         {
 
         }
@@ -129,7 +129,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         }
 
         [TestMethod]
-        protected virtual Task ValidateRoleAsyncTest()
+        protected Task ValidateRoleAsyncTest()
         {
 
         }
