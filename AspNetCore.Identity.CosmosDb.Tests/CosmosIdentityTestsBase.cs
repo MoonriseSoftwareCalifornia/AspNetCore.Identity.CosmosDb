@@ -127,7 +127,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
             var roles = new List<IRoleValidator<TRole>>();
             roles.Add(new RoleValidator<TRole>());
             var roleManager = new RoleManager<TRole>(store, roles, MockLookupNormalizer(),
-                new IdentityErrorDescriber(), null);
+                new IdentityErrorDescriber(), new Mock<ILogger<RoleManager<TRole>>>().Object);
             return roleManager;
         }
         public ILookupNormalizer MockLookupNormalizer()

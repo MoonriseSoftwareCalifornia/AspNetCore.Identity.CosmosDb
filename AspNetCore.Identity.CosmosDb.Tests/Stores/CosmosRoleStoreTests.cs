@@ -37,14 +37,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
             // Act
             // Create a bunch of roles in rapid succession
+            using var dbContext = _testUtilities.GetDbContext();
+            var currentCount = dbContext.Roles.Count();
             for (int i = 0; i < 35; i++)
             {
                 var r = await GetMockRandomRoleAsync();
             }
 
             // Assert
-            using var dbContext = _testUtilities.GetDbContext();
-            Assert.AreEqual(36, dbContext.Roles.Count());
+            Assert.AreEqual(35 + currentCount, dbContext.Roles.Count());
 
         }
 

@@ -1,11 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AspNetCore.Identity.CosmosDb;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace AspNetCore.Identity.CosmosDb.Tests
@@ -31,22 +24,29 @@ namespace AspNetCore.Identity.CosmosDb.Tests
             InitializeClass();
         }
         [TestMethod]
-        public async Task AddClaimAsyncTest()
+        public async Task Consolidated_ClaimsAsync_Tests()
         {
             // Assert
             using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
             var role = await GetTestRole(roleManager);
             var claim = new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
-            // Act
+            // Act - Add a claim
             var result1 = await roleManager.AddClaimAsync(role, claim);
 
-            // Assert
+            // Assert - Add a claim
             Assert.IsTrue(result1.Succeeded);
             var result2 = await roleManager.GetClaimsAsync(role);
             // Two claims: LOCAL AUTHORITY and the new claim above
-            Assert.AreEqual(2, result2?.Count);
+            Assert.AreEqual(1, result2?.Count);
 
+            // Act - Remove a claim
+            var result3 = await roleManager.RemoveClaimAsync(role, claim);
+
+            // Assert
+            Assert.IsTrue(result3.Succeeded);
+            var result4 = await roleManager.GetClaimsAsync(role);
+            Assert.AreEqual(0, result4.Count);
         }
 
         [TestMethod]
@@ -54,13 +54,20 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         {
 
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            var roleStore = _testUtilities.GetRoleStore();
+            using var roleManager = GetTestRoleManager(roleStore);
+            var role = new IdentityRole();
+            role.Name = Guid.NewGuid().ToString();
+            role.NormalizedName = role.Name.ToLowerInvariant();
+            role.Id = Guid.NewGuid().ToString();
+            
 
             // Act
-            var role = await GetTestRole(roleManager);
+            var result1 = await roleManager.CreateAsync(role);
+
 
             // Assert
-            Assert.IsNotNull(role);
+            Assert.IsTrue(result1.Succeeded);
         }
 
         [TestMethod]
@@ -181,27 +188,6 @@ namespace AspNetCore.Identity.CosmosDb.Tests
 
             // Assert
             Assert.AreEqual(key.ToUpperInvariant(), result);
-        }
-
-        [TestMethod]
-        public async Task RemoveClaimAsyncTest()
-        {
-            // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
-            var role = await GetTestRole(roleManager);
-            var claim = new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
-            var result1 = await roleManager.AddClaimAsync(role, claim);
-            Assert.IsTrue(result1.Succeeded);
-            var result2 = await roleManager.GetClaimsAsync(role);
-            Assert.AreEqual(2, result2.Count);
-
-            // Act
-            var result3 = await roleManager.RemoveClaimAsync(role, claim);
-
-            // Assert
-            Assert.IsTrue(result3.Succeeded);
-            var result4 = await roleManager.GetClaimsAsync(role);
-            Assert.AreEqual(1, result4.Count);
         }
 
         [TestMethod]

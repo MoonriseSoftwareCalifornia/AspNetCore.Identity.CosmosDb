@@ -160,7 +160,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task SetNormalizedRoleNameAsync(TRoleEntity role, string normalizedName, CancellationToken cancellationToken = default)
+        public Task SetNormalizedRoleNameAsync(TRoleEntity role, string normalizedName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -170,14 +170,13 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 throw new ArgumentNullException(nameof(role));
             }
 
-            role.NormalizedName = normalizedName;
+            SetRoleProperty(role, normalizedName, (u, m) => u.NormalizedName = normalizedName, cancellationToken);
 
-            _repo.Update(role);
-            await _repo.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
         // <inheritdoc />
-        public async Task SetRoleNameAsync(TRoleEntity role, string roleName, CancellationToken cancellationToken = default)
+        public Task SetRoleNameAsync(TRoleEntity role, string roleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -185,10 +184,10 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
 
-            role.Name = roleName;
 
-            _repo.Update(role);
-            await _repo.SaveChangesAsync();
+            SetRoleProperty(role, roleName, (u, m) => u.Name = roleName, cancellationToken);
+
+            return Task.CompletedTask;
 
         }
 
@@ -218,6 +217,17 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             }
 
             return IdentityResult.Success;
+        }
+
+        private void SetRoleProperty<T>(TRoleEntity user, T value, Action<TRoleEntity, T> setter, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (user == null) throw new ArgumentNullException(nameof(user));
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
+            setter(user, value);
         }
 
         // <inheritdoc />
