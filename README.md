@@ -172,5 +172,5 @@ Just for your information, here is a summary of the available methods in the IRe
 ## v2.0.0-alpha
 - Forked from source repository [pierodetomi/efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos).
 - Refactored for .Net 6 LTS.
-- Added `UserStore` and`RoleStore` unit tests, and `UserManager` integration tests.
+- Added `UserStore`, `RoleStore`, `UserManager` and `RoleManager` unit tests.
 - Namespace changed to one more generic: `AspNetCore.Identity.CosmosDb`
