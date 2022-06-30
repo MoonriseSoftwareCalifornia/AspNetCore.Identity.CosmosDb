@@ -10,7 +10,7 @@ You can use this package to easily bootstrap an ASP.NET **Identity Server** back
 # Installation (NuGet)
 
 ```shell
-PM> Install-Package PieroDeTomi.EntityFrameworkCore.Identity.Cosmos
+PM> Install-Package AspNetCore.Identity.CosmosDb (Note this is currently in Alpha)
 ```
 
 # Integration Steps
