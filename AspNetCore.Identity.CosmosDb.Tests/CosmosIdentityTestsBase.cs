@@ -1,5 +1,6 @@
 ﻿using AspNetCore.Identity.CosmosDb.Stores;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -103,10 +104,21 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// <returns></returns>
         public UserManager<TUser> GetTestUserManager<TUser>(IUserStore<TUser> store) where TUser : class
         {
+            var builder = new IdentityBuilder(typeof(IdentityUser), new ServiceCollection());
+
+            var userType = builder.UserType;
+
+            var dataProtectionProviderType = typeof(DataProtectorTokenProvider<>).MakeGenericType(userType);
+            var phoneNumberProviderType = typeof(PhoneNumberTokenProvider<>).MakeGenericType(userType);
+            var emailTokenProviderType = typeof(EmailTokenProvider<>).MakeGenericType(userType);
+            var authenticatorProviderType = typeof(AuthenticatorTokenProvider<>).MakeGenericType(userType);
+            //var authenticatorProviderType = typeof(UserTwoFactorTokenProvider<>).MakeGenericType(userType);
+
+
             store = store ?? new Mock<IUserStore<TUser>>().Object;
             var options = new Mock<IOptions<IdentityOptions>>();
             var idOptions = new IdentityOptions();
-            idOptions.Lockout.AllowedForNewUsers = false;
+
             options.Setup(o => o.Value).Returns(idOptions);
             var userValidators = new List<IUserValidator<TUser>>();
             var validator = new Mock<IUserValidator<TUser>>();
@@ -119,6 +131,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
                 new Mock<ILogger<UserManager<TUser>>>().Object);
             validator.Setup(v => v.ValidateAsync(userManager, It.IsAny<TUser>()))
                 .Returns(Task.FromResult(IdentityResult.Success)).Verifiable();
+
             return userManager;
         }
         public RoleManager<TRole> GetTestRoleManager<TRole>(IRoleStore<TRole> store) where TRole : class

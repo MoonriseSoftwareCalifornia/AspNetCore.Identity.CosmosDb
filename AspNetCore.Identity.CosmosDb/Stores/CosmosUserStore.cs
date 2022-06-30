@@ -22,6 +22,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         IUserPhoneNumberStore<TUserEntity>,
         IUserLockoutStore<TUserEntity>,
         IUserClaimStore<TUserEntity>,
+        IUserSecurityStampStore<TUserEntity>,
+        IUserTwoFactorStore<TUserEntity>,
         IUserLoginStore<TUserEntity> where TUserEntity : IdentityUser, new()
     {
         private readonly IRepository _repo;
@@ -387,7 +389,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             ThrowIfDisposed();
 
             if (user == null) throw new ArgumentNullException(nameof(user));
-            if (value == null) throw new ArgumentNullException(nameof(value));
+            //if (value == null) throw new ArgumentNullException(nameof(value));
 
             setter(user, value);
         }
@@ -835,6 +837,65 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 .Where(w => userIds.Contains(w.Id)).ToListAsync(cancellationToken);
 
             return (IList<TUserEntity>)users;
+        }
+
+
+        #endregion
+
+        #region Methods implementing IUserSecurityStampStore<TUserEntity> interface
+
+        // <inheritdoc />
+        public Task SetSecurityStampAsync(TUserEntity user, string stamp, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            if (string.IsNullOrEmpty(stamp))
+                throw new ArgumentNullException(nameof(stamp));
+
+            SetUserProperty(user, stamp, (u, v) => user.SecurityStamp = v, cancellationToken);
+            return Task.CompletedTask;
+        }
+
+        // <inheritdoc />
+        public Task<string> GetSecurityStampAsync(TUserEntity user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            return Task.FromResult(
+                GetUserProperty(user, user => user.SecurityStamp, cancellationToken));
+        }
+
+        #endregion
+
+        #region Methods that implement IUserTwoFactorStore<TUserEntity>
+
+        // <inheritdoc />
+        public Task SetTwoFactorEnabledAsync(TUserEntity user, bool enabled, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            SetUserProperty(user, enabled, (u, v) => user.TwoFactorEnabled = v, cancellationToken);
+            return Task.CompletedTask;
+        }
+
+        // <inheritdoc />
+        public Task<bool> GetTwoFactorEnabledAsync(TUserEntity user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            return Task.FromResult(
+                GetUserProperty(user, user => user.TwoFactorEnabled, cancellationToken));
         }
 
         #endregion
