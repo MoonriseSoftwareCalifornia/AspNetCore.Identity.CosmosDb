@@ -6,11 +6,11 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
 {
     public class RoleEntityTypeConfiguration : IEntityTypeConfiguration<IdentityRole>
     {
-        private readonly string _tableName;
+        private readonly string _container;
 
-        public RoleEntityTypeConfiguration(string tableName = "Identity_Roles")
+        public RoleEntityTypeConfiguration(string container = "Identity")
         {
-            _tableName = tableName;
+            _container = container;
         }
 
         public void Configure(EntityTypeBuilder<IdentityRole> builder)
@@ -19,7 +19,7 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
             builder.HasPartitionKey(_ => _.Id);
             builder.Property(_ => _.ConcurrencyStamp).IsETagConcurrency();
 
-            builder.ToContainer(_tableName);
+            builder.ToContainer(_container);
         }
     }
 }

@@ -6,11 +6,11 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
 {
     public class UserTokensEntityTypeConfiguration : IEntityTypeConfiguration<IdentityUserToken<string>>
     {
-        private readonly string _tableName;
+        private readonly string _container;
 
-        public UserTokensEntityTypeConfiguration(string tableName = "Identity_Tokens")
+        public UserTokensEntityTypeConfiguration(string container = "Identity")
         {
-            _tableName = tableName;
+            _container = container;
         }
 
         public void Configure(EntityTypeBuilder<IdentityUserToken<string>> builder)
@@ -19,7 +19,7 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
                 .UseETagConcurrency()
                 .HasPartitionKey(_ => _.UserId);
 
-            builder.ToContainer(_tableName);
+            builder.ToContainer(_container);
         }
     }
 }

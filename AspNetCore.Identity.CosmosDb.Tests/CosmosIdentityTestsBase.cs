@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using System.Security.Claims;
 
 namespace AspNetCore.Identity.CosmosDb.Tests
 {
     public abstract class CosmosIdentityTestsBase
     {
         protected static TestUtilities? _testUtilities;
-        protected static CosmosUserStore<IdentityUser>? _userStore;
         protected static CosmosRoleStore<IdentityRole>? _roleStore;
         protected static Random? _random;
 
@@ -19,7 +19,6 @@ namespace AspNetCore.Identity.CosmosDb.Tests
             // Setup context.
             //
             _testUtilities = new TestUtilities();
-            _userStore = _testUtilities.GetUserStore();
             _roleStore = _testUtilities.GetRoleStore();
             _random = new Random();
 
@@ -67,7 +66,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// Gets a mock <see cref="IdentityUser"/> for unit testing purposes
         /// </summary>
         /// <returns></returns>
-        protected async Task<IdentityUser> GetMockRandomUserAsync(bool saveToDatabase = true)
+        protected async Task<IdentityUser> GetMockRandomUserAsync(CosmosUserStore<IdentityUser>? userStore, bool saveToDatabase = true)
         {
             var randomEmail = $"{GetNextRandomNumber(1000, 9999)}@{GetNextRandomNumber(10000, 99999)}.com";
             var user = new IdentityUser(randomEmail) { Email = randomEmail, Id = Guid.NewGuid().ToString() };
@@ -75,11 +74,11 @@ namespace AspNetCore.Identity.CosmosDb.Tests
             user.NormalizedUserName = user.UserName.ToUpper();
             user.NormalizedEmail = user.Email.ToUpper();
 
-            if (saveToDatabase)
+            if (userStore != null && saveToDatabase)
             {
-                var result = await _userStore.CreateAsync(user);
+                var result = await userStore.CreateAsync(user);
                 Assert.IsTrue(result.Succeeded);//Confirm success
-                user = await _userStore.FindByNameAsync(user.UserName.ToUpper());
+                user = await userStore.FindByNameAsync(user.UserName.ToUpper());
             }
             return user;
         }
@@ -92,6 +91,18 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         {
             return new UserLoginInfo("Twitter", Guid.NewGuid().ToString(), "Twitter");
         }
+
+        protected Claim GetMockClaim()
+        {
+            return new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+        }
+
+        /// <summary>
+        /// Gets a user manager for testing purposes
+        /// </summary>
+        /// <typeparam name="TUser"></typeparam>
+        /// <param name="store"></param>
+        /// <returns></returns>
         public UserManager<TUser> GetTestUserManager<TUser>(IUserStore<TUser> store) where TUser : class
         {
             store = store ?? new Mock<IUserStore<TUser>>().Object;

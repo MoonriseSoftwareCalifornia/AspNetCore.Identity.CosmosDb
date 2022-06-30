@@ -271,7 +271,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 Id = nextId
             };
 
-            _repo.Add(identityRoleClaim);
+            _repo.Add<IdentityRoleClaim<string>>(identityRoleClaim);
             await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
         }
 
@@ -290,6 +290,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                     c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType, cancellationToken);
 
             _repo.Delete(doomed);
+            await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
         }
 
         #endregion

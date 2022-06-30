@@ -44,7 +44,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 
             // Assert
             using var dbContext = _testUtilities.GetDbContext();
-            Assert.AreEqual(35, dbContext.Roles.Count());
+            Assert.AreEqual(36, dbContext.Roles.Count());
 
         }
 
@@ -183,7 +183,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetClaimsAsyncTest()
         {
             // Arrange
-            var claims = new Claim[] { new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString()), new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString()), new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString()) };
+            var claims = new Claim[] { GetMockClaim(), GetMockClaim(), GetMockClaim() };
             var role = await GetMockRandomRoleAsync();
             await _roleStore.AddClaimAsync(role, claims[0], default);
             await _roleStore.AddClaimAsync(role, claims[1], default);
@@ -201,7 +201,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
             // Assert
             var role = await GetMockRandomRoleAsync();
-            var claim = new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            var claim = GetMockClaim();
 
             // Act
             await _roleStore.AddClaimAsync(role, claim, default);
@@ -216,15 +216,17 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
             // Assert
             var role = await GetMockRandomRoleAsync();
-            var claim = new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            var claim = GetMockClaim();
             await _roleStore.AddClaimAsync(role, claim, default);
+            var result2 = await _roleStore.GetClaimsAsync(role, default);
+            Assert.AreEqual(1, result2.Count);
 
             // Act
             await _roleStore.RemoveClaimAsync(role, claim, default);
 
             // Assert
-            var result2 = await _roleStore.GetClaimsAsync(role, default);
-            Assert.AreEqual(0, result2.Count);
+            var result3 = await _roleStore.GetClaimsAsync(role, default);
+            Assert.AreEqual(0, result3.Count);
         }
     }
 }

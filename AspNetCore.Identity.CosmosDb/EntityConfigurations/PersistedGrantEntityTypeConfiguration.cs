@@ -7,11 +7,11 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
 {
     public class PersistedGrantEntityTypeConfiguration : IEntityTypeConfiguration<PersistedGrant>
     {
-        private readonly string _tableName;
+        private readonly string _container;
 
-        public PersistedGrantEntityTypeConfiguration(string tableName = "Identity_PersistedGrant")
+        public PersistedGrantEntityTypeConfiguration(string container = "Identity")
         {
-            _tableName = tableName;
+            _container = container;
         }
 
         public void Configure(EntityTypeBuilder<PersistedGrant> builder)
@@ -22,7 +22,7 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
                 .UseETagConcurrency()
                 .HasPartitionKey(_ => _.Key);
 
-            builder.ToContainer(_tableName);
+            builder.ToContainer(_container);
         }
     }
 }

@@ -6,11 +6,11 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
 {
     public class DeviceFlowCodesEntityTypeConfiguration : IEntityTypeConfiguration<DeviceFlowCodes>
     {
-        private readonly string _tableName;
+        private readonly string _container;
 
-        public DeviceFlowCodesEntityTypeConfiguration(string tableName = "Identity_DeviceFlowCodes")
+        public DeviceFlowCodesEntityTypeConfiguration(string container = "Identity")
         {
-            _tableName = tableName;
+            _container = container;
         }
 
         public void Configure(EntityTypeBuilder<DeviceFlowCodes> builder)
@@ -22,7 +22,7 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
                 .UseETagConcurrency()
                 .HasPartitionKey(_ => _.SessionId);
 
-            builder.ToContainer(_tableName);
+            builder.ToContainer(_container);
         }
     }
 }

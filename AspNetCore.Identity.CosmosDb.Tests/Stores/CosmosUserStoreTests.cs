@@ -9,7 +9,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
     {
 
         //private static TestUtilities? utils;
-        //private static CosmosUserStore<IdentityUser>? _userStore;
+        //private static CosmosUserStore<IdentityUser>? userStore;
         //private static CosmosRoleStore<IdentityRole>? _roleStore;
         private static string phoneNumber = "0000000000";
         //private static Random? _random;
@@ -30,13 +30,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         [TestMethod()]
         public async Task CreateAsyncTest()
         {
+            using var userStore = _testUtilities.GetUserStore();
             // Create a bunch of users in rapid succession
             for (int i = 0; i < 35; i++)
             {
-                var r = await GetMockRandomUserAsync();
+                var r = await GetMockRandomUserAsync(userStore);
             }
 
             // Arrange - setup the new user
+
             var user = new IdentityUser(TestUtilities.IDENUSER1EMAIL) { Email = TestUtilities.IDENUSER1EMAIL };
             user.NormalizedUserName = user.UserName.ToUpper();
             user.NormalizedEmail = user.Email.ToUpper();
@@ -45,13 +47,13 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 
 
             // Act - create the user
-            var result = await _userStore.CreateAsync(user);
+            var result = await userStore.CreateAsync(user);
 
             // Assert - User should have been created
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Succeeded);
 
-            var user2 = await _userStore.FindByIdAsync(TestUtilities.IDENUSER1ID);
+            var user2 = await userStore.FindByIdAsync(TestUtilities.IDENUSER1ID);
 
             Assert.IsNotNull(user2);
             Assert.AreEqual(user2.UserName, TestUtilities.IDENUSER1EMAIL);
@@ -63,13 +65,13 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         [TestMethod()]
         public async Task DeleteAsyncTest()
         {
-
             // Arrange - setup the new user
+            using var userStore = _testUtilities.GetUserStore();
             using var dbContext = _testUtilities.GetDbContext();
-            var user = await GetMockRandomUserAsync();
+            var user = await GetMockRandomUserAsync(userStore);
 
             // Act
-            var result = await _userStore.DeleteAsync(user);
+            var result = await userStore.DeleteAsync(user);
 
             // Assert
             Assert.IsTrue(result.Succeeded);
@@ -80,10 +82,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task FindByEmailAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
 
             // Act
-            var user1 = await _userStore.FindByEmailAsync(user.Email.ToUpper());
+            var user1 = await userStore.FindByEmailAsync(user.Email.ToUpper());
 
             // Assert
             Assert.IsNotNull(user1);
@@ -94,10 +97,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task FindByIdAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
 
             // Act
-            var user1 = await _userStore.FindByIdAsync(user.Id);
+            var user1 = await userStore.FindByIdAsync(user.Id);
 
             // Assert
             Assert.IsNotNull(user1);
@@ -108,10 +112,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task FindByNameAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
 
             // Act
-            var user1 = await _userStore.FindByNameAsync(user.UserName.ToUpper());
+            var user1 = await userStore.FindByNameAsync(user.UserName.ToUpper());
 
             // Assert
             Assert.IsNotNull(user);
@@ -122,10 +127,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetEmailAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
 
             // Act
-            var result = await _userStore.GetEmailAsync(user);
+            var result = await userStore.GetEmailAsync(user);
 
             // Assert
             Assert.IsNotNull(result);
@@ -136,16 +142,17 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetEmailConfirmedAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
-            var result = await _userStore.GetEmailConfirmedAsync(user);
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
+            var result = await userStore.GetEmailConfirmedAsync(user);
             Assert.IsNotNull(result);
             Assert.IsFalse(result);
 
             // Arrange - user name and email are the same with this test
-            await _userStore.SetEmailConfirmedAsync(user, true);
+            await userStore.SetEmailConfirmedAsync(user, true);
 
             // Act
-            result = await _userStore.GetEmailConfirmedAsync(user);
+            result = await userStore.GetEmailConfirmedAsync(user);
 
             // Assert
             Assert.IsNotNull(result);
@@ -156,14 +163,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetEmailConfirmedAsyncTestFail()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
-            var result = await _userStore.GetEmailConfirmedAsync(user);
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
+            var result = await userStore.GetEmailConfirmedAsync(user);
             Assert.IsNotNull(result);
             Assert.IsFalse(result);
-            await _userStore.SetEmailConfirmedAsync(user, true);
+            await userStore.SetEmailConfirmedAsync(user, true);
 
             // Act
-            result = await _userStore.GetEmailConfirmedAsync(user);
+            result = await userStore.GetEmailConfirmedAsync(user);
 
             // Assert
             Assert.IsNotNull(result);
@@ -174,10 +182,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetNormalizedEmailAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
 
             // Act
-            var result = await _userStore.GetNormalizedEmailAsync(user);
+            var result = await userStore.GetNormalizedEmailAsync(user);
 
             // Assert
             Assert.IsNotNull(result);
@@ -188,10 +197,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetNormalizedUserNameAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
 
             // Act
-            var result = await _userStore.GetNormalizedUserNameAsync(user);
+            var result = await userStore.GetNormalizedUserNameAsync(user);
 
             // Assert
             Assert.IsNotNull(result);
@@ -202,15 +212,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetPasswordHashAsyncTest()
         {
             // Arrange
-            //var userManager = utils.GetUserManager();
-            var user = await GetMockRandomUserAsync();
-            var hash = await _userStore.GetPasswordHashAsync(user); // Should be no hash now
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
+            var hash = await userStore.GetPasswordHashAsync(user); // Should be no hash now
             Assert.IsTrue(string.IsNullOrEmpty(hash));
             var password = Guid.NewGuid().ToString(); // Now add hash
-            await _userStore.SetPasswordHashAsync(user, password);
+            await userStore.SetPasswordHashAsync(user, password);
 
             // Act
-            hash = await _userStore.GetPasswordHashAsync(user);
+            hash = await userStore.GetPasswordHashAsync(user);
 
             // Assert
             Assert.IsFalse(string.IsNullOrEmpty(hash));
@@ -221,14 +231,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetPhoneNumberAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var phoneNumber = "1234567899";
-            await _userStore.SetPhoneNumberAsync(user, phoneNumber);
+            await userStore.SetPhoneNumberAsync(user, phoneNumber);
             //user = await userStore.FindByIdAsync(user.Id);
 
             // Act
-            user = await _userStore.FindByIdAsync(user.Id);
-            var result2 = await _userStore.GetPhoneNumberAsync(user);
+            user = await userStore.FindByIdAsync(user.Id);
+            var result2 = await userStore.GetPhoneNumberAsync(user);
 
             // Assert
             Assert.AreSame(phoneNumber, result2);
@@ -238,14 +249,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetPhoneNumberConfirmedAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
-            await _userStore.SetPhoneNumberAsync(user, phoneNumber);
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
+            await userStore.SetPhoneNumberAsync(user, phoneNumber);
             //user = await userStore.FindByIdAsync(user.Id);
-            await _userStore.SetPhoneNumberConfirmedAsync(user, true);
+            await userStore.SetPhoneNumberConfirmedAsync(user, true);
             //user = await userStore.FindByIdAsync(user.Id);
 
             // Act
-            var result = await _userStore.GetPhoneNumberConfirmedAsync(user);
+            var result = await userStore.GetPhoneNumberConfirmedAsync(user);
 
             // Assert
             Assert.IsTrue(result);
@@ -255,10 +267,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetUserIdAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
 
             // Act
-            var result = await _userStore.GetUserIdAsync(user);
+            var result = await userStore.GetUserIdAsync(user);
 
             // Assert
             Assert.IsNotNull(result);
@@ -269,10 +282,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetUserNameAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
 
             // Act
-            var result = await _userStore.GetUserNameAsync(user);
+            var result = await userStore.GetUserNameAsync(user);
 
             // Assert
             Assert.IsNotNull(result);
@@ -283,15 +297,16 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task HasPasswordAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
-            var hash = await _userStore.GetPasswordHashAsync(user); // Should be no hash now
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
+            var hash = await userStore.GetPasswordHashAsync(user); // Should be no hash now
             Assert.IsTrue(string.IsNullOrEmpty(hash));
             var password = Guid.NewGuid().ToString(); // Now add hash
 
-            await _userStore.SetPasswordHashAsync(user, password);
+            await userStore.SetPasswordHashAsync(user, password);
 
             // Act
-            var result1 = await _userStore.HasPasswordAsync(user);
+            var result1 = await userStore.HasPasswordAsync(user);
 
             // Assert
             Assert.IsTrue(result1);
@@ -301,13 +316,14 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task SetEmailAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
 
             // Act
-            await _userStore.SetEmailAsync(user, TestUtilities.IDENUSER2EMAIL);
+            await userStore.SetEmailAsync(user, TestUtilities.IDENUSER2EMAIL);
 
             // Assert
-            var user2 = await _userStore.FindByIdAsync(user.Id);
+            var user2 = await userStore.FindByIdAsync(user.Id);
 
             Assert.IsNotNull(user2);
             Assert.AreEqual(TestUtilities.IDENUSER2EMAIL, user2.Email);
@@ -319,15 +335,16 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task SetEmailConfirmedAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             Assert.IsFalse(user.EmailConfirmed);
 
             // Act
-            await _userStore.SetEmailConfirmedAsync(user, true);
+            await userStore.SetEmailConfirmedAsync(user, true);
 
             // Assert
-            var result = await _userStore.GetEmailConfirmedAsync(user);
-            user = await _userStore.FindByIdAsync(user.Id);
+            var result = await userStore.GetEmailConfirmedAsync(user);
+            user = await userStore.FindByIdAsync(user.Id);
             Assert.IsTrue(user.EmailConfirmed);
             Assert.IsTrue(result);
         }
@@ -337,14 +354,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task SetNormalizedEmailAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var newEmail = $"A{GetNextRandomNumber(111, 9999).ToString()}@foo.com";
 
             // Act
-            await _userStore.SetNormalizedEmailAsync(user, newEmail.ToUpper());
+            await userStore.SetNormalizedEmailAsync(user, newEmail.ToUpper());
 
             // Assert
-            user = await _userStore.FindByIdAsync(user.Id);
+            user = await userStore.FindByIdAsync(user.Id);
             Assert.AreEqual(newEmail.ToUpper(), user.NormalizedEmail);
         }
 
@@ -353,14 +371,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task SetNormalizedUserNameAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var newEmail = $"A{GetNextRandomNumber(111, 9999).ToString()}@foo.com";
 
             // Act
-            await _userStore.SetNormalizedUserNameAsync(user, newEmail.ToUpper());
+            await userStore.SetNormalizedUserNameAsync(user, newEmail.ToUpper());
 
             // Assert
-            var user2 = await _userStore.FindByIdAsync(user.Id);
+            var user2 = await userStore.FindByIdAsync(user.Id);
             Assert.AreEqual(newEmail.ToUpper(), user2.NormalizedUserName);
         }
 
@@ -368,11 +387,12 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task SetPasswordHashAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             Assert.IsTrue(string.IsNullOrEmpty(user.PasswordHash));
 
             // Act
-            await _userStore.SetPasswordHashAsync(user, Guid.NewGuid().ToString());
+            await userStore.SetPasswordHashAsync(user, Guid.NewGuid().ToString());
 
             // Assert
             Assert.IsFalse(string.IsNullOrEmpty(user.PasswordHash));
@@ -384,14 +404,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task SetPhoneNumberAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             Assert.IsTrue(string.IsNullOrEmpty(user.PhoneNumber));
 
             // Act
-            await _userStore.SetPhoneNumberAsync(user, phoneNumber);
+            await userStore.SetPhoneNumberAsync(user, phoneNumber);
 
             // Assert
-            var user2 = await _userStore.FindByIdAsync(user.Id);
+            var user2 = await userStore.FindByIdAsync(user.Id);
             Assert.AreEqual(phoneNumber, user2.PhoneNumber);
         }
 
@@ -399,15 +420,16 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task SetPhoneNumberConfirmedAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             Assert.IsFalse(user.PhoneNumberConfirmed);
 
             // Act
-            await _userStore.SetPhoneNumberConfirmedAsync(user, true);
+            await userStore.SetPhoneNumberConfirmedAsync(user, true);
 
             // Assert
-            var result = await _userStore.GetPhoneNumberConfirmedAsync(user);
-            user = await _userStore.FindByIdAsync(user.Id);
+            var result = await userStore.GetPhoneNumberConfirmedAsync(user);
+            user = await userStore.FindByIdAsync(user.Id);
             Assert.IsTrue(user.PhoneNumberConfirmed);
             Assert.IsTrue(result);
         }
@@ -416,14 +438,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task SetUserNameAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var newUserName = "A" + user.UserName;
 
             // Act
-            await _userStore.SetUserNameAsync(user, newUserName);
+            await userStore.SetUserNameAsync(user, newUserName);
 
             // Assert
-            user = await _userStore.FindByIdAsync(user.Id);
+            user = await userStore.FindByIdAsync(user.Id);
             Assert.AreEqual(newUserName, user.UserName);
 
         }
@@ -433,7 +456,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task UpdateAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var phoneNumber = "1234567890";
 
             // Act
@@ -441,13 +465,13 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             user.NormalizedEmail = TestUtilities.IDENUSER1EMAIL.ToUpper();
             user.PhoneNumber = phoneNumber;
 
-            var result = await _userStore.UpdateAsync(user);
+            var result = await userStore.UpdateAsync(user);
 
             // Assert
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Succeeded);
 
-            var user1 = await _userStore.FindByIdAsync(user.Id);
+            var user1 = await userStore.FindByIdAsync(user.Id);
 
             Assert.AreEqual(TestUtilities.IDENUSER1EMAIL, user1.Email);
             Assert.AreEqual(TestUtilities.IDENUSER1EMAIL.ToUpper(), user1.NormalizedEmail);
@@ -459,14 +483,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task AddLoginAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
 
             // Act
             var loginInfo = GetMockLoginInfoAsync();
-            await _userStore.AddLoginAsync(user, loginInfo);
+            await userStore.AddLoginAsync(user, loginInfo);
 
             // Assert
-            var logins = await _userStore.GetLoginsAsync(user);
+            var logins = await userStore.GetLoginsAsync(user);
             Assert.AreEqual(1, logins.Count);
             Assert.IsTrue(logins.Any(a => a.LoginProvider.Equals("Twitter")));
 
@@ -477,18 +502,19 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
 
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var loginInfo = GetMockLoginInfoAsync();
-            await _userStore.AddLoginAsync(user, loginInfo);
-            var logins = await _userStore.GetLoginsAsync(user);
+            await userStore.AddLoginAsync(user, loginInfo);
+            var logins = await userStore.GetLoginsAsync(user);
             Assert.AreEqual(1, logins.Count);
             Assert.IsTrue(logins.Any(a => a.LoginProvider.Equals("Twitter")));
 
             // Act
-            await _userStore.RemoveLoginAsync(user, "Twitter", loginInfo.ProviderKey);
+            await userStore.RemoveLoginAsync(user, "Twitter", loginInfo.ProviderKey);
 
             // Assert
-            logins = await _userStore.GetLoginsAsync(user);
+            logins = await userStore.GetLoginsAsync(user);
             Assert.AreEqual(0, logins.Count);
 
         }
@@ -497,12 +523,13 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetLoginsAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var loginInfo = GetMockLoginInfoAsync();
-            await _userStore.AddLoginAsync(user, loginInfo);
+            await userStore.AddLoginAsync(user, loginInfo);
 
             // Act
-            var logins = await _userStore.GetLoginsAsync(user);
+            var logins = await userStore.GetLoginsAsync(user);
 
             // Assert
             Assert.AreEqual(1, logins.Count);
@@ -513,15 +540,16 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task FindByLoginAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var loginInfo = GetMockLoginInfoAsync();
-            await _userStore.AddLoginAsync(user, loginInfo);
-            var logins = await _userStore.GetLoginsAsync(user);
+            await userStore.AddLoginAsync(user, loginInfo);
+            var logins = await userStore.GetLoginsAsync(user);
             Assert.AreEqual(1, logins.Count);
             Assert.IsTrue(logins.Any(a => a.LoginProvider.Equals("Twitter")));
 
             // Arrange
-            var user2 = await _userStore.FindByLoginAsync("Twitter", loginInfo.ProviderKey);
+            var user2 = await userStore.FindByLoginAsync("Twitter", loginInfo.ProviderKey);
 
             // Assert
             Assert.AreEqual(user.Id, user2.Id);
@@ -531,17 +559,18 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task AddToRoleAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var role = await GetMockRandomRoleAsync();
-            var users = await _userStore.GetUsersInRoleAsync(role.Name);
+            var users = await userStore.GetUsersInRoleAsync(role.Name);
             Assert.AreEqual(0, users.Count); // Should be no users
 
             // Act
-            await _userStore.AddToRoleAsync(user, role.Name);
+            await userStore.AddToRoleAsync(user, role.Name);
 
             // Assert
-            Assert.IsTrue(await _userStore.IsInRoleAsync(user, role.Name));
-            users = await _userStore.GetUsersInRoleAsync(role.Name);
+            Assert.IsTrue(await userStore.IsInRoleAsync(user, role.Name));
+            users = await userStore.GetUsersInRoleAsync(role.Name);
             Assert.AreEqual(1, users.Count); // Should be one user
             Assert.IsTrue(users.Any(u => u.Id == user.Id));
         }
@@ -550,21 +579,22 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task RemoveFromRoleAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var role = await GetMockRandomRoleAsync();
-            var users = await _userStore.GetUsersInRoleAsync(role.Name);
+            var users = await userStore.GetUsersInRoleAsync(role.Name);
             Assert.AreEqual(0, users.Count); // Should be no users
-            await _userStore.AddToRoleAsync(user, role.Name);
-            Assert.IsTrue(await _userStore.IsInRoleAsync(user, role.Name));
-            users = await _userStore.GetUsersInRoleAsync(role.Name);
+            await userStore.AddToRoleAsync(user, role.Name);
+            Assert.IsTrue(await userStore.IsInRoleAsync(user, role.Name));
+            users = await userStore.GetUsersInRoleAsync(role.Name);
             Assert.AreEqual(1, users.Count); // Should be one user
             Assert.IsTrue(users.Any(u => u.Id == user.Id));
 
             // Act
-            await _userStore.RemoveFromRoleAsync(user, role.Name);
+            await userStore.RemoveFromRoleAsync(user, role.Name);
 
             // Assert
-            users = await _userStore.GetUsersInRoleAsync(role.Name);
+            users = await userStore.GetUsersInRoleAsync(role.Name);
             Assert.AreEqual(0, users.Count); // Should be no users
 
         }
@@ -573,22 +603,23 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetRolesAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var role1 = await GetMockRandomRoleAsync();
             var role2 = await GetMockRandomRoleAsync();
-            var users1 = await _userStore.GetUsersInRoleAsync(role1.Name);
+            var users1 = await userStore.GetUsersInRoleAsync(role1.Name);
             Assert.AreEqual(0, users1.Count); // Should be no users
-            var users2 = await _userStore.GetUsersInRoleAsync(role1.Name);
+            var users2 = await userStore.GetUsersInRoleAsync(role1.Name);
             Assert.AreEqual(0, users2.Count); // Should be no users
 
-            await _userStore.AddToRoleAsync(user, role1.Name);
-            await _userStore.AddToRoleAsync(user, role2.Name);
+            await userStore.AddToRoleAsync(user, role1.Name);
+            await userStore.AddToRoleAsync(user, role2.Name);
 
-            Assert.IsTrue(await _userStore.IsInRoleAsync(user, role1.Name));
-            Assert.IsTrue(await _userStore.IsInRoleAsync(user, role2.Name));
+            Assert.IsTrue(await userStore.IsInRoleAsync(user, role1.Name));
+            Assert.IsTrue(await userStore.IsInRoleAsync(user, role2.Name));
 
             // Act
-            var roles = await _userStore.GetRolesAsync(user);
+            var roles = await userStore.GetRolesAsync(user);
 
             // Assert
             Assert.AreEqual(2, roles.Count); // Should be two
@@ -601,14 +632,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task IsInRoleAsyncTest()
         {
             // Arrange
-            var user = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
             var role = await GetMockRandomRoleAsync();
-            var users = await _userStore.GetUsersInRoleAsync(role.Name);
+            var users = await userStore.GetUsersInRoleAsync(role.Name);
             Assert.AreEqual(0, users.Count); // Should be no users
-            await _userStore.AddToRoleAsync(user, role.Name);
+            await userStore.AddToRoleAsync(user, role.Name);
 
             // Act
-            var result = await _userStore.IsInRoleAsync(user, role.Name);
+            var result = await userStore.IsInRoleAsync(user, role.Name);
 
             // Assert
             Assert.IsTrue(result);
@@ -618,14 +650,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetUsersInRoleAsyncTest()
         {
             // Arrange
-            var user1 = await GetMockRandomUserAsync();
-            var user2 = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user1 = await GetMockRandomUserAsync(userStore);
+            var user2 = await GetMockRandomUserAsync(userStore);
             var role = await GetMockRandomRoleAsync();
-            await _userStore.AddToRoleAsync(user1, role.Name);
-            await _userStore.AddToRoleAsync(user2, role.Name);
+            await userStore.AddToRoleAsync(user1, role.Name);
+            await userStore.AddToRoleAsync(user2, role.Name);
 
             // Act
-            var result = await _userStore.GetUsersInRoleAsync(role.Name);
+            var result = await userStore.GetUsersInRoleAsync(role.Name);
 
             // Assert
             Assert.IsTrue(result.Count == 2);
@@ -640,12 +673,13 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task GetClaimsAsyncTest()
         {
             // Arrange
-            var user1 = await GetMockRandomUserAsync();
+            using var userStore = _testUtilities.GetUserStore();
+            var user1 = await GetMockRandomUserAsync(userStore);
             var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
-            await _userStore.AddClaimsAsync(user1, claims, default);
+            await userStore.AddClaimsAsync(user1, claims, default);
 
             // Act
-            var result2 = await _userStore.GetClaimsAsync(user1, default);
+            var result2 = await userStore.GetClaimsAsync(user1, default);
 
             // Assert
             Assert.AreEqual(3, result2.Count);
@@ -655,14 +689,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task AddClaimsAsyncTest()
         {
             // Arrange
-            var user1 = await GetMockRandomUserAsync();
-            var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
+            using var userStore = _testUtilities.GetUserStore();
+            var user1 = await GetMockRandomUserAsync(userStore);
+            var claims = new Claim[] { GetMockClaim(), GetMockClaim(), GetMockClaim() };
 
             // Act
-            await _userStore.AddClaimsAsync(user1, claims, default);
+            await userStore.AddClaimsAsync(user1, claims, default);
 
             // Assert;
-            var result2 = await _userStore.GetClaimsAsync(user1, default);
+            var result2 = await userStore.GetClaimsAsync(user1, default);
             Assert.AreEqual(3, result2.Count);
         }
 
@@ -670,18 +705,19 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task ReplaceClaimAsyncTest()
         {
             // Arrange
-            var user1 = await GetMockRandomUserAsync();
-            var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
-            var newClaim = new Claim("4", "4");
-            await _userStore.AddClaimsAsync(user1, claims, default);
-            var result2 = await _userStore.GetClaimsAsync(user1, default);
+            using var userStore = _testUtilities.GetUserStore();
+            var user1 = await GetMockRandomUserAsync(userStore);
+            var claims = new Claim[] { GetMockClaim(), GetMockClaim(), GetMockClaim() };
+            var newClaim = GetMockClaim();
+            await userStore.AddClaimsAsync(user1, claims, default);
+            var result2 = await userStore.GetClaimsAsync(user1, default);
             Assert.AreEqual(3, result2.Count);
 
             // Act
-            await _userStore.ReplaceClaimAsync(user1, claims.FirstOrDefault(), newClaim, default);
+            await userStore.ReplaceClaimAsync(user1, claims.FirstOrDefault(), newClaim, default);
 
             // Assert
-            var result3 = await _userStore.GetClaimsAsync(user1, default);
+            var result3 = await userStore.GetClaimsAsync(user1, default);
             Assert.IsFalse(result3.Any(a => a.Type == "1"));
             Assert.IsTrue(result3.Any(a => a.Type == "4"));
         }
@@ -690,33 +726,36 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         public async Task RemoveClaimsAsyncTest()
         {
             // Arrange
-            var user1 = await GetMockRandomUserAsync();
-            var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
-            var newClaim = new Claim("4", "4");
-            await _userStore.AddClaimsAsync(user1, claims, default);
-            var result2 = await _userStore.GetClaimsAsync(user1, default);
+            using var userStore = _testUtilities.GetUserStore();
+            var user1 = await GetMockRandomUserAsync(userStore);
+            var claims = new Claim[] { GetMockClaim(), GetMockClaim(), GetMockClaim() };
+            
+            await userStore.AddClaimsAsync(user1, claims, default);
+            var result2 = await userStore.GetClaimsAsync(user1, default);
             Assert.AreEqual(3, result2.Count);
 
             // Act
-            await _userStore.RemoveClaimsAsync(user1, claims, default);
+            await userStore.RemoveClaimsAsync(user1, claims, default);
 
             // Assert
-            var result3 = await _userStore.GetClaimsAsync(user1, default);
+            var result3 = await userStore.GetClaimsAsync(user1, default);
             Assert.IsFalse(result3.Any());
         }
 
         [TestMethod()]
         public async Task GetUsersForClaimAsyncTest()
         {
-            var user1 = await GetMockRandomUserAsync();
-            var user2 = await GetMockRandomUserAsync();
+            // Arrange
+            using var userStore = _testUtilities.GetUserStore();
+            var user1 = await GetMockRandomUserAsync(userStore);
+            var user2 = await GetMockRandomUserAsync(userStore);
             var val = Guid.NewGuid().ToString();
             var claims = new Claim[] { new Claim(val, val) };
-            await _userStore.AddClaimsAsync(user1, claims, default);
-            await _userStore.AddClaimsAsync(user2, claims, default);
+            await userStore.AddClaimsAsync(user1, claims, default);
+            await userStore.AddClaimsAsync(user2, claims, default);
 
             // Act
-            var result1 = await _userStore.GetUsersForClaimAsync(claims.FirstOrDefault(), default);
+            var result1 = await userStore.GetUsersForClaimAsync(claims.FirstOrDefault(), default);
 
             // Assert
             Assert.AreEqual(2, result1.Count);

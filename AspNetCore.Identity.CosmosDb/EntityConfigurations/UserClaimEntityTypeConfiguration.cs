@@ -7,11 +7,11 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
 {
     public class UserClaimEntityTypeConfiguration : IEntityTypeConfiguration<IdentityUserClaim<string>>
     {
-        private readonly string _tableName;
+        private readonly string _container;
 
-        public UserClaimEntityTypeConfiguration(string tableName = "Identity")
+        public UserClaimEntityTypeConfiguration(string container = "Identity")
         {
-            _tableName = tableName;
+            _container = container;
         }
 
         public void Configure(EntityTypeBuilder<IdentityUserClaim<string>> builder)
@@ -23,7 +23,7 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
             builder
                 .UseETagConcurrency()
                 .HasPartitionKey(_ => _.Id)
-                .ToContainer(_tableName);
+                .ToContainer(_container);
         }
     }
 }

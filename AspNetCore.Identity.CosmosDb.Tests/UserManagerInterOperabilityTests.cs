@@ -12,7 +12,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         // Creates a new test user with a hashed password, using the mock UserManager to do so
         private async Task<IdentityUser> GetTestUser(UserManager<IdentityUser> userManager, string password = "")
         {
-            var user = await GetMockRandomUserAsync(false);
+            var user = await GetMockRandomUserAsync(null, false);
 
             if (string.IsNullOrEmpty(password))
                 password = $"A1a{Guid.NewGuid()}";
@@ -56,7 +56,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         {
             // Arrange
             using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
-            var user = await GetMockRandomUserAsync(false);
+            var user = await GetMockRandomUserAsync(null, false);
 
             // Act
             var result = await userManager.CreateAsync(user);
