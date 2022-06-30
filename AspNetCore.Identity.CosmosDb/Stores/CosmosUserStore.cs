@@ -624,7 +624,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         #region IUserLockoutStore methods
 
         // <inheritdoc />
-        public async Task<DateTimeOffset?> GetLockoutEndDateAsync(TUserEntity user, CancellationToken cancellationToken)
+        public async Task<DateTimeOffset?> GetLockoutEndDateAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -638,7 +638,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task SetLockoutEndDateAsync(TUserEntity user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken)
+        public Task SetLockoutEndDateAsync(TUserEntity user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -650,7 +650,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task<int> IncrementAccessFailedCountAsync(TUserEntity user, CancellationToken cancellationToken)
+        public async Task<int> IncrementAccessFailedCountAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -667,7 +667,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task ResetAccessFailedCountAsync(TUserEntity user, CancellationToken cancellationToken)
+        public Task ResetAccessFailedCountAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -685,7 +685,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task<int> GetAccessFailedCountAsync(TUserEntity user, CancellationToken cancellationToken)
+        public Task<int> GetAccessFailedCountAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -697,7 +697,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task<bool> GetLockoutEnabledAsync(TUserEntity user, CancellationToken cancellationToken)
+        public Task<bool> GetLockoutEnabledAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -726,7 +726,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         #region methods implementing IUserClaimStore<TUserEntity>
 
         // <inheritdoc />
-        public async Task<IList<Claim>> GetClaimsAsync(TUserEntity user, CancellationToken cancellationToken)
+        public async Task<IList<Claim>> GetClaimsAsync(TUserEntity user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -773,7 +773,6 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 _repo.Add(identityUserClaim);
                 await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
             }
-
         }
 
         // <inheritdoc />

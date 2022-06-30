@@ -560,8 +560,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
             // Arrange
             using var userStore = _testUtilities.GetUserStore();
+            using var roleStore = _testUtilities.GetRoleStore();
             var user = await GetMockRandomUserAsync(userStore);
-            var role = await GetMockRandomRoleAsync();
+            var role = await GetMockRandomRoleAsync(roleStore);
             var users = await userStore.GetUsersInRoleAsync(role.Name);
             Assert.AreEqual(0, users.Count); // Should be no users
 
@@ -580,8 +581,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
             // Arrange
             using var userStore = _testUtilities.GetUserStore();
+            using var roleStore = _testUtilities.GetRoleStore();
             var user = await GetMockRandomUserAsync(userStore);
-            var role = await GetMockRandomRoleAsync();
+            var role = await GetMockRandomRoleAsync(roleStore);
             var users = await userStore.GetUsersInRoleAsync(role.Name);
             Assert.AreEqual(0, users.Count); // Should be no users
             await userStore.AddToRoleAsync(user, role.Name);
@@ -604,9 +606,10 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
             // Arrange
             using var userStore = _testUtilities.GetUserStore();
+            using var roleStore = _testUtilities.GetRoleStore();
             var user = await GetMockRandomUserAsync(userStore);
-            var role1 = await GetMockRandomRoleAsync();
-            var role2 = await GetMockRandomRoleAsync();
+            var role1 = await GetMockRandomRoleAsync(roleStore);
+            var role2 = await GetMockRandomRoleAsync(roleStore);
             var users1 = await userStore.GetUsersInRoleAsync(role1.Name);
             Assert.AreEqual(0, users1.Count); // Should be no users
             var users2 = await userStore.GetUsersInRoleAsync(role1.Name);
@@ -633,8 +636,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
             // Arrange
             using var userStore = _testUtilities.GetUserStore();
+            using var roleStore = _testUtilities.GetRoleStore();
             var user = await GetMockRandomUserAsync(userStore);
-            var role = await GetMockRandomRoleAsync();
+            var role = await GetMockRandomRoleAsync(roleStore);
             var users = await userStore.GetUsersInRoleAsync(role.Name);
             Assert.AreEqual(0, users.Count); // Should be no users
             await userStore.AddToRoleAsync(user, role.Name);
@@ -651,9 +655,10 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
             // Arrange
             using var userStore = _testUtilities.GetUserStore();
+            using var roleStore = _testUtilities.GetRoleStore();
             var user1 = await GetMockRandomUserAsync(userStore);
             var user2 = await GetMockRandomUserAsync(userStore);
-            var role = await GetMockRandomRoleAsync();
+            var role = await GetMockRandomRoleAsync(roleStore);
             await userStore.AddToRoleAsync(user1, role.Name);
             await userStore.AddToRoleAsync(user2, role.Name);
 
@@ -667,100 +672,5 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 
         }
 
-        #region methods implementing IUserClaimStore<TUserEntity>
-
-        [TestMethod()]
-        public async Task GetClaimsAsyncTest()
-        {
-            // Arrange
-            using var userStore = _testUtilities.GetUserStore();
-            var user1 = await GetMockRandomUserAsync(userStore);
-            var claims = new Claim[] { new Claim("1", "1"), new Claim("2", "2"), new Claim("3", "3") };
-            await userStore.AddClaimsAsync(user1, claims, default);
-
-            // Act
-            var result2 = await userStore.GetClaimsAsync(user1, default);
-
-            // Assert
-            Assert.AreEqual(3, result2.Count);
-        }
-
-        [TestMethod()]
-        public async Task AddClaimsAsyncTest()
-        {
-            // Arrange
-            using var userStore = _testUtilities.GetUserStore();
-            var user1 = await GetMockRandomUserAsync(userStore);
-            var claims = new Claim[] { GetMockClaim(), GetMockClaim(), GetMockClaim() };
-
-            // Act
-            await userStore.AddClaimsAsync(user1, claims, default);
-
-            // Assert;
-            var result2 = await userStore.GetClaimsAsync(user1, default);
-            Assert.AreEqual(3, result2.Count);
-        }
-
-        [TestMethod()]
-        public async Task ReplaceClaimAsyncTest()
-        {
-            // Arrange
-            using var userStore = _testUtilities.GetUserStore();
-            var user1 = await GetMockRandomUserAsync(userStore);
-            var claims = new Claim[] { GetMockClaim(), GetMockClaim(), GetMockClaim() };
-            var newClaim = GetMockClaim();
-            await userStore.AddClaimsAsync(user1, claims, default);
-            var result2 = await userStore.GetClaimsAsync(user1, default);
-            Assert.AreEqual(3, result2.Count);
-
-            // Act
-            await userStore.ReplaceClaimAsync(user1, claims.FirstOrDefault(), newClaim, default);
-
-            // Assert
-            var result3 = await userStore.GetClaimsAsync(user1, default);
-            Assert.IsFalse(result3.Any(a => a.Type == "1"));
-            Assert.IsTrue(result3.Any(a => a.Type == "4"));
-        }
-
-        [TestMethod()]
-        public async Task RemoveClaimsAsyncTest()
-        {
-            // Arrange
-            using var userStore = _testUtilities.GetUserStore();
-            var user1 = await GetMockRandomUserAsync(userStore);
-            var claims = new Claim[] { GetMockClaim(), GetMockClaim(), GetMockClaim() };
-            
-            await userStore.AddClaimsAsync(user1, claims, default);
-            var result2 = await userStore.GetClaimsAsync(user1, default);
-            Assert.AreEqual(3, result2.Count);
-
-            // Act
-            await userStore.RemoveClaimsAsync(user1, claims, default);
-
-            // Assert
-            var result3 = await userStore.GetClaimsAsync(user1, default);
-            Assert.IsFalse(result3.Any());
-        }
-
-        [TestMethod()]
-        public async Task GetUsersForClaimAsyncTest()
-        {
-            // Arrange
-            using var userStore = _testUtilities.GetUserStore();
-            var user1 = await GetMockRandomUserAsync(userStore);
-            var user2 = await GetMockRandomUserAsync(userStore);
-            var val = Guid.NewGuid().ToString();
-            var claims = new Claim[] { new Claim(val, val) };
-            await userStore.AddClaimsAsync(user1, claims, default);
-            await userStore.AddClaimsAsync(user2, claims, default);
-
-            // Act
-            var result1 = await userStore.GetUsersForClaimAsync(claims.FirstOrDefault(), default);
-
-            // Assert
-            Assert.AreEqual(2, result1.Count);
-        }
-
-        #endregion
     }
 }

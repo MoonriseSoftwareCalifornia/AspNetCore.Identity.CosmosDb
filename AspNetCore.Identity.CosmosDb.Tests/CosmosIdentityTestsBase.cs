@@ -10,7 +10,6 @@ namespace AspNetCore.Identity.CosmosDb.Tests
     public abstract class CosmosIdentityTestsBase
     {
         protected static TestUtilities? _testUtilities;
-        protected static CosmosRoleStore<IdentityRole>? _roleStore;
         protected static Random? _random;
 
         protected static void InitializeClass()
@@ -19,7 +18,6 @@ namespace AspNetCore.Identity.CosmosDb.Tests
             // Setup context.
             //
             _testUtilities = new TestUtilities();
-            _roleStore = _testUtilities.GetRoleStore();
             _random = new Random();
 
             // Arrange class - remove prior data
@@ -48,15 +46,15 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// Gets a mock <see cref="IdentityRole"/> for unit testing purposes
         /// </summary>
         /// <returns></returns>
-        protected async Task<IdentityRole> GetMockRandomRoleAsync(bool saveToDatabase = true)
+        protected async Task<IdentityRole> GetMockRandomRoleAsync(CosmosRoleStore<IdentityRole> roleStore, bool saveToDatabase = true)
         {
             var role = new IdentityRole(GetNextRandomNumber(1000, 9999).ToString());
             role.NormalizedName = role.Name.ToUpper();
 
-            if (saveToDatabase)
+            if (roleStore != null && saveToDatabase)
             {
-                var result = await _roleStore.CreateAsync(role);
-                role = await _roleStore.FindByIdAsync(role.Id);
+                var result = await roleStore.CreateAsync(role);
+                role = await roleStore.FindByIdAsync(role.Id);
                 Assert.IsTrue(result.Succeeded);//Confirm success
             }
             return role;

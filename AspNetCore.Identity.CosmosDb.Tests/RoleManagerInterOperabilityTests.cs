@@ -17,7 +17,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         // Creates a new test role using the mock RoleManager to do so
         private async Task<IdentityRole> GetTestRole(RoleManager<IdentityRole> roleManager)
         {
-            var role = await GetMockRandomRoleAsync(false);
+            var role = await GetMockRandomRoleAsync(null, false);
 
             var result = await roleManager.CreateAsync(role);
 

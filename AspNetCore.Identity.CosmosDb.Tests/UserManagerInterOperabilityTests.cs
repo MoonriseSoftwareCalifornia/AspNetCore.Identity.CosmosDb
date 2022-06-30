@@ -552,7 +552,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
             using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
             using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
-            var role = await GetMockRandomRoleAsync(false);
+            var role = await GetMockRandomRoleAsync(null, false);
             var result1 = await roleManager.CreateAsync(role);
             Assert.IsTrue(result1.Succeeded);
 
@@ -569,12 +569,12 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task AddToRolesAsyncTest()
         {
             // Arrange
-            using var roleManager = GetTestRoleManager(_roleStore);
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
             using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
-            var role1 = await GetMockRandomRoleAsync();
-            var role2 = await GetMockRandomRoleAsync();
-            var role3 = await GetMockRandomRoleAsync();
+            var role1 = await GetMockRandomRoleAsync(null, false);
+            var role2 = await GetMockRandomRoleAsync(null, false);
+            var role3 = await GetMockRandomRoleAsync(null, false);
             var result1 = await roleManager.CreateAsync(role1);
             Assert.IsTrue(result1.Succeeded);
             var result2 = await roleManager.CreateAsync(role2);
@@ -596,10 +596,10 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task RemoveFromRoleAsyncTest()
         {
             // Arrange
-            using var roleManager = GetTestRoleManager(_roleStore);
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
             using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
-            var role = await GetMockRandomRoleAsync(false);
+            var role = await GetMockRandomRoleAsync(null, false);
             var result1 = await roleManager.CreateAsync(role);
             Assert.IsTrue(result1.Succeeded);
 
@@ -617,12 +617,12 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         {
 
             // Arrange
-            using var roleManager = GetTestRoleManager(_roleStore);
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
             using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
-            var role1 = await GetMockRandomRoleAsync(false);
-            var role2 = await GetMockRandomRoleAsync(false);
-            var role3 = await GetMockRandomRoleAsync(false);
+            var role1 = await GetMockRandomRoleAsync(null, false);
+            var role2 = await GetMockRandomRoleAsync(null, false);
+            var role3 = await GetMockRandomRoleAsync(null, false);
             var result1 = await roleManager.CreateAsync(role1);
             Assert.IsTrue(result1.Succeeded);
             var result2 = await roleManager.CreateAsync(role2);
@@ -645,12 +645,12 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         {
 
             // Arrange
-            using var roleManager = GetTestRoleManager(_roleStore);
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
             using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
-            var role1 = await GetMockRandomRoleAsync(false);
-            var role2 = await GetMockRandomRoleAsync(false);
-            var role3 = await GetMockRandomRoleAsync(false);
+            var role1 = await GetMockRandomRoleAsync(null, false);
+            var role2 = await GetMockRandomRoleAsync(null, false);
+            var role3 = await GetMockRandomRoleAsync(null, false);
             var result1 = await roleManager.CreateAsync(role1);
             Assert.IsTrue(result1.Succeeded);
             var result2 = await roleManager.CreateAsync(role2);
@@ -670,10 +670,10 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public async Task IsInRoleAsyncTest()
         {
             // Arrange
-            using var roleManager = GetTestRoleManager(_roleStore);
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
             using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
             var user = await GetTestUser(userManager);
-            var role = await GetMockRandomRoleAsync(false);
+            var role = await GetMockRandomRoleAsync(null, false);
             var result1 = await roleManager.CreateAsync(role);
             Assert.IsTrue(result1.Succeeded);
 
@@ -1107,10 +1107,12 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         {
             // Arrange
             using var userManager = GetTestUserManager(_testUtilities.GetUserStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
             var user1 = await GetTestUser(userManager);
             var user2 = await GetTestUser(userManager);
             var user3 = await GetTestUser(userManager);
-            var role = await GetMockRandomRoleAsync(true);
+            var role = await GetMockRandomRoleAsync(null, false);
+            await roleManager.CreateAsync(role);
             var result1 = await userManager.AddToRoleAsync(user1, role.Name);
             Assert.IsTrue(result1.Succeeded);
             var result2 = await userManager.AddToRoleAsync(user2, role.Name);
