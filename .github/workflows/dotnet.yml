@@ -1,4 +1,4 @@
-name: .NET 6 Build-Test
+name: .NET 6 Build
 
 on:
   workflow_dispatch
@@ -22,10 +22,7 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Test
-      env:
-          APPLICATIONDBCONTEXTCONNECTION: ${{ secrets.APPLICATIONDBCONTEXTCONNECTION }}
-      run: dotnet test --no-build --verbosity normal
+   
     - name: Publish NuGet
       run: dotnet nuget push /home/runner/work/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/bin/Debug/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
     - name: Publish NuGet Symbols

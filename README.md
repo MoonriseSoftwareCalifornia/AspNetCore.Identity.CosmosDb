@@ -1,13 +1,10 @@
-![Logo](/Assets/cosmosdb.svg)
-
-# EF Core Cosmos DB Identity Provider
-This is a **Cosmos DB** implementation of an Identity provider for .NET 6. It uses the official [EF Core Azure Cosmos DB Provider](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
+<h1 valign="center"><img src="./Assets/cosmosdb.svg"/>EF Core Cosmos DB Identity Provider</h1>
 
 [![.NET 6 Build-Test](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml)
 
-This project was forked from [Piero De Tomi](https://github.com/pierodetomi's) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos). If you are using .Net 5, I highly recommend using that project instead of this one.
+This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that uses the [EF Core Azure Cosmos DB Provider](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
-You can use this package to easily bootstrap an ASP.NET **Identity Server** backed by a CosmosDb database and EF Core, in place of SQL Server.
+This project was forked from [Piero De Tomi](https://github.com/pierodetomi's) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos). If you are using .Net 5, it is highly recommended using that project instead of this one.
 
 # Installation (NuGet)
 
@@ -18,13 +15,17 @@ PM> Install-Package AspNetCore.Identity.CosmosDb (Note this is currently in Alph
 # Integration Steps
 
 ## Project Requirements
+
 The following steps assume that you have an ASP.NET Core 5 Web Application project that uses Identity and/or IdentityServer features.
 
 ## Cosmos DB Requirements
+
 ### Database
+
 Just as with EF Core on SQL Server, you have to manually create a database in your Cosmos DB instance to be able to operate.
 
 ### Containers
+
 Since **migrations are NOT supported when using EF Core on Cosmos DB**, you’ll have to manually create the following containers in your database:
 
 | Container Name | Partition Key |
@@ -38,6 +39,7 @@ Since **migrations are NOT supported when using EF Core on Cosmos DB**, you’ll
 | Identity_Roles | /Id |
 
 ## DbContext
+
 You have to create a DbContext that implements the provided `CosmosIdentityDbContext` type.
 
 To start off you can create just an empty DbContext class that satisfies the above requirement:
@@ -79,6 +81,7 @@ As specified in the above code snippet, when overriding the `OnModelCreating()` 
 ## Configurations in Startup.cs File
 
 ## Remove the Default Identity Provider
+
 Remove the line where the default/current identity provider is added/configured.
 
 If you just created a new project, this line should be something like:
@@ -89,6 +92,7 @@ services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfi
 ```
 
 ## Remove Default DbContext Configuration
+
 Remove the line where the SQL DbContext is configured.
 
 It should be something like:
@@ -99,6 +103,7 @@ services.AddDbContext<ApplicationDbContext>(options =>
 ```
 
 ## Add Cosmos DB Identity Provider
+
 Now add the Cosmos DB provider:
 
 ```csharp
@@ -117,6 +122,7 @@ services.AddCosmosIdentity<MyDbContext, IdentityUser, IdentityRole>(
 ```
 
 ## Update IdentityServer Configuration (If Applicable)
+
 If your project is using **IdentityServer**, update the related configuration in order to use your new DbContext implementation:
 
 ```csharp
@@ -125,6 +131,7 @@ services.AddIdentityServer().AddApiAuthorization<IdentityUser, MyDbContext>();
 ```
 
 # This Provider & Identity UI
+
 This provider is also **compatible** with Identity UI.
 
 You can either use the default Identity UI (e.g.: in `Startup.cs` there's a call to `AddDefaultUI()` method) or use the [scaffolded](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/scaffold-identity?view=aspnetcore-5.0&tabs=visual-studio) version of Identity UI. Both scenarios should work out of the box without having to do anything else.
@@ -132,6 +139,7 @@ You can either use the default Identity UI (e.g.: in `Startup.cs` there's a call
 Finally you can also use your own implementation of Identity UI, as long as you use the Identity services (e.g.: `UserManager` and `SignInManager`).
 
 # Available Services
+
 This library registers in the service collection a basic Cosmos DB repository implementation, that you can resolve in your constructors requiring the `IRepository` interface.
 
 An example:
@@ -149,6 +157,7 @@ public class MyClass {
 ```
 
 ## Available IRepository methods
+
 Just for your information, here is a summary of the available methods in the IRepository interface:
 
 - `Table<TEntity>()`
@@ -165,15 +174,19 @@ Just for your information, here is a summary of the available methods in the IRe
 # Changelog
 
 ## v1.0.6
+
 - Introduced support for `IUserLoginStore<TUser>` in User Store
 
 ## v1.0.5
+
 - Introduced support for `IUserPhoneNumberStore<TUser>` in User Store
 
 ## v1.0.4
+
 - Introduced support for `IUserEmailStore<TUser>` in User Store
 
 ## v2.0.0-alpha
+
 - Forked from source repository [pierodetomi/efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos).
 - Refactored for .Net 6 LTS.
 - Added `UserStore`, `RoleStore`, `UserManager` and `RoleManager` unit tests.
