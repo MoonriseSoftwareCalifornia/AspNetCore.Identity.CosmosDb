@@ -26,3 +26,7 @@ jobs:
       env:
           APPLICATIONDBCONTEXTCONNECTION: ${{ secrets.APPLICATIONDBCONTEXTCONNECTION }}
       run: dotnet test --no-build --verbosity normal
+    - name: Publish NuGet
+      run: dotnet nuget push /home/runner/work/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+    - name: Publish NuGet Symbols
+      run: dotnet nuget push /home/runner/work/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/bin/Release/*.snupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
