@@ -87,6 +87,11 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         {
             var config = GetConfig();
             var connectionString = config.GetConnectionString("ApplicationDbContextConnection");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = GetKeyValue("ApplicationDbContextConnection");
+            }
+
             var builder = new DbContextOptionsBuilder();
             builder.UseCosmos(connectionString, TestUtilities.DATABASENAME);
 
