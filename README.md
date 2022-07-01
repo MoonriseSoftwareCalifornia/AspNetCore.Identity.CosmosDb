@@ -1,6 +1,6 @@
 <h1 valign="center"><img src="./Assets/cosmosdb.svg"/>EF Core Cosmos DB Identity Provider</h1>
 
-[![.NET 6 Build-Test](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml)
+[![.NET 6 Build-Test](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml)[![NuGet Badge](https://buildstats.info/nuget/AspNetCore.Identity.CosmosDb)](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/)
 
 This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that uses the [EF Core Azure Cosmos DB Provider](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
