@@ -11,7 +11,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 		//private static TestUtilities? utils;
 		//private static CosmosUserStore<IdentityUser>? userStore;
 		//private static CosmosRoleStore<IdentityRole>? _roleStore;
-		private static string phoneNumber = "0000000000";
+		// private static string phoneNumber = "0000000000";
 		//private static Random? _random;
 
 		[ClassInitialize]

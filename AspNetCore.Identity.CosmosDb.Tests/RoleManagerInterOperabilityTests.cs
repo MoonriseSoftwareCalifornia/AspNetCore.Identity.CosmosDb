@@ -259,22 +259,24 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         }
 
         [TestMethod]
-        protected async Task UpdateRoleAsyncTest()
+        protected Task UpdateRoleAsyncTest()
         {
 
             // Assert
             using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
-            var role = await GetTestRole(roleManager);
+            var role = GetTestRole(roleManager).Result;
             var stamp = Guid.NewGuid().ToString();
             role.ConcurrencyStamp = stamp;
 
             // Act
-            var result1 = await roleManager.UpdateAsync(role);
+            var result1 = roleManager.UpdateAsync(role).Result;
 
             // Assert
             Assert.IsTrue(result1.Succeeded);
-            var result2 = await roleManager.FindByIdAsync(role.Id);
+            var result2 = roleManager.FindByIdAsync(role.Id).Result;
             Assert.AreEqual(stamp, result2.ConcurrencyStamp);
+
+            return Task.CompletedTask;
         }
 
     }
