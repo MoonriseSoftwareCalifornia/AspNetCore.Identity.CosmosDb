@@ -122,15 +122,6 @@ services.AddCosmosIdentity<MyDbContext, IdentityUser, IdentityRole>(
 );
 ```
 
-## Update IdentityServer Configuration (If Applicable)
-
-If your project is using **IdentityServer**, update the related configuration in order to use your new DbContext implementation:
-
-```csharp
-// Note that we're using MyDbContext as the second type parameter here...
-services.AddIdentityServer().AddApiAuthorization<IdentityUser, MyDbContext>();
-```
-
 # This Provider & Identity UI
 
 This provider is also **compatible** with Identity UI.
