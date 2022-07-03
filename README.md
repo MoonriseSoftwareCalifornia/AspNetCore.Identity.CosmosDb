@@ -125,7 +125,7 @@ builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, Identi
 ```
 
 When users register accounts or need to reset passwords, you will need (at a minimum), the ability 
-to send tokens via email. The example below uses an interface built for SendGrid.  Here is how to add the SendGrid
+to send tokens via an [Email provider](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/accconfirm?view=aspnetcore-6.0&tabs=visual-studio#configure-an-email-provider). The example below uses a SendGrid provider. Here is how to add the SendGrid
 provider used in this example:
 
 Start by adding the following NuGet package to your project:
