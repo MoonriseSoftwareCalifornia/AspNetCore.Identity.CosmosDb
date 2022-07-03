@@ -9,45 +9,53 @@ This project was forked from [Piero De Tomi](https://github.com/pierodetomi's) e
 
 # Installation (NuGet)
 
+To add this provider to your own Asp.Net 6 web project, add the following NuGet package:
+
 ```shell
 PM> Install-Package AspNetCore.Identity.CosmosDb
 ```
 
 # Integration Steps
 
-## Project Requirements
+## Before Starting
 
-The following steps assume that you have an ASP.NET Core 6 Web Application project that uses Identity features.
+The following instructions show how to install the Cosmos DB identity provider. To continue please have the following ready:
 
-## Cosmos DB Requirements
+- An Azure Cosmos DB account created - either the serverless or dedicated instance. You do not have to create a database yet.
+- A SendGrid API Key if you are using the IEmailProvider used in these instructions
 
-### Database
+Note: This provider requires too many containers to use the free version of Cosmos DB.  The serverless instance is very economical
+and is a good option to start with. See [documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless) to help choose which is best for you.
 
-Start by creating an instance of [Cosmos DB in Azure](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction).  Either the Serverless or the dedicated model. At present this package is not compatible with the free version.  Choose the 'serverless' model as this is extremely cheap to run.  See [documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless) to help choose which is best for you.
+## Application Configuration "Secrets"
 
-### Containers
+Three secrets need to be created for this example:
 
-This package will automatically create the required containers (shown below) by setting the following configuration variable:
+- SendGridApiKey (The API key for your SendGrid account)
+- CosmosIdentityDbName (The name of the database you want to use)
+- ConnectionStrings:ApplicationDbContextConnection (The connection string for your Cosmos account)
 
-"SetupCosmosDb" set to "true"
+And if you want the provider to automatically setup the database and required containers, use this setting:
 
+- SetupCosmosDb
 
+Here is an example of how to set the secrets in a `secrets.json` file that would be used with Visual Studio:
 
-| Container Name | Partition Key |
-| --- | --- |
-| Identity | /Id |
-| Identity_DeviceFlowCodes | /SessionId |
-| Identity_Logins | /ProviderKey |
-| Identity_PersistedGrant | /Key |
-| Identity_Tokens | /UserId |
-| Identity_UserRoles | /UserId |
-| Identity_Roles | /Id |
+```json
+{
+  "SendGridApiKey": "YOUR SENDGRID API KEY",
+  "SetupCosmosDb": "true", // Importat: Remove this variable after first run to improve startup performance.
+  "CosmosIdentityDbName": "YourDabatabaseName",
+  "ConnectionStrings": {
+    "ApplicationDbContextConnection": "THE CONNECTION STRING TO YOUR COSMOS ACCOUNT"
+  }
+}
+```
 
-## DbContext
+## Modify Program.cs or Startup.cs File
 
-You have to create a DbContext that implements the provided `CosmosIdentityDbContext` type.
-
-To start off you can create just an empty DbContext class that satisfies the above requirement:
+After the "secrets" have been set, the next task is to modify your project's startup file.  For Asp.net
+6 and higher that might be the `Project.cs` file. For other projects it might be your `Startup.cs.`
 
 
 ```csharp
