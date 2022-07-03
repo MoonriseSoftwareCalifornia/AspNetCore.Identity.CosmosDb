@@ -124,10 +124,11 @@ builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, Identi
     );
 ```
 
-When users register accounts or need to reset passwords, you will need at a minimum be able to send them
-an email.  There are many email providers and you can use them if they adhere to the IEmailProvider
-interface. The example below uses an interface built for SendGrid.  Here is how to add the SendGrid
-provider used in this example. Start by adding the following NuGet package to your project:
+When users register accounts or need to reset passwords, you will need (at a minimum), the ability 
+to send tokens via email. The example below uses an interface built for SendGrid.  Here is how to add the SendGrid
+provider used in this example:
+
+Start by adding the following NuGet package to your project:
 
 ```shell
 PM> Install-PackageAspNetCore.Identity.Services.SendGrid
