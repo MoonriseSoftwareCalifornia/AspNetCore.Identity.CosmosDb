@@ -52,7 +52,7 @@ Here is an example of how to set the secrets in a `secrets.json` file that would
 ```json
 {
   "SendGridApiKey": "YOUR SENDGRID API KEY",
-  "SetupCosmosDb": "true", // Importat: Remove this variable after first run to improve startup performance.
+  "SetupCosmosDb": "true", // Importat: Remove this after first run.
   "CosmosIdentityDbName": "YourDabatabaseName",
   "ConnectionStrings": {
     "ApplicationDbContextConnection": "THE CONNECTION STRING TO YOUR COSMOS ACCOUNT"
