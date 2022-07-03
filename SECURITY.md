@@ -7,15 +7,10 @@ currently being supported with security updates.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+| < 2.0.x   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+Please help improve this repository by giving notice of any security flaws you find with this library. Please email mars@moonrise.net of any issues.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+Thank you so much!
