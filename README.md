@@ -7,6 +7,14 @@ This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that u
 
 This project was forked from [Piero De Tomi](https://github.com/pierodetomi's) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos). If you are using .Net 5, it is highly recommended using that project instead of this one.
 
+# Contents
+
+This repository contains three projects:
+
+- AspNetCore.Identity.CosmosDb (The Cosmos DB Identity Provider - NuGet package source)
+- AspNetCore.Identity.CosmosDb.Example (And example Asp.Net 6 website configured to use the provider)
+- AspNetCore.Identity.CosmosDb.Tests (Unit tests that exercise and validate the provider)
+
 # Installation (NuGet)
 
 To add this provider to your own Asp.Net 6 web project, add the following NuGet package:
@@ -57,123 +65,175 @@ Here is an example of how to set the secrets in a `secrets.json` file that would
 After the "secrets" have been set, the next task is to modify your project's startup file.  For Asp.net
 6 and higher that might be the `Project.cs` file. For other projects it might be your `Startup.cs.`
 
+You will likely need to add these usings:
 
 ```csharp
-public class MyDbContext : CosmosIdentityDbContext<IdentityUser>
+using AspNetCore.Identity.CosmosDb;
+using AspNetCore.Identity.CosmosDb.Containers;
+using AspNetCore.Identity.CosmosDb.Extensions;
+using AspNetCore.Identity.Services.SendGrid;
+using AspNetCore.Identity.Services.SendGrid.Extensions;
+```
+
+Next, the configuration variables need to be retrieved. Add the following to your startup file:
+
+```csharp
+// The Cosmos connection string
+var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection");
+
+// Name of the Cosmos database to use
+var cosmosIdentityDbName = builder.Configuration.GetValue<string>("CosmosIdentityDbName");
+
+// If this is set, the Cosmos identity provider will:
+// 1. Create the database if it does not already exist.
+// 2. Create the required containers if they do not already exist.
+// IMPORTANT: Remove this setting if after first run. It will improve startup performance.
+var setupCosmosDb = builder.Configuration.GetValue<string>("SetupCosmosDb");
+
+```
+
+Next, add the code that will trigger the provider to create the database and required containers:
+
+```csharp
+// If the following is set, then create the identity database and required containers.
+// You can omit the following, or simplify it as needed.
+if (bool.TryParse(setupCosmosDb, out var setup) && setup)
 {
-  public MyDbContext(DbContextOptions dbContextOptions, IOptions<OperationalStoreOptions> options)
-    : base(dbContextOptions, options) { }
+    var utils = new ContainerUtilities(connectionString, cosmosIdentityDbName);
+    utils.CreateDatabaseAsync(cosmosIdentityDbName).Wait();
+    utils.CreateRequiredContainers().Wait();
 }
+
 ```
 
-Later in your development you'll likely add some entities to your application: you'll update the DbContext class adding the `DbSet<T>` properties and overriding the `OnModelCreating()` method for entity mappings:
+Now add the database context that is required for this provider. Note: This context can be modified
+to add your own entities (documentation on that is being developed).
 
+Put this in your startup file:
 
 ```csharp
-public class MyDbContext : CosmosIdentityDbContext<IdentityUser>
+builder.Services.AddDbContext<CosmosIdentityDbContext<IdentityUser>>(options =>
+  options.UseCosmos(connectionString: connectionString, databaseName: cosmosIdentityDbName));
+```
+
+The next step is to add the identity provider to your starup file. Here is an example:
+
+```csharp
+builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, IdentityUser, IdentityRole>(
+      options => options.SignIn.RequireConfirmedAccount = true // Always a good idea :)
+    );
+```
+
+When users register accounts or need to reset passwords, you will need at a minimum be able to send them
+an email.  There are many email providers and you can use them if they adhere to the IEmailProvider
+interface. The example below uses an interface built for SendGrid.  Here is how to add the SendGrid
+provider used in this example. Start by adding the following NuGet package to your project:
+
+```shell
+PM> Install-PackageAspNetCore.Identity.Services.SendGrid
+```
+
+Next add the following code to your startup file:
+
+```csharp
+var sendGridApiKey = builder.Configuration.GetValue<string>("SendGridApiKey");
+var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "eric@moonrise.net");
+builder.Services.AddSendGridEmailProvider(sendGridOptions);
+```
+
+# Putting it all together
+
+The above instructions showed how to modify the startup file to make use of this provider. Sometimes 
+it is easier to see the end result rather than peicemeal.  Here is an example Asp.Net 6 Project.cs
+file fully configured:
+
+```csharp
+using AspNetCore.Identity.CosmosDb;
+using AspNetCore.Identity.CosmosDb.Containers;
+using AspNetCore.Identity.CosmosDb.Extensions;
+using AspNetCore.Identity.Services.SendGrid;
+using AspNetCore.Identity.Services.SendGrid.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// The Cosmos connection string
+var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection");
+
+// Name of the Cosmos database to use
+var cosmosIdentityDbName = builder.Configuration.GetValue<string>("CosmosIdentityDbName");
+
+// If this is set, the Cosmos identity provider will:
+// 1. Create the database if it does not already exist.
+// 2. Create the required containers if they do not already exist.
+// IMPORTANT: Remove this variable if after first run. It will improve startup performance.
+var setupCosmosDb = builder.Configuration.GetValue<string>("SetupCosmosDb");
+
+// If the following is set, then create the identity database and required containers.
+// You can omit the following, or simplify it as needed.
+if (bool.TryParse(setupCosmosDb, out var setup) && setup)
 {
-  public DbSet<SampleEntity> SampleEntities { get; set; }
-
-  public DbSet<OtherSampleEntity> OtherSampleEntities { get; set; }
-
-  public MyDbContext(DbContextOptions dbContextOptions, IOptions<OperationalStoreOptions> options)
-    : base(dbContextOptions, options) { }
-
-  protected override void OnModelCreating(ModelBuilder builder)
-  {
-    // DO NOT REMOVE THIS LINE. If you do, your context won't work as expected.
-    base.OnModelCreating(builder);
-    
-    // TODO: Add your own fluent mappings
-  }
+    var utils = new ContainerUtilities(connectionString, cosmosIdentityDbName);
+    utils.CreateDatabaseAsync(cosmosIdentityDbName).Wait();
+    utils.CreateRequiredContainers().Wait();
 }
-```
 
-As specified in the above code snippet, when overriding the `OnModelCreating()` method it is **crucial** to not remove the `base.OnModelCreating(builder)` call: if you do so, the identity configuration mappings won't be applied and the application won't work properly.
+//
+// Add the Cosmos database context here
+//
+builder.Services.AddDbContext<CosmosIdentityDbContext<IdentityUser>>(options =>
+  options.UseCosmos(connectionString: connectionString, databaseName: cosmosIdentityDbName));
 
-## Configurations in Startup.cs File
+//
+// Add Cosmos Identity here
+//
+builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, IdentityUser, IdentityRole>(
+      options => options.SignIn.RequireConfirmedAccount = true
+    );
 
-## Remove the Default Identity Provider
+//
+// Must have an Email sender when using Identity Framework.
+// You will need an IEmailProvider. Below uses a SendGrid EmailProvider. You can use another.
+// Below users NuGet package: AspNetCore.Identity.Services.SendGrid
+var sendGridApiKey = builder.Configuration.GetValue<string>("SendGridApiKey");
+var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "eric@moonrise.net");
+builder.Services.AddSendGridEmailProvider(sendGridOptions);
+// End add SendGrid
 
-Remove the line where the default/current identity provider is added/configured.
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
-If you just created a new project, this line should be something like:
+var app = builder.Build();
 
-```csharp
-services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-  .AddEntityFrameworkStores<ApplicationDbContext>();
-```
-
-## Remove Default DbContext Configuration
-
-Remove the line where the SQL DbContext is configured.
-
-It should be something like:
-
-```csharp
-services.AddDbContext<ApplicationDbContext>(options =>
-  options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-```
-
-## Add Cosmos DB Identity Provider
-
-Now add the Cosmos DB provider:
-
-```csharp
-services.AddCosmosIdentity<MyDbContext, IdentityUser, IdentityRole>(
-  // Auth provider standard configuration (e.g.: account confirmation, password requirements, etc.)
-  options => ...,
-  options => options.UseCosmos(
-      "your_cosmos_db_URL",
-      "your_cosmos_db_key",
-      databaseName: "your_db"
-  ),
-
-  // If true, AddDefaultTokenProviders() method will be called on the IdentityBuilder instance
-  addDefaultTokenProviders: false   
-);
-```
-
-# This Provider & Identity UI
-
-This provider is also **compatible** with Identity UI.
-
-You can either use the default Identity UI (e.g.: in `Startup.cs` there's a call to `AddDefaultUI()` method) or use the [scaffolded](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/scaffold-identity?view=aspnetcore-5.0&tabs=visual-studio) version of Identity UI. Both scenarios should work out of the box without having to do anything else.
-
-Finally you can also use your own implementation of Identity UI, as long as you use the Identity services (e.g.: `UserManager` and `SignInManager`).
-
-# Available Services
-
-This library registers in the service collection a basic Cosmos DB repository implementation, that you can resolve in your constructors requiring the `IRepository` interface.
-
-An example:
-
-```csharp
-public class MyClass {
-  private readonly IRepository _repo;
-
-  public MyClass(IRepository repo) {
-    _repo = repo;
-  }
-
-  // ... Use the _repo instance methods to query the database
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
 }
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
+
+app.Run();
 ```
-
-## Available IRepository methods
-
-Just for your information, here is a summary of the available methods in the IRepository interface:
-
-- `Table<TEntity>()`
-- `GetById<TEntity>(string id)`
-- `TryFindOne<TEntity>(Expression<Func<TEntity, bool>> predicate)`
-- `Find<TEntity>(Expression<Func<TEntity, bool>> predicate)`
-- `Add<TEntity>(TEntity entity)`
-- `Update<TEntity>(TEntity entity)`
-- `DeleteById<TEntity>(string id)`
-- `Delete<TEntity>(TEntity entity)`
-- `Delete<TEntity>(Expression<Func<TEntity, bool>> predicate)`
-- `SaveChangesAsync()`
 
 # Changelog
 
@@ -200,3 +260,7 @@ Just for your information, here is a summary of the available methods in the IRe
 ## v2.0.1.0
 
 - Added example web project
+
+## Future work
+
+- Add support for IdentityServer
