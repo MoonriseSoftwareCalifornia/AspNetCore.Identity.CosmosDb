@@ -20,7 +20,7 @@ This repository contains three projects:
 To add this provider to your own Asp.Net 6 web project, add the following NuGet package:
 
 ```shell
-PM> Install-Package AspNetCore.Identity.CosmosDb
+PM> Install-Package [AspNetCore.Identity.CosmosDb](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb)
 ```
 
 # Integration Steps
