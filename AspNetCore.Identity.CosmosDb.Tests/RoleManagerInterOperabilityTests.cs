@@ -15,6 +15,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
             var result = await roleManager.CreateAsync(role);
 
             Assert.IsTrue(result.Succeeded);
+
             return await roleManager.FindByIdAsync(role.Id);
         }
 
@@ -259,24 +260,26 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         }
 
         [TestMethod]
-        protected Task UpdateRoleAsyncTest()
+        public async Task UpdateRoleAsyncTest()
         {
 
             // Assert
             using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
-            var role = GetTestRole(roleManager).Result;
-            var stamp = Guid.NewGuid().ToString();
-            role.ConcurrencyStamp = stamp;
+            var role = await GetTestRole(roleManager);
+            role.Name = role.Name + "-A";
+            role.NormalizedName = role.NormalizedName + "-A";
+            var n = role.Name;
+            var nn = role.NormalizedName;
 
             // Act
-            var result1 = roleManager.UpdateAsync(role).Result;
+            var result1 = await roleManager.UpdateAsync(role);
 
             // Assert
             Assert.IsTrue(result1.Succeeded);
-            var result2 = roleManager.FindByIdAsync(role.Id).Result;
-            Assert.AreEqual(stamp, result2.ConcurrencyStamp);
+            var result2 = await roleManager.FindByIdAsync(role.Id);
+            Assert.AreEqual(n, result2.Name);
+            Assert.AreEqual(nn, result2.NormalizedName);
 
-            return Task.CompletedTask;
         }
 
     }

@@ -47,7 +47,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// Gets a mock <see cref="IdentityRole"/> for unit testing purposes
         /// </summary>
         /// <returns></returns>
-        protected async Task<IdentityRole> GetMockRandomRoleAsync(CosmosRoleStore<IdentityRole> roleStore, bool saveToDatabase = true)
+        protected async Task<IdentityRole> GetMockRandomRoleAsync(CosmosRoleStore<IdentityRole>? roleStore, bool saveToDatabase = true)
         {
             var role = new IdentityRole(GetNextRandomNumber(1000, 9999).ToString());
             role.NormalizedName = role.Name.ToUpper();

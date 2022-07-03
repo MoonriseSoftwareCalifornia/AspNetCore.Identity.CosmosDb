@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using AspNetCore.Identity.CosmosDb.Contracts;
+﻿using AspNetCore.Identity.CosmosDb.Contracts;
 using AspNetCore.Identity.CosmosDb.Repositories;
 using AspNetCore.Identity.CosmosDb.Stores;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 
 namespace AspNetCore.Identity.CosmosDb.Extensions
@@ -11,51 +13,107 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds the Cosmos DB Identity.
+        /// Adds the default identity system configuration for the specified User and Role types.
         /// </summary>
-        /// <typeparam name="TDbContext"></typeparam>
-        /// <typeparam name="TUserEntity"></typeparam>
-        /// <typeparam name="TRoleEntity"></typeparam>
-        /// <param name="services"></param>
-        /// <param name="identityOptions"></param>
-        /// <param name="dbContextOptions">Optional</param>
-        /// <returns></returns>
+        /// <typeparam name="TUser">The type representing a User in the system.</typeparam>
+        /// <typeparam name="TRole">The type representing a Role in the system.</typeparam>
+        /// <param name="services">The services available in the application.</param>
+        /// <returns>An <see cref="IdentityBuilder"/> for creating and configuring the identity system.</returns>
+        public static IdentityBuilder AddCosmosIdentity<TUser, TRole>(
+            this IServiceCollection services)
+            where TUser : class
+            where TRole : class
+            => services.AddIdentity<TUser, TRole>(setupAction: null!);
+
+        /// <summary>
+        /// Adds and configures the identity system for the specified User and Role types.
+        /// </summary>
+        /// <typeparam name="TUser">The type representing a User in the system.</typeparam>
+        /// <typeparam name="TRole">The type representing a Role in the system.</typeparam>
+        /// <param name="services">The services available in the application.</param>
+        /// <param name="setupAction">An action to configure the <see cref="IdentityOptions"/>.</param>
+        /// <returns>An <see cref="IdentityBuilder"/> for creating and configuring the identity system.</returns>
         /// <remarks>
-        /// <para>The Cosmos DbContext be automatically added dbContextOptions are set. Otherwise add DbContext prior to this service.</para>
-        /// <para>Adds the following to services in order:</para>
-        /// <list type="number">
-        /// <item>CosmosIdentityDbContext</item>
-        /// <item>CosmosUserStore</item>
-        /// <item>CosmosRoleStore</item>
-        /// <item>CosmosIdentityRepository</item>
-        /// </list>
+        /// This class is based on the <see href="https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Core/src/IdentityServiceCollectionExtensions.cs">AddIdentity()</see>.
         /// </remarks>
-        public static IdentityBuilder AddCosmosIdentity<TDbContext, TUserEntity, TRoleEntity>(
+        public static IdentityBuilder AddCosmosIdentity<TDbContext, TUser, TRole>(
             this IServiceCollection services,
-            Action<IdentityOptions> identityOptions,
-            Action<DbContextOptionsBuilder> dbContextOptions = null
+            Action<IdentityOptions> setupAction
         )
-            where TDbContext : CosmosIdentityDbContext<TUserEntity>
-            where TUserEntity : IdentityUser, new()
-            where TRoleEntity : IdentityRole, new()
+            where TDbContext : CosmosIdentityDbContext<TUser>
+            where TUser : IdentityUser, new()
+            where TRole : IdentityRole, new()
         {
-            if (dbContextOptions != null)
-                services.AddDbContext<TDbContext>(dbContextOptions);
 
-            var builder = services
-                .AddIdentityCore<TUserEntity>(identityOptions)
-                .AddEntityFrameworkStores<TDbContext>();
+            //services.AddAuthentication().AddCookie(IdentityConstants.ExternalScheme).AddApplicationCookie();
+            //services.TryAddSingleton<ISystemClock, SystemClock>();
 
-            builder.AddDefaultTokenProviders();
+            // Services used by identity
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddCookie(IdentityConstants.ApplicationScheme, o =>
+            {
+                o.LoginPath = new PathString("/Account/Login");
+                o.Events = new CookieAuthenticationEvents
+                {
+                    OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
+                };
+            })
+            .AddCookie(IdentityConstants.ExternalScheme, o =>
+            {
+                o.Cookie.Name = IdentityConstants.ExternalScheme;
+                o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+            })
+            .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, o =>
+            {
+                o.Cookie.Name = IdentityConstants.TwoFactorRememberMeScheme;
+                o.Events = new CookieAuthenticationEvents
+                {
+                    OnValidatePrincipal = SecurityStampValidator.ValidateAsync<ITwoFactorSecurityStampValidator>
+                };
+            })
+            .AddCookie(IdentityConstants.TwoFactorUserIdScheme, o =>
+            {
+                o.Cookie.Name = IdentityConstants.TwoFactorUserIdScheme;
+                o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+            });
 
-            // Add custom Identity stores
-            services.AddTransient<IUserStore<TUserEntity>, CosmosUserStore<TUserEntity>>();
-            services.AddTransient<IRoleStore<TRoleEntity>, CosmosRoleStore<TRoleEntity>>();
+            // Hosting doesn't add IHttpContextAccessor by default
+            services.AddHttpContextAccessor();
 
-            // Add repository service
-            services.AddTransient<IRepository, CosmosIdentityRepository<TDbContext, TUserEntity>>();
+            // Add repository service (Connects to Cosmos DB)
+            services.AddTransient<IRepository, CosmosIdentityRepository<TDbContext, TUser>>();
 
-            return builder;
+            // Data stores
+            services.TryAddScoped<IUserStore<TUser>, CosmosUserStore<TUser>>();
+            services.TryAddScoped<IRoleStore<TRole>, CosmosRoleStore<TRole>>();
+
+            // Identity services
+            services.TryAddScoped<IUserValidator<TUser>, UserValidator<TUser>>();
+            services.TryAddScoped<IPasswordValidator<TUser>, PasswordValidator<TUser>>();
+            services.TryAddScoped<IPasswordHasher<TUser>, PasswordHasher<TUser>>();
+            services.TryAddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
+            services.TryAddScoped<IRoleValidator<TRole>, RoleValidator<TRole>>();
+            // No interface for the error describer so we can add errors without rev'ing the interface
+            services.TryAddScoped<IdentityErrorDescriber>();
+            services.TryAddScoped<ISecurityStampValidator, SecurityStampValidator<TUser>>();
+            services.TryAddScoped<ITwoFactorSecurityStampValidator, TwoFactorSecurityStampValidator<TUser>>();
+            services.TryAddScoped<IUserClaimsPrincipalFactory<TUser>, UserClaimsPrincipalFactory<TUser, TRole>>();
+            services.TryAddScoped<IUserConfirmation<TUser>, DefaultUserConfirmation<TUser>>();
+            services.TryAddScoped<UserManager<TUser>>();
+            services.TryAddScoped<SignInManager<TUser>>();
+            services.TryAddScoped<RoleManager<TRole>>();
+
+            if (setupAction != null)
+            {
+                services.Configure(setupAction);
+            }
+
+            return new IdentityBuilder(typeof(TUser), typeof(TRole), services);
         }
     }
 }

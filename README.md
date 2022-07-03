@@ -9,24 +9,28 @@ This project was forked from [Piero De Tomi](https://github.com/pierodetomi's) e
 # Installation (NuGet)
 
 ```shell
-PM> Install-Package AspNetCore.Identity.CosmosDb (Note this is currently in Alpha)
+PM> Install-Package AspNetCore.Identity.CosmosDb
 ```
 
 # Integration Steps
 
 ## Project Requirements
 
-The following steps assume that you have an ASP.NET Core 5 Web Application project that uses Identity and/or IdentityServer features.
+The following steps assume that you have an ASP.NET Core 6 Web Application project that uses Identity features.
 
 ## Cosmos DB Requirements
 
 ### Database
 
-Just as with EF Core on SQL Server, you have to manually create a database in your Cosmos DB instance to be able to operate.
+Start by creating an instance of [Cosmos DB in Azure](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction).  Either the Serverless or the dedicated model. At present this package is not compatible with the free version.  Choose the 'serverless' model as this is extremely cheap to run.  See [documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless) to help choose which is best for you.
 
 ### Containers
 
-Since **migrations are NOT supported when using EF Core on Cosmos DB**, you’ll have to manually create the following containers in your database:
+This package will automatically create the required containers (shown below) by setting the following configuration variable:
+
+"SetupCosmosDb" set to "true"
+
+
 
 | Container Name | Partition Key |
 | --- | --- |

@@ -258,7 +258,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="emailAddress"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task SetEmailAsync(TUserEntity user, string emailAddress, CancellationToken cancellationToken = default)
+        public Task SetEmailAsync(TUserEntity user, string emailAddress, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(emailAddress))
                 throw new ArgumentNullException(nameof(emailAddress));
@@ -268,6 +268,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             SetUserProperty(user, emailAddress, (u, m) => u.Email = emailAddress, cancellationToken);
 
+            return Task.CompletedTask;
         }
 
         /// <summary>

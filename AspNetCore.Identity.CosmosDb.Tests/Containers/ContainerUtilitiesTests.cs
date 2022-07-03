@@ -1,11 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AspNetCore.Identity.CosmosDb.Containers;
-using AspNetCore.Identity.CosmosDb.Tests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AspNetCore.Identity.CosmosDb.Tests;
 
 namespace AspNetCore.Identity.CosmosDb.Containers.Tests
 {
@@ -13,8 +6,8 @@ namespace AspNetCore.Identity.CosmosDb.Containers.Tests
     public class ContainerUtilitiesTests
     {
 
-        private static TestUtilities utils;
-        private static ContainerUtilities containerUtilities;
+        private static TestUtilities? utils;
+        private static ContainerUtilities? containerUtilities;
 
         /// <summary>
         /// Class initialize
