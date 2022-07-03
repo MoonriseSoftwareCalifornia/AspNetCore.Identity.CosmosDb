@@ -40,7 +40,8 @@ builder.Services.AddDbContext<CosmosIdentityDbContext<IdentityUser>>(options =>
 //
 builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, IdentityUser, IdentityRole>(
       options => options.SignIn.RequireConfirmedAccount = true
-    );
+    )
+    .AddDefaultTokenProviders();
 
 //
 // Must have an Email sender when using Identity Framework.

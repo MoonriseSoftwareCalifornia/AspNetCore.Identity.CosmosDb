@@ -125,7 +125,8 @@ The next step is to add the identity provider to your starup file. Here is an ex
 ```csharp
 builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, IdentityUser, IdentityRole>(
       options => options.SignIn.RequireConfirmedAccount = true // Always a good idea :)
-    );
+    )
+    .AddDefaultTokenProviders();
 ```
 
 ## Configure Email Provider
