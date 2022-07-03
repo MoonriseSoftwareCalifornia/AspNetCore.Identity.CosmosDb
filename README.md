@@ -162,15 +162,13 @@ In your project, find this file:
 Find the `OnGetAsync()` method, then look for the following line:
 
 ```csharp
-// Once you add a real email sender, you should remove this code that lets you confirm the account
-DisplayConfirmAccountLink = false;
+DisplayConfirmAccountLink = true;
 ```
 
-Change that line to `true` like the following:
+Change that line to `false` like the following:
 
 ```csharp
-// Once you add a real email sender, you should remove this code that lets you confirm the account
-DisplayConfirmAccountLink = true;
+DisplayConfirmAccountLink = false;
 ```
 
 # Startup file: Putting it all together
