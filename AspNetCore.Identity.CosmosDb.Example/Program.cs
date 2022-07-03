@@ -8,41 +8,48 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// The Cosmos connection string
 var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection");
+
+// Name of the Cosmos database to use
 var cosmosIdentityDbName = builder.Configuration.GetValue<string>("CosmosIdentityDbName");
+
+// If this is set, the Cosmos identity provider will:
+// 1. Create the database if it does not already exist.
+// 2. Create the required containers if they do not already exist.
+// IMPORTANT: Remove this variable if after first run. It will improve startup performance.
 var setupCosmosDb = builder.Configuration.GetValue<string>("SetupCosmosDb");
 
 // If the following is set, then create the identity database and required containers.
 // You can omit the following, or simplify it as needed.
-if (!string.IsNullOrEmpty(setupCosmosDb))
+if (bool.TryParse(setupCosmosDb, out var setup) && setup)
 {
-    if (bool.TryParse(setupCosmosDb, out var setup))
-    {
-        if (setup)
-        {
-            var utils = new ContainerUtilities(connectionString, cosmosIdentityDbName);
-            utils.CreateDatabaseAsync(cosmosIdentityDbName).Wait();
-            utils.CreateRequiredContainers().Wait();
-        }
-    }
+    var utils = new ContainerUtilities(connectionString, cosmosIdentityDbName);
+    utils.CreateDatabaseAsync(cosmosIdentityDbName).Wait();
+    utils.CreateRequiredContainers().Wait();
 }
 
 //
-// Add the database context here
+// Add the Cosmos database context here
 //
 builder.Services.AddDbContext<CosmosIdentityDbContext<IdentityUser>>(options =>
   options.UseCosmos(connectionString: connectionString, databaseName: cosmosIdentityDbName));
 
+//
+// Add Cosmos Identity here
+//
 builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, IdentityUser, IdentityRole>(
       options => options.SignIn.RequireConfirmedAccount = true
     );
 
+//
 // Must have an Email sender when using Identity Framework.
 // You will need an IEmailProvider. Below uses a SendGrid EmailProvider. You can use another.
-// NuGet package: AspNetCore.Identity.Services.SendGrid
+// Below users NuGet package: AspNetCore.Identity.Services.SendGrid
 var sendGridApiKey = builder.Configuration.GetValue<string>("SendGridApiKey");
 var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "eric@moonrise.net");
 builder.Services.AddSendGridEmailProvider(sendGridOptions);
+// End add SendGrid
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllersWithViews();

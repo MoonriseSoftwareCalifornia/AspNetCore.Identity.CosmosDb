@@ -26,7 +26,7 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
             => services.AddIdentity<TUser, TRole>(setupAction: null!);
 
         /// <summary>
-        /// Adds and configures the identity system for the specified User and Role types.
+        /// Adds and configures the identity system for the specified User and Role types, using Cosmos DB as the data store.
         /// </summary>
         /// <typeparam name="TUser">The type representing a User in the system.</typeparam>
         /// <typeparam name="TRole">The type representing a Role in the system.</typeparam>
