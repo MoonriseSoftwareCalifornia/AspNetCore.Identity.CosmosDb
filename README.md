@@ -21,7 +21,7 @@ This repository contains three projects:
 
 # Installation (NuGet)
 
-To add this provider to your own Asp.Net 6 web project, add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb)
+To add this provider to your own Asp.Net 6 web project, add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb):
 
 ```shell
 PM> Install-Package AspNetCore.Identity.CosmosDb
@@ -131,9 +131,8 @@ builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, Identi
 
 ## Configure Email Provider
 
-When users register accounts or need to reset passwords, you will need (at a minimum), the ability 
-to send tokens via an [Email provider](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/accconfirm?view=aspnetcore-6.0&tabs=visual-studio#configure-an-email-provider). The example below uses a SendGrid provider. Here is how to add the SendGrid
-provider used in this example:
+When users register accounts or need to reset passwords, you will need (at a minimum), the ability
+to send tokens via an [Email provider](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/accconfirm?view=aspnetcore-6.0&tabs=visual-studio#configure-an-email-provider). The example below uses a SendGrid provider. Here is how to add it:
 
 Start by adding the following NuGet package to your project:
 
@@ -154,7 +153,7 @@ builder.Services.AddSendGridEmailProvider(sendGridOptions);
 ## Modify "Scaffolded" Identity UI
 
 The example web project uses the "scaffolded" Identity UI. By default it does not use an IEmailProvider.
-But in our case we have installed a provider so we need to modify the UI to enable it.
+But in our case we have installed one so we need to modify the UI to enable it.
 
 In your project, find this file:
 
