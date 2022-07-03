@@ -1,6 +1,7 @@
 <h1 valign="center"><img src="./Assets/cosmosdb.svg"/>EF Core Cosmos DB Identity Provider</h1>
 
 [![.NET 6 Build-Test](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml) [![CodeQL](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
+[![Unit Tests](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml)
 
 This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that uses the [EF Core Azure Cosmos DB Provider](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
@@ -125,15 +126,6 @@ services.AddCosmosIdentity<MyDbContext, IdentityUser, IdentityRole>(
 );
 ```
 
-## Update IdentityServer Configuration (If Applicable)
-
-If your project is using **IdentityServer**, update the related configuration in order to use your new DbContext implementation:
-
-```csharp
-// Note that we're using MyDbContext as the second type parameter here...
-services.AddIdentityServer().AddApiAuthorization<IdentityUser, MyDbContext>();
-```
-
 # This Provider & Identity UI
 
 This provider is also **compatible** with Identity UI.
@@ -196,3 +188,7 @@ Just for your information, here is a summary of the available methods in the IRe
 - Added `UserStore`, `RoleStore`, `UserManager` and `RoleManager` unit tests.
 - Namespace changed to one more generic: `AspNetCore.Identity.CosmosDb`
 - Implemented `IUserLockoutStore` interface for `UserStore`
+
+## v2.0.1.0
+
+- Added example web project
