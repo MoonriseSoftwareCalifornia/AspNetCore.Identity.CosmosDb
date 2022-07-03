@@ -7,6 +7,10 @@ This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that u
 
 This project was forked from [Piero De Tomi](https://github.com/pierodetomi's) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos). If you are using .Net 5, it is highly recommended using that project instead of this one.
 
+# Feedback
+
+We appreciate feedback through this project's discussion boards and issues list! That greatly helps us know what to improve with this project.
+
 # Contents
 
 This repository contains three projects:
@@ -124,6 +128,8 @@ builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, Identi
     );
 ```
 
+## Configure Email Provider
+
 When users register accounts or need to reset passwords, you will need (at a minimum), the ability 
 to send tokens via an [Email provider](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/accconfirm?view=aspnetcore-6.0&tabs=visual-studio#configure-an-email-provider). The example below uses a SendGrid provider. Here is how to add the SendGrid
 provider used in this example:
@@ -134,7 +140,9 @@ Start by adding the following NuGet package to your project:
 PM> Install-PackageAspNetCore.Identity.Services.SendGrid
 ```
 
-Next add the following code to your startup file:
+## Configure app to support email
+
+Next we need to configure the application to support our Email provider. Start by adding the following code to your startup file:
 
 ```csharp
 var sendGridApiKey = builder.Configuration.GetValue<string>("SendGridApiKey");
@@ -142,7 +150,30 @@ var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "eric@moo
 builder.Services.AddSendGridEmailProvider(sendGridOptions);
 ```
 
-# Putting it all together
+## Modify "Scaffolded" Identity UI
+
+The example web project uses the "scaffolded" Identity UI. By default it does not use an IEmailProvider.
+But in our case we have installed a provider so we need to modify the UI to enable it.
+
+In your project, find this file:
+
+`/Areas/Identity/Pages/Account/RegisterConfirmation.cshtml.cs`
+
+Find the `OnGetAsync()` method, then look for the following line:
+
+```csharp
+// Once you add a real email sender, you should remove this code that lets you confirm the account
+DisplayConfirmAccountLink = false;
+```
+
+Change that line to `true` like the following:
+
+```csharp
+// Once you add a real email sender, you should remove this code that lets you confirm the account
+DisplayConfirmAccountLink = true;
+```
+
+# Startup file: Putting it all together
 
 The above instructions showed how to modify the startup file to make use of this provider. Sometimes 
 it is easier to see the end result rather than peicemeal.  Here is an example Asp.Net 6 Project.cs
@@ -266,3 +297,12 @@ app.Run();
 ## Future work
 
 - Add support for IdentityServer
+
+# References
+
+To learn more about Asp.Net Identity and items realted to this project, please see the following:
+
+- [Introduction to Identity on ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-6.0&tabs=visual-studio)
+  - [Account confirmation and password recovery in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/accconfirm?view=aspnetcore-6.0&tabs=visual-studio)
+- [Asp.Net Core Identity on GitHub](https://github.com/dotnet/AspNetCore/tree/main/src/Identity)
+- [The .Net 5 version of AspNetCore.Identity.Cosmos (pierodetomi/efcore-identity-cosmos)](https://github.com/pierodetomi/efcore-identity-cosmos)
