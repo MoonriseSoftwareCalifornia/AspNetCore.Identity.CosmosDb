@@ -5,7 +5,7 @@
 
 This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that uses the [EF Core Azure Cosmos DB Provider](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
-This project was forked from [Piero De Tomi](https://github.com/pierodetomi's) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos). If you are using .Net 5, it is highly recommended using that project instead of this one.
+This project was forked from [Piero De Tomi's](https://github.com/pierodetomi) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos). If you are using .Net 5, it is highly recommended using that project instead of this one.
 
 # Feedback
 
