@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>2.0.3.2</Version>
-    <AssemblyVersion>2.0.3.2</AssemblyVersion>
-    <FileVersion>2.0.3.2</FileVersion>
+    <Version>2.0.3.3</Version>
+    <AssemblyVersion>2.0.3.3</AssemblyVersion>
+    <FileVersion>2.0.3.3</FileVersion>
     <Authors>Eric Kauffman</Authors>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>aspnet, efcore, cosmos, cosmosdb, identity, provider, identity provider</PackageTags>
@@ -16,13 +16,13 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <RepositoryType>git</RepositoryType>
-    <Description>A Cosmos DB implementation of an Identity provider for .NET 6. You can use this package to easily bootstrap an ASP.NET Core Web Application by a CosmosDb database and EF Core, in place of SQL Server.</Description>
+    <Description>A Cosmos DB implementation of an ASP.NET Core Identity provider for .NET 6. Please provide feedback on our Git repository. Thank you!</Description>
     <ApplicationIcon>_res\icons\nuget-icon.ico</ApplicationIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Company>Cosmos Software LLC</Company>
     <Copyright>Moonrise Software LLC</Copyright>
-    <PackageReleaseNotes>This is an alpha release of this package. It is now going through testing and validation.</PackageReleaseNotes>
+    <PackageReleaseNotes>This is a production release. For latest updates see project website.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

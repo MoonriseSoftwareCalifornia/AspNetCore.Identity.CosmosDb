@@ -4,9 +4,9 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>2.0.3.2</Version>
-    <AssemblyVersion>2.0.3.2</AssemblyVersion>
-    <FileVersion>2.0.3.2</FileVersion>
+    <Version>2.0.3.3</Version>
+    <AssemblyVersion>2.0.3.3</AssemblyVersion>
+    <FileVersion>2.0.3.3</FileVersion>
     <Authors>Eric Kauffman</Authors>
     <IsPackable>false</IsPackable>
 
