@@ -294,10 +294,6 @@ app.Run();
 
 - Added example web project
 
-## Future work
-
-- Add support for IdentityServer
-
 # References
 
 To learn more about Asp.Net Identity and items realted to this project, please see the following:
