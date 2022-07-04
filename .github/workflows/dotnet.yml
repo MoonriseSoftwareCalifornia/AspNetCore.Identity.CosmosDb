@@ -23,7 +23,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
    
-    - name: Publish NuGet
-      run: dotnet nuget push /home/runner/work/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/bin/Debug/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-    - name: Publish NuGet Symbols
-      run: dotnet nuget push /home/runner/work/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/bin/Debug/*.snupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+    #- name: Publish NuGet
+    #  run: dotnet nuget push /home/runner/work/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/bin/Debug/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+    #- name: Publish NuGet Symbols
+    #  run: dotnet nuget push /home/runner/work/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/bin/Debug/*.snupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
