@@ -146,7 +146,8 @@ Next we need to configure the application to support our Email provider. Start b
 
 ```csharp
 var sendGridApiKey = builder.Configuration.GetValue<string>("SendGridApiKey");
-var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "eric@moonrise.net");
+var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "your@emailaddress.com");
+
 builder.Services.AddSendGridEmailProvider(sendGridOptions);
 ```
 
