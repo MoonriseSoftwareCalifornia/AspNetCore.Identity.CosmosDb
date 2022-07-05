@@ -69,7 +69,7 @@ Here is an example of how to set the secrets in a `secrets.json` file that would
 Here you will need to modify the database context to inherit from the `CosmosIdentityDbContext.`  Often
 the database context can be found in this location:
 
-`/Data/ApplicationDbContext.cs'
+`/Data/ApplicationDbContext.cs`
 
 Now modify the file above to look like this:
 
