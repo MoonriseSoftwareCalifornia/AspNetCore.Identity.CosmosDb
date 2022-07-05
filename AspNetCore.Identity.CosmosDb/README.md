@@ -1,24 +1,15 @@
-<h1 valign="center"><img src="./Assets/cosmosdb.svg"/>EF Core Cosmos DB Identity Provider</h1>
+# Cosmos DB Provider for ASP.NET Core Identity
 
 [![.NET 6 Build-Test](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml) [![CodeQL](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
 [![Unit Tests](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml)
-[![NuGet Status](http://nugetstatus.com/AspNetCore.Identity.CosmosDb.png)](http://nugetstatus.com/packages/AspNetCore.Identity.CosmosDb)
 
-This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that uses the [EF Core Azure Cosmos DB Provider](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
+This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that uses the [“EF Core Azure Cosmos DB Provider.”](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli)
 
-This project was forked from [Piero De Tomi](https://github.com/pierodetomi's) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos). If you are using .Net 5, it is highly recommended using that project instead of this one.
+This project was forked from [Piero De Tomi’s](https://github.com/pierodetomi) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos). If you are using .Net 5, it is highly recommended using that project instead of this one.
 
 # Feedback
 
 We appreciate feedback through this project's discussion boards and issues list! That greatly helps us know what to improve with this project.
-
-# Contents
-
-This repository contains three projects:
-
-- AspNetCore.Identity.CosmosDb (The Cosmos DB Identity Provider - NuGet package source)
-- AspNetCore.Identity.CosmosDb.Example (And example Asp.Net 6 website configured to use the provider)
-- AspNetCore.Identity.CosmosDb.Tests (Unit tests that exercise and validate the provider)
 
 # Installation (NuGet)
 
@@ -39,6 +30,37 @@ The following instructions show how to install the Cosmos DB identity provider. 
 
 Note: This provider requires too many containers to use the free version of Cosmos DB.  The serverless instance is very economical
 and is a good option to start with. See [documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless) to help choose which is best for you.
+
+## Update Database Context (ApplicationDbContext.cs)
+
+Here you will need to modify the database context to inherit from the `CosmosIdentityDbContext.`  Often
+the database context can be found in this location:
+
+`/Data/ApplicationDbContext.cs`
+
+Now modify the file above to look like this:
+
+```csharp
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+namespace AspNetCore.Identity.CosmosDb.Example.Data
+{
+    public class ApplicationDbContext : CosmosIdentityDbContext<IdentityUser>
+    {
+        public ApplicationDbContext(DbContextOptions dbContextOptions)
+          : base(dbContextOptions) { }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            // DO NOT REMOVE THIS LINE. If you do, your context won't work as expected.
+            base.OnModelCreating(builder);
+
+            // TODO: Add your own fluent mappings
+        }
+    }
+}
+```
 
 ## Application Configuration "Secrets"
 

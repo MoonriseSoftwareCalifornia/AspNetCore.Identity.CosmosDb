@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace AspNetCore.Identity.CosmosDb.Contracts
 {
+    /// <summary>
+    /// Cosmos Repository interface
+    /// </summary>
     public interface IRepository
     {
         DbSet<TEntity> Table<TEntity>() where TEntity : class, new();
