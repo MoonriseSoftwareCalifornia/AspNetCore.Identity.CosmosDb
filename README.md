@@ -64,6 +64,37 @@ Here is an example of how to set the secrets in a `secrets.json` file that would
 }
 ```
 
+## Update Database Context (ApplicationDbContext.cs)
+
+Here you will need to modify the database context to inherit from the `CosmosIdentityDbContext.`  Often
+the database context can be found in this location:
+
+`/Data/ApplicationDbContext.cs'
+
+Now modify the file above to look like this:
+
+```csharp
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+namespace AspNetCore.Identity.CosmosDb.Example.Data
+{
+    public class ApplicationDbContext : CosmosIdentityDbContext<IdentityUser>
+    {
+        public ApplicationDbContext(DbContextOptions dbContextOptions)
+          : base(dbContextOptions) { }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            // DO NOT REMOVE THIS LINE. If you do, your context won't work as expected.
+            base.OnModelCreating(builder);
+
+            // TODO: Add your own fluent mappings
+        }
+    }
+}
+```
+
 ## Modify Program.cs or Startup.cs File
 
 After the "secrets" have been set, the next task is to modify your project's startup file.  For Asp.net
