@@ -178,7 +178,8 @@ Next we need to configure the application to support our Email provider. Start b
 
 ```csharp
 var sendGridApiKey = builder.Configuration.GetValue<string>("SendGridApiKey");
-var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "your@emailaddress.com");
+// Modify 'from' email address to your own.
+var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "foo@mycompany.com");
 
 builder.Services.AddSendGridEmailProvider(sendGridOptions);
 ```
@@ -261,7 +262,8 @@ builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, Identi
 // You will need an IEmailProvider. Below uses a SendGrid EmailProvider. You can use another.
 // Below users NuGet package: AspNetCore.Identity.Services.SendGrid
 var sendGridApiKey = builder.Configuration.GetValue<string>("SendGridApiKey");
-var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "eric@moonrise.net");
+// Modify 'from' email address to your own.
+var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "foo@mycompany.com");
 builder.Services.AddSendGridEmailProvider(sendGridOptions);
 // End add SendGrid
 
