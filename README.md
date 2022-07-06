@@ -21,11 +21,11 @@ PM> Install-Package AspNetCore.Identity.CosmosDb
 
 # Integration Steps
 
-## Before Starting
+## Cosmos Account and optional SendGrid API Key
 
 The following instructions show how to install the Cosmos DB identity provider. To continue please have the following ready:
 
-- An Azure Cosmos DB account created - either the serverless or dedicated instance. You do not have to create a database yet.
+- [Azure Cosmos DB account](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/create-cosmosdb-resources-portal) - either the serverless or dedicated instance. You do not have to create a database yet.
 - A SendGrid API Key if you are using the IEmailProvider used in these instructions
 
 Note: This provider requires too many containers to use the free version of Cosmos DB.  The serverless instance is very economical
