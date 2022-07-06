@@ -672,5 +672,19 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
 
         }
 
+        [TestMethod]
+        public async Task QueryUsersTest()
+        {
+            // Arrange
+            using var userStore = _testUtilities.GetUserStore();
+            var user1 = await GetMockRandomUserAsync(userStore);
+
+            // Act
+            var result = userStore.Users.ToList();
+
+            // Assert
+            Assert.IsTrue(result.Count > 0);
+        }
+
     }
 }

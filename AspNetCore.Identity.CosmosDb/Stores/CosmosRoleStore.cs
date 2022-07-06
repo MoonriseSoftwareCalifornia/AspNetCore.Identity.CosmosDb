@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Linq;
+using AspNetCore.Identity.CosmosDb.Repositories;
 
 namespace AspNetCore.Identity.CosmosDb.Stores
 {
@@ -15,6 +16,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
     /// </summary>
     /// <typeparam name="TRoleEntity"></typeparam>
     public class CosmosRoleStore<TRoleEntity> : IRoleStore<TRoleEntity>,
+        IQueryableRoleStore<TRoleEntity>,
         IRoleClaimStore<TRoleEntity> where TRoleEntity : IdentityRole, new()
     {
         private readonly IRepository _repo;
@@ -28,6 +30,18 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (_disposed)
             {
                 throw new ObjectDisposedException(GetType().Name);
+            }
+        }
+
+        /// <summary>
+        /// Role query
+        /// </summary>
+        public IQueryable<TRoleEntity> Roles
+        {
+            get
+            {
+                var cir = (CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser>, IdentityUser>)_repo;
+                return (IQueryable<TRoleEntity>)cir.Roles;
             }
         }
 

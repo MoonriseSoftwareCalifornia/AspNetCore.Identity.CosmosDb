@@ -11,6 +11,7 @@ namespace AspNetCore.Identity.CosmosDb.Contracts
     /// </summary>
     public interface IRepository
     {
+
         DbSet<TEntity> Table<TEntity>() where TEntity : class, new();
 
         TEntity GetById<TEntity>(string id) where TEntity : class, new();

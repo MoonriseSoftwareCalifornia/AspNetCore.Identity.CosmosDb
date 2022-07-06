@@ -12,10 +12,6 @@ namespace AspNetCore.Identity.CosmosDb
     /// <typeparam name="TUserEntity"></typeparam>
     public class CosmosIdentityDbContext<TUserEntity> : IdentityDbContext<TUserEntity> where TUserEntity : IdentityUser
     {
-        //private readonly bool _createDbAndContainers;
-        //private readonly string _connectionString;
-        //private readonly string _databaseName;
-
         /// <summary>
         /// Constructor
         /// </summary>

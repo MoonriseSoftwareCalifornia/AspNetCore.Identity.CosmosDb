@@ -1,4 +1,5 @@
 ﻿using AspNetCore.Identity.CosmosDb.Contracts;
+using AspNetCore.Identity.CosmosDb.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,10 +25,20 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         IUserClaimStore<TUserEntity>,
         IUserSecurityStampStore<TUserEntity>,
         IUserTwoFactorStore<TUserEntity>,
+        IQueryableUserStore<TUserEntity>,
         IUserLoginStore<TUserEntity> where TUserEntity : IdentityUser, new()
     {
         private readonly IRepository _repo;
         private bool _disposed;
+
+        public IQueryable<TUserEntity> Users
+        {
+            get
+            {
+                var cir = (CosmosIdentityRepository<CosmosIdentityDbContext<TUserEntity>, TUserEntity>)_repo;
+                return cir.Users;
+            }
+        }
 
         /// <summary>
         /// Throws if this class has been disposed.

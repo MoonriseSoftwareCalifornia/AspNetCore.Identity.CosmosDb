@@ -14,6 +14,16 @@ namespace AspNetCore.Identity.CosmosDb.Repositories
     {
         protected TDbContext _db;
 
+        public IQueryable<TUserEntity> Users
+        {
+            get { return _db.Users.AsQueryable(); }
+        }
+
+        public IQueryable<IdentityRole> Roles
+        {
+            get { return _db.Roles.AsQueryable(); }
+        }
+
         public CosmosIdentityRepository(TDbContext db)
         {
             _db = db;

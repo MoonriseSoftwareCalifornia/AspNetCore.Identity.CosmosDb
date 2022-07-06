@@ -241,5 +241,19 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             var result3 = await roleStore.GetClaimsAsync(role, default);
             Assert.AreEqual(0, result3.Count);
         }
+
+        [TestMethod]
+        public async Task QueryRolesTest()
+        {
+            // Arrange
+            using var roletore = _testUtilities.GetRoleStore();
+            var user1 = await GetMockRandomRoleAsync(roletore);
+
+            // Act
+            var result = roletore.Roles.ToList();
+
+            // Assert
+            Assert.IsTrue(result.Count > 0);
+        }
     }
 }
