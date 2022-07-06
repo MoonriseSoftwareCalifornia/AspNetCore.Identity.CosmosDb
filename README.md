@@ -11,14 +11,6 @@ This project was forked from [Piero De Tomi's](https://github.com/pierodetomi) e
 
 We appreciate feedback through this project's discussion boards and issues list! That greatly helps us know what to improve with this project.
 
-# Contents
-
-This repository contains three projects:
-
-- AspNetCore.Identity.CosmosDb (The Cosmos DB Identity Provider - NuGet package source)
-- AspNetCore.Identity.CosmosDb.Example (And example Asp.Net 6 website configured to use the provider)
-- AspNetCore.Identity.CosmosDb.Tests (Unit tests that exercise and validate the provider)
-
 # Installation (NuGet)
 
 To add this provider to your own Asp.Net 6 web project, add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb):
