@@ -204,9 +204,9 @@ Change that line to `false` like the following:
 DisplayConfirmAccountLink = false;
 ```
 
-# Startup file: Putting it all together
+# Complete Startup File Example
 
-The above instructions showed how to modify the startup file to make use of this provider. Sometimes 
+The above instructions showed how to modify the startup file to make use of this provider. Sometimes
 it is easier to see the end result rather than peicemeal.  Here is an example Asp.Net 6 Project.cs
 file fully configured:
 
