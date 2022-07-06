@@ -196,7 +196,7 @@ Change that line to `false` like the following:
 DisplayConfirmAccountLink = false;
 ```
 
-# Startup file: Putting it all together
+## Completed Startup FIle Exampe
 
 The above instructions showed how to modify the startup file to make use of this provider. Sometimes 
 it is easier to see the end result rather than peicemeal.  Here is an example Asp.Net 6 Project.cs
@@ -293,21 +293,33 @@ app.MapRazorPages();
 app.Run();
 ```
 
-# Changelog
+## Supported LINQ Operators User and Role Stores
 
-## v1.0.6
+Both the user and role stores now support queries via LINQ using Entity Framework.
+Here is an example:
+
+```csharp
+var results = userManager.Users.Where(w => w.Email.StartsWith("bob"))
+```
+
+For a list of supported LINQ operations, please see the ["Supported LINQ Operaions"](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/sql-query-linq-to-sql#SupportedLinqOperators)
+documentation for more details.
+
+## Changelog
+
+### v1.0.6
 
 - Introduced support for `IUserLoginStore<TUser>` in User Store
 
-## v1.0.5
+### v1.0.5
 
 - Introduced support for `IUserPhoneNumberStore<TUser>` in User Store
 
-## v1.0.4
+#### v1.0.4
 
 - Introduced support for `IUserEmailStore<TUser>` in User Store
 
-## v2.0.0-alpha
+### v2.0.0-alpha
 
 - Forked from source repository [pierodetomi/efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos).
 - Refactored for .Net 6 LTS.
@@ -315,11 +327,15 @@ app.Run();
 - Namespace changed to one more generic: `AspNetCore.Identity.CosmosDb`
 - Implemented `IUserLockoutStore` interface for `UserStore`
 
-## v2.0.1.0
+### v2.0.1.0
 
 - Added example web project
 
-# References
+### v2.0.5.1
+
+- Implemented IQueryableUserStore and IQueryableRoleStore
+
+## References
 
 To learn more about Asp.Net Identity and items realted to this project, please see the following:
 
