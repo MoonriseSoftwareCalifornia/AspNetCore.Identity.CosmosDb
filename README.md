@@ -301,6 +301,19 @@ app.MapRazorPages();
 app.Run();
 ```
 
+# Supported LINQ Operators User and Role Stores
+
+Both the user and role stores now support queries via LINQ using Entity Framework.
+Here is an example:
+
+```csharp
+var userResults = userManager.Users.Where(u => u.Email.StartsWith("bob"));
+var roleResults = roleManager.Roles.Where (r => r.Name.Contains("water"));
+```
+
+For a list of supported LINQ operations, please see the ["Supported LINQ Operaions"](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/sql-query-linq-to-sql#SupportedLinqOperators)
+documentation for more details.
+
 # Changelog
 
 ## v1.0.6
@@ -327,11 +340,16 @@ app.Run();
 
 - Added example web project
 
+## v2.0.5.1
+
+- Implemented IQueryableUserStore and IQueryableRoleStore
+
 # References
 
 To learn more about Asp.Net Identity and items realted to this project, please see the following:
 
+- [.Net 5 version of AspNetCore.Identity.Cosmos (pierodetomi/efcore-identity-cosmos)](https://github.com/pierodetomi/efcore-identity-cosmos)
+- [Asp.Net Core Identity on GitHub](https://github.com/dotnet/AspNetCore/tree/main/src/Identity)
 - [Introduction to Identity on ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-6.0&tabs=visual-studio)
   - [Account confirmation and password recovery in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/accconfirm?view=aspnetcore-6.0&tabs=visual-studio)
-- [Asp.Net Core Identity on GitHub](https://github.com/dotnet/AspNetCore/tree/main/src/Identity)
-- [The .Net 5 version of AspNetCore.Identity.Cosmos (pierodetomi/efcore-identity-cosmos)](https://github.com/pierodetomi/efcore-identity-cosmos)
+- [Supported LINQ Operaions for Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/sql-query-linq-to-sql#SupportedLinqOperators)
