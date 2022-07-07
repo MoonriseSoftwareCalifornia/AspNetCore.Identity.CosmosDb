@@ -160,7 +160,7 @@ to send tokens via an [Email provider](https://docs.microsoft.com/en-us/aspnet/c
 Start by adding the following NuGet package to your project:
 
 ```shell
-PM> Install-PackageAspNetCore.Identity.Services.SendGrid
+PM> Install-Package AspNetCore.Identity.Services.SendGrid
 ```
 
 ## Configure app to support email
