@@ -303,7 +303,7 @@ var userResults = userManager.Users.Where(u => u.Email.StartsWith("bob"));
 var roleResults = roleManager.Roles.Where (r => r.Name.Contains("water"));
 ```
 
-For a list of supported LINQ operations, please see the ["Supported LINQ Operaions"](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/sql-query-linq-to-sql#SupportedLinqOperators)
+For a list of supported LINQ operations, please see the ["Supported LINQ Operations"](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/sql-query-linq-to-sql#SupportedLinqOperators)
 documentation for more details.
 
 # Changelog
