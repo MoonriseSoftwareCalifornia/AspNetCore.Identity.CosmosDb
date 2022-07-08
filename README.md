@@ -7,9 +7,11 @@ This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that u
 
 This project was forked from [Piero De Tomi's](https://github.com/pierodetomi) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos). If you are using .Net 5, it is highly recommended using that project instead of this one.
 
-# Feedback
+# Questions and Feedback Welcome
 
-We appreciate feedback through this project's discussion boards and issues list! That greatly helps us know what to improve with this project.
+Need help getting started, or have feedback on how we can improve this product, [let us know](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions)!
+
+We appreciate feedback through this project's [discussion boards and issues list](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions)! That greatly helps us know what to improve with this project.
 
 # Installation (NuGet)
 
@@ -163,6 +165,8 @@ Start by adding the following NuGet package to your project:
 PM> Install-Package AspNetCore.Identity.Services.SendGrid
 ```
 
+Note: You can sign up for a [free SendGrid account](https://sendgrid.com/) if you do not already have one.
+
 ## Configure app to support email
 
 Next we need to configure the application to support our Email provider. Start by adding the following code to your startup file:
@@ -292,6 +296,8 @@ app.MapRazorPages();
 
 app.Run();
 ```
+
+TIP: Download and run [a working website](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/tree/master/AspNetCore.Identity.CosmosDb.Example) that implements these instructions.
 
 # Supported LINQ Operators User and Role Stores
 
