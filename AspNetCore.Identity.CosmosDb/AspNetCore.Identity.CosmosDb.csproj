@@ -7,7 +7,7 @@
     <FileVersion>2.0.7.1</FileVersion>
     <Authors>Eric Kauffman</Authors>
     <RepositoryType>GitHub</RepositoryType>
-    <PackageTags>aspnet, efcore, cosmos, cosmosdb, identity, provider, identity provider</PackageTags>
+    <PackageTags>Cosmos, CosmosDB, Identity, Provider, AspNetCore, Membership, Roles, AspNetCore.Identity, AspNetCore.Identity.CosmosDb, Microsoft.AspNetCore.Identity, aspnet, efcore</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>AspNetCore.Identity.CosmosDb</PackageId>
     <RepositoryUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</RepositoryUrl>
