@@ -128,10 +128,10 @@ Next, add the code that will trigger the provider to create the database and req
 //  required containers.
 if (bool.TryParse(setupCosmosDb, out var setup) && setup)
 {
-    var builder1 = new DbContextOptionsBuilder();
-    builder1.UseCosmos(connectionString, cosmosCmsDbName);
+    var builder1 = new DbContextOptionsBuilder<ApplicationDbContext>();
+    builder1.UseCosmos(connectionString, cosmosIdentityDbName);
 
-    using (var dbContext = new CosmosDbContext(builder1.Options))
+    using (var dbContext = new ApplicationDbContext(builder1.Options))
     {
         dbContext.Database.EnsureCreated();
     }
