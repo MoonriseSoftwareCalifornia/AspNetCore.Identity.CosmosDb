@@ -124,13 +124,17 @@ var setupCosmosDb = builder.Configuration.GetValue<string>("SetupCosmosDb");
 Next, add the code that will trigger the provider to create the database and required containers:
 
 ```csharp
-// If the following is set, then create the identity database and required containers.
-// You can omit the following, or simplify it as needed.
+// If the following is set, it will create the Cosmos database and
+//  required containers.
 if (bool.TryParse(setupCosmosDb, out var setup) && setup)
 {
-    var utils = new ContainerUtilities(connectionString, cosmosIdentityDbName);
-    utils.CreateDatabaseAsync(cosmosIdentityDbName).Wait();
-    utils.CreateRequiredContainers().Wait();
+    var builder1 = new DbContextOptionsBuilder();
+    builder1.UseCosmos(connectionString, cosmosCmsDbName);
+
+    using (var dbContext = new CosmosDbContext(builder1.Options))
+    {
+        dbContext.Database.EnsureCreated();
+    }
 }
 
 ```
@@ -229,13 +233,17 @@ var cosmosIdentityDbName = builder.Configuration.GetValue<string>("CosmosIdentit
 // IMPORTANT: Remove this variable if after first run. It will improve startup performance.
 var setupCosmosDb = builder.Configuration.GetValue<string>("SetupCosmosDb");
 
-// If the following is set, then create the identity database and required containers.
-// You can omit the following, or simplify it as needed.
+// If the following is set it will create the Cosmos database
+// and required containers.
 if (bool.TryParse(setupCosmosDb, out var setup) && setup)
 {
-    var utils = new ContainerUtilities(connectionString, cosmosIdentityDbName);
-    utils.CreateDatabaseAsync(cosmosIdentityDbName).Wait();
-    utils.CreateRequiredContainers().Wait();
+    var builder1 = new DbContextOptionsBuilder();
+    builder1.UseCosmos(connectionString, cosmosCmsDbName);
+
+    using (var dbContext = new CosmosDbContext(builder1.Options))
+    {
+        dbContext.Database.EnsureCreated();
+    }
 }
 
 //

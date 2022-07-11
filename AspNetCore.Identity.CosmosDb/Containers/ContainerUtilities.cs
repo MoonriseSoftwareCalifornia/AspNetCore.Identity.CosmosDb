@@ -9,7 +9,8 @@ namespace AspNetCore.Identity.CosmosDb.Containers
     /// Utilities for creating Cosmos DB Containers
     /// </summary>
     /// <remarks>
-    /// This class is only meant to run when the database needs to be created, deleted or containers removed.
+    /// This class is only meant to run when the database needs to be created, deleted or containers removed without using the DbContext.
+    /// A better approach is to use DbContext.EnsureCreated.
     /// </remarks>
     public class ContainerUtilities : IDisposable
     {
