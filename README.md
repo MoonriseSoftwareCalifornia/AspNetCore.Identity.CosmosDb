@@ -237,12 +237,17 @@ var setupCosmosDb = builder.Configuration.GetValue<string>("SetupCosmosDb");
 // and required containers.
 if (bool.TryParse(setupCosmosDb, out var setup) && setup)
 {
-    var builder1 = new DbContextOptionsBuilder();
-    builder1.UseCosmos(connectionString, cosmosCmsDbName);
-
-    using (var dbContext = new CosmosDbContext(builder1.Options))
+    // If the following is set, it will create the Cosmos database and
+    //  required containers.
+    if (bool.TryParse(setupCosmosDb, out var setup) && setup)
     {
-        dbContext.Database.EnsureCreated();
+        var builder1 = new DbContextOptionsBuilder<ApplicationDbContext>();
+        builder1.UseCosmos(connectionString, cosmosIdentityDbName);
+
+        using (var dbContext = new ApplicationDbContext(builder1.Options))
+        {
+            dbContext.Database.EnsureCreated();
+        }
     }
 }
 
