@@ -1,5 +1,6 @@
 using AspNetCore.Identity.CosmosDb;
 using AspNetCore.Identity.CosmosDb.Containers;
+using AspNetCore.Identity.CosmosDb.Example.Data;
 using AspNetCore.Identity.CosmosDb.Extensions;
 using AspNetCore.Identity.Services.SendGrid;
 using AspNetCore.Identity.Services.SendGrid.Extensions;
@@ -20,27 +21,32 @@ var cosmosIdentityDbName = builder.Configuration.GetValue<string>("CosmosIdentit
 // IMPORTANT: Remove this variable if after first run. It will improve startup performance.
 var setupCosmosDb = builder.Configuration.GetValue<string>("SetupCosmosDb");
 
-// If the following is set, then create the identity database and required containers.
-// You can omit the following, or simplify it as needed.
+// If the following is set, it will create the Cosmos database and
+//  required containers.
 if (bool.TryParse(setupCosmosDb, out var setup) && setup)
 {
-    var utils = new ContainerUtilities(connectionString, cosmosIdentityDbName);
-    utils.CreateDatabaseAsync(cosmosIdentityDbName).Wait();
-    utils.CreateRequiredContainers().Wait();
+    var builder1 = new DbContextOptionsBuilder<ApplicationDbContext>();
+    builder1.UseCosmos(connectionString, cosmosIdentityDbName);
+
+    using (var dbContext = new ApplicationDbContext(builder1.Options))
+    {
+        dbContext.Database.EnsureCreated();
+    }
 }
 
 //
 // Add the Cosmos database context here
 //
-builder.Services.AddDbContext<CosmosIdentityDbContext<IdentityUser>>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
   options.UseCosmos(connectionString: connectionString, databaseName: cosmosIdentityDbName));
 
 //
 // Add Cosmos Identity here
 //
-builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, IdentityUser, IdentityRole>(
+builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityRole>(
       options => options.SignIn.RequireConfirmedAccount = true
     )
+    .AddDefaultUI() // Use this if Identity Scaffolding added
     .AddDefaultTokenProviders();
 
 //
@@ -54,7 +60,7 @@ builder.Services.AddSendGridEmailProvider(sendGridOptions);
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(); // Use this if Identity Scaffolding added
 
 var app = builder.Build();
 
@@ -81,6 +87,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+app.MapRazorPages(); // Use this if Identity Scaffolding added
 
 app.Run();
