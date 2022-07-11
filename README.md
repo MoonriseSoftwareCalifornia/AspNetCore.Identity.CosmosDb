@@ -145,14 +145,14 @@ to add your own entities (documentation on that is being developed).
 Put this in your startup file:
 
 ```csharp
-builder.Services.AddDbContext<CosmosIdentityDbContext<IdentityUser>>(options =>
-  options.UseCosmos(connectionString: connectionString, databaseName: cosmosIdentityDbName));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseCosmos(connectionString: connectionString, databaseName: cosmosIdentityDbName));
 ```
 
 The next step is to add the identity provider to your starup file. Here is an example:
 
 ```csharp
-builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, IdentityUser, IdentityRole>(
+builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityRole>(
       options => options.SignIn.RequireConfirmedAccount = true // Always a good idea :)
     )
     .AddDefaultTokenProviders();
@@ -254,14 +254,14 @@ if (bool.TryParse(setupCosmosDb, out var setup) && setup)
 //
 // Add the Cosmos database context here
 //
-builder.Services.AddDbContext<CosmosIdentityDbContext<IdentityUser>>(options =>
-  options.UseCosmos(connectionString: connectionString, databaseName: cosmosIdentityDbName));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseCosmos(connectionString: connectionString, databaseName: cosmosIdentityDbName));
 
 //
 // Add Cosmos Identity here
 //
-builder.Services.AddCosmosIdentity<CosmosIdentityDbContext<IdentityUser>, IdentityUser, IdentityRole>(
-      options => options.SignIn.RequireConfirmedAccount = true
+builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityRole>(
+      options => options.SignIn.RequireConfirmedAccount = true // Always a good idea :)
     )
     .AddDefaultTokenProviders();
 
