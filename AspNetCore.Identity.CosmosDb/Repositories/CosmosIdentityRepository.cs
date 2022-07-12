@@ -25,6 +25,31 @@ namespace AspNetCore.Identity.CosmosDb.Repositories
             get { return _db.Roles.AsQueryable(); }
         }
 
+        public IQueryable UserClaims
+        {
+            get { return _db.UserClaims.AsQueryable(); }
+        }
+
+        public IQueryable UserRoles
+        {
+            get { return _db.UserRoles.AsQueryable(); }
+        }
+
+        public IQueryable UserLogins
+        {
+            get { return _db.UserLogins.AsQueryable(); }
+        }
+
+        public IQueryable RoleClaims
+        {
+            get { return _db.RoleClaims.AsQueryable(); }
+        }
+
+        public IQueryable UserTokens
+        {
+            get { return _db.UserTokens.AsQueryable(); }
+        }
+
         public CosmosIdentityRepository(TDbContext db)
         {
             _db = db;

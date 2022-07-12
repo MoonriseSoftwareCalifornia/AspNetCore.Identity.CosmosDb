@@ -10,8 +10,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests
 {
     public abstract class CosmosIdentityTestsBase
     {
-        protected static TestUtilities? _testUtilities;
-        protected static Random? _random;
+        protected static TestUtilities _testUtilities;
+        protected static Random _random;
 
         protected static void InitializeClass()
         {
@@ -47,7 +47,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// Gets a mock <see cref="IdentityRole"/> for unit testing purposes
         /// </summary>
         /// <returns></returns>
-        protected async Task<IdentityRole> GetMockRandomRoleAsync(CosmosRoleStore<IdentityRole>? roleStore, bool saveToDatabase = true)
+        protected async Task<IdentityRole> GetMockRandomRoleAsync(CosmosRoleStore<IdentityUser, IdentityRole> roleStore, bool saveToDatabase = true)
         {
             var role = new IdentityRole(GetNextRandomNumber(1000, 9999).ToString());
             role.NormalizedName = role.Name.ToUpper();
@@ -65,7 +65,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// Gets a mock <see cref="IdentityUser"/> for unit testing purposes
         /// </summary>
         /// <returns></returns>
-        protected async Task<IdentityUser> GetMockRandomUserAsync(CosmosUserStore<IdentityUser>? userStore, bool saveToDatabase = true)
+        protected async Task<IdentityUser> GetMockRandomUserAsync(CosmosUserStore<IdentityUser> userStore, bool saveToDatabase = true)
         {
             var randomEmail = $"{GetNextRandomNumber(1000, 9999)}@{GetNextRandomNumber(10000, 99999)}.com";
             var user = new IdentityUser(randomEmail) { Email = randomEmail, Id = Guid.NewGuid().ToString() };

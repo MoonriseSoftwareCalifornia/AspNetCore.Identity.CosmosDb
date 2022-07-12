@@ -99,6 +99,23 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             try
             {
+                var roles = await GetRolesAsync(user);
+                var claims = await GetClaimsAsync(user);
+                var logins = await GetLoginsAsync(user);
+
+                foreach (var role in roles)
+                {
+                    await RemoveFromRoleAsync(user, role, cancellationToken);
+                }
+
+                if (claims.Any())
+                    await RemoveClaimsAsync(user, claims, cancellationToken);
+                
+                foreach(var login in logins)
+                {
+                    await RemoveLoginAsync(user, login.ProviderDisplayName, login.ProviderKey, cancellationToken);
+                }
+
                 _repo.Delete(user);
                 await _repo.SaveChangesAsync();
             }
@@ -753,7 +770,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task AddClaimsAsync(TUserEntity user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        public async Task AddClaimsAsync(TUserEntity user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -816,7 +833,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task RemoveClaimsAsync(TUserEntity user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        public async Task RemoveClaimsAsync(TUserEntity user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();

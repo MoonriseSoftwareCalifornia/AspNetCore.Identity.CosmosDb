@@ -6,8 +6,8 @@ namespace AspNetCore.Identity.CosmosDb.Containers.Tests
     public class ContainerUtilitiesTests
     {
 
-        private static TestUtilities? utils;
-        private static ContainerUtilities? containerUtilities;
+        private static TestUtilities utils;
+        private static ContainerUtilities containerUtilities;
 
         /// <summary>
         /// Class initialize

@@ -90,7 +90,7 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
 
             // Data stores
             services.TryAddScoped<IUserStore<TUser>, CosmosUserStore<TUser>>();
-            services.TryAddScoped<IRoleStore<TRole>, CosmosRoleStore<TRole>>();
+            services.TryAddScoped<IRoleStore<TRole>, CosmosRoleStore<TUser, TRole>>();
 
             // Identity services
             services.TryAddScoped<IUserValidator<TUser>, UserValidator<TUser>>();

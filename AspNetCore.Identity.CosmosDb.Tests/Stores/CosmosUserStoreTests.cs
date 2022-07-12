@@ -67,15 +67,26 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
             // Arrange - setup the new user
             using var userStore = _testUtilities.GetUserStore();
+            using var roleStore = _testUtilities.GetRoleStore();
             using var dbContext = _testUtilities.GetDbContext();
             var user = await GetMockRandomUserAsync(userStore);
+            var userId = user.Id;
+            var role = await GetMockRandomRoleAsync(roleStore);
+            var claim = GetMockClaim();
+            var login = GetMockLoginInfoAsync();
+            await userStore.AddClaimsAsync(user, new[] { claim });
+            await userStore.AddLoginAsync(user, login);
+            await userStore.AddToRoleAsync(user, role.NormalizedName);
 
             // Act
             var result = await userStore.DeleteAsync(user);
 
             // Assert
             Assert.IsTrue(result.Succeeded);
-            Assert.IsTrue(dbContext.Users.Where(a => a.UserName == user.UserName).Count() == 0);            // Assert
+            Assert.IsTrue(dbContext.Users.Where(a => a.Id == userId).Count() == 0);
+            Assert.IsTrue(dbContext.UserClaims.Where(a => a.UserId == userId).Count() == 0);
+            Assert.IsTrue(dbContext.UserLogins.Where(a => a.UserId == userId).Count() == 0);
+            Assert.IsTrue(dbContext.UserRoles.Where(a => a.UserId == userId).Count() == 0);           // Assert
         }
 
         [TestMethod()]

@@ -11,9 +11,15 @@ namespace AspNetCore.Identity.CosmosDb.Contracts
     /// </summary>
     public interface IRepository
     {
-
         IQueryable Users { get; }
         IQueryable Roles { get; }
+
+        IQueryable UserClaims { get; }
+        IQueryable UserRoles { get; }
+
+        IQueryable UserLogins { get; }
+        IQueryable RoleClaims { get; }
+        IQueryable UserTokens { get; }
 
         DbSet<TEntity> Table<TEntity>() where TEntity : class, new();
 

@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <Version>2.0.8.1</Version>
-    <AssemblyVersion>2.0.8.1</AssemblyVersion>
-    <FileVersion>2.0.8.1</FileVersion>
+    <Nullable>disable</Nullable>
+    <Version>2.0.9.1</Version>
+    <AssemblyVersion>2.0.9.1</AssemblyVersion>
+    <FileVersion>2.0.9.1</FileVersion>
     <Authors>Eric Kauffman</Authors>
     <IsPackable>false</IsPackable>
 

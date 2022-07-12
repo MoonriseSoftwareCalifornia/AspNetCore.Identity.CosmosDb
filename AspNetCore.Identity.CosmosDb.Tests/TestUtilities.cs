@@ -12,7 +12,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
 {
     public class TestUtilities
     {
-        private IConfigurationRoot? _configuration;
+        private IConfigurationRoot _configuration;
 
         /// <summary>
         /// Non-normalized email address for user 1
@@ -147,11 +147,11 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// Get an instance of the Cosmos DB role store
         /// </summary>
         /// <returns></returns>
-        public CosmosRoleStore<IdentityRole> GetRoleStore()
+        public CosmosRoleStore<IdentityUser, IdentityRole> GetRoleStore()
         {
             var repository = new CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser, IdentityRole>, IdentityUser, IdentityRole>(GetDbContext());
 
-            var rolestore = new CosmosRoleStore<IdentityRole>(repository);
+            var rolestore = new CosmosRoleStore<IdentityUser, IdentityRole>(repository);
 
             return rolestore;
         }

@@ -54,8 +54,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
         {
             // Arrange
             using var roleStore = _testUtilities.GetRoleStore();
+            using var userStore = _testUtilities.GetUserStore();
             using var dbContext = _testUtilities.GetDbContext();
-            var role = await GetMockRandomRoleAsync();
+            var role = await GetMockRandomRoleAsync(roleStore);
+            var user = await GetMockRandomUserAsync(userStore);
+            var roleClaim = GetMockClaim();
+            await roleStore.AddClaimAsync(role, roleClaim);
+            await userStore.AddToRoleAsync(user, role.NormalizedName);
+
+            var roleId = role.Id;
 
             // Act
             var result = await roleStore.DeleteAsync(role);
@@ -63,6 +70,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             // Assert
             Assert.IsTrue(result.Succeeded);
             Assert.IsTrue(dbContext.Roles.Where(a => a.Name == role.Name).Count() == 0);
+            Assert.IsTrue(dbContext.RoleClaims.Where(a => a.RoleId == roleId).Count() == 0);
+            Assert.IsTrue(dbContext.UserRoles.Where(a => a.RoleId == roleId).Count() == 0);
         }
 
         [TestMethod()]

@@ -15,9 +15,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores
     /// Cosmos DB Role Store
     /// </summary>
     /// <typeparam name="TRoleEntity"></typeparam>
-    public class CosmosRoleStore<TRoleEntity> : IRoleStore<TRoleEntity>,
+    public class CosmosRoleStore<TUserRoleEntity, TRoleEntity> : IRoleStore<TRoleEntity>,
         IQueryableRoleStore<TRoleEntity>,
-        IRoleClaimStore<TRoleEntity> where TRoleEntity : IdentityRole, new()
+        IRoleClaimStore<TRoleEntity> 
+        where TRoleEntity : IdentityRole
+        , new()
     {
         private readonly IRepository _repo;
         private bool _disposed;
@@ -41,6 +43,28 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             get
             {
                 return (IQueryable<TRoleEntity>)_repo.Roles;
+            }
+        }
+
+        /// <summary>
+        /// UserRoles query
+        /// </summary>
+        public IQueryable<IdentityUserRole<string>> UserRoles
+        {
+            get
+            {
+                return (IQueryable<IdentityUserRole<string>>)_repo.UserRoles;
+            }
+        }
+
+        /// <summary>
+        /// UserRoles query
+        /// </summary>
+        public IQueryable<IdentityRoleClaim<string>> RoleClaims
+        {
+            get
+            {
+                return (IQueryable<IdentityRoleClaim<string>>)_repo.RoleClaims;
             }
         }
 
@@ -89,6 +113,16 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             try
             {
+                var userRoles = await UserRoles.Where(w => w.RoleId == role.Id).ToListAsync();
+                foreach(var userRole in userRoles)
+                {
+                    _repo.Delete(userRole);
+                }
+                var roleClaims = await RoleClaims.Where(w => w.RoleId == role.Id).ToListAsync();
+                foreach(var roleClaim in roleClaims)
+                {
+                    _repo.Delete(roleClaim);
+                }
                 _repo.Delete(role);
                 await _repo.SaveChangesAsync();
             }
