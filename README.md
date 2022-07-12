@@ -250,6 +250,19 @@ documentation for more details.
 
 - Implemented IQueryableUserStore and IQueryableRoleStore
 
+# Unit Test Instructions
+
+To run the unit tests you will need two things: (1) A Cosmos DB Account, and (2) a connection string to that account.
+Here is an example of a `secrets.json` file created for the unit test project:
+
+```json
+{
+  "ConnectionStrings": {
+    "ApplicationDbContextConnection": "AccountEndpoint=https://cosmosunittest.documents.azure.com:443/;AccountKey=Wszmj4FW7gLTWG06OB0m9LYQ7dAWaNmQiFHJsXXZjBNakP3Sy3AOtewplc73CH3b6ZYaFm1VLY4i4DEyGLD2vw==;"
+  }
+}
+```
+
 # References
 
 To learn more about Asp.Net Identity and items realted to this project, please see the following:
