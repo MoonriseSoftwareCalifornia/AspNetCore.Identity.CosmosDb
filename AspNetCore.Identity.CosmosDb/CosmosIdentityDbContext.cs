@@ -10,7 +10,10 @@ namespace AspNetCore.Identity.CosmosDb
     /// Cosmos Identity Database Context
     /// </summary>
     /// <typeparam name="TUserEntity"></typeparam>
-    public class CosmosIdentityDbContext<TUserEntity> : IdentityDbContext<TUserEntity> where TUserEntity : IdentityUser
+    public class CosmosIdentityDbContext<TUserEntity, TRoleEntity> : 
+        IdentityDbContext<TUserEntity, TRoleEntity, string> 
+        where TUserEntity : IdentityUser
+        where TRoleEntity : IdentityRole
     {
         /// <summary>
         /// Constructor

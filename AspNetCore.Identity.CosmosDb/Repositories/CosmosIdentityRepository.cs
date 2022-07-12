@@ -8,18 +8,19 @@ using System.Threading.Tasks;
 
 namespace AspNetCore.Identity.CosmosDb.Repositories
 {
-    public class CosmosIdentityRepository<TDbContext, TUserEntity> : IRepository
-        where TDbContext : CosmosIdentityDbContext<TUserEntity>
+    public class CosmosIdentityRepository<TDbContext, TUserEntity, TRoleEntity> : IRepository
+        where TDbContext : CosmosIdentityDbContext<TUserEntity, TRoleEntity>
         where TUserEntity : IdentityUser
+        where TRoleEntity : IdentityRole
     {
         protected TDbContext _db;
 
-        public IQueryable<TUserEntity> Users
+        public IQueryable Users
         {
             get { return _db.Users.AsQueryable(); }
         }
 
-        public IQueryable<IdentityRole> Roles
+        public IQueryable Roles
         {
             get { return _db.Roles.AsQueryable(); }
         }

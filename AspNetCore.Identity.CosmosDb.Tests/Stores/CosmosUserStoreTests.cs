@@ -683,6 +683,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             var result = userStore.Users.ToList();
 
             // Assert
+            Assert.IsInstanceOfType(userStore.Users, typeof(IQueryable<IdentityUser>));
             Assert.IsTrue(result.Count > 0);
         }
 

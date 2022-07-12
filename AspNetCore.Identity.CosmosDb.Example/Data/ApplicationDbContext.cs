@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCore.Identity.CosmosDb.Example.Data
 {
-    public class ApplicationDbContext : CosmosIdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : CosmosIdentityDbContext<IdentityUser, IdentityRole>
     {
         public ApplicationDbContext(DbContextOptions dbContextOptions)
           : base(dbContextOptions) { }

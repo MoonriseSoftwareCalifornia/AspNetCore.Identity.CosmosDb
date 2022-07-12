@@ -73,7 +73,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCore.Identity.CosmosDb.Example.Data
 {
-    public class ApplicationDbContext : CosmosIdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : CosmosIdentityDbContext<IdentityUser, IdentityRole>
     {
         public ApplicationDbContext(DbContextOptions dbContextOptions)
           : base(dbContextOptions) { }
@@ -147,6 +147,7 @@ The next step is to add the identity provider to your starup file. Here is an ex
 builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityRole>(
       options => options.SignIn.RequireConfirmedAccount = true // Always a good idea :)
     )
+    .AddDefaultUI() // Use this if Identity Scaffolding is in use
     .AddDefaultTokenProviders();
 ```
 

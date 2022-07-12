@@ -122,9 +122,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// </summary>
         /// <param name="connectionName"></param>
         /// <returns></returns>
-        public CosmosIdentityDbContext<IdentityUser> GetDbContext(string connectionName = "ApplicationDbContextConnection")
+        public CosmosIdentityDbContext<IdentityUser, IdentityRole> GetDbContext(string connectionName = "ApplicationDbContextConnection")
         {
-            var dbContext = new CosmosIdentityDbContext<IdentityUser>(GetDbOptions(connectionName));
+            var dbContext = new CosmosIdentityDbContext<IdentityUser, IdentityRole>(GetDbOptions(connectionName));
             return dbContext;
         }
 
@@ -136,7 +136,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public CosmosUserStore<IdentityUser> GetUserStore(string connectionName = "ApplicationDbContextConnection")
         {
 
-            var repository = new CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser>, IdentityUser>(GetDbContext());
+            var repository = new CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser, IdentityRole>, IdentityUser, IdentityRole>(GetDbContext());
 
             var userStore = new CosmosUserStore<IdentityUser>(repository);
 
@@ -149,7 +149,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// <returns></returns>
         public CosmosRoleStore<IdentityRole> GetRoleStore()
         {
-            var repository = new CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser>, IdentityUser>(GetDbContext());
+            var repository = new CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser, IdentityRole>, IdentityUser, IdentityRole>(GetDbContext());
 
             var rolestore = new CosmosRoleStore<IdentityRole>(repository);
 

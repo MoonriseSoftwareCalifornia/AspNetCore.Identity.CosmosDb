@@ -40,7 +40,7 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
             this IServiceCollection services,
             Action<IdentityOptions> setupAction
         )
-            where TDbContext : CosmosIdentityDbContext<TUser>
+            where TDbContext : CosmosIdentityDbContext<TUser, TRole>
             where TUser : IdentityUser, new()
             where TRole : IdentityRole, new()
         {
@@ -86,7 +86,7 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
             services.AddHttpContextAccessor();
 
             // Add repository service (Connects to Cosmos DB)
-            services.AddTransient<IRepository, CosmosIdentityRepository<TDbContext, TUser>>();
+            services.AddTransient<IRepository, CosmosIdentityRepository<TDbContext, TUser, TRole>>();
 
             // Data stores
             services.TryAddScoped<IUserStore<TUser>, CosmosUserStore<TUser>>();

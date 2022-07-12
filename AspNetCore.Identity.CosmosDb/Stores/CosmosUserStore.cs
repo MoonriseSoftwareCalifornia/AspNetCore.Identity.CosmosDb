@@ -35,8 +35,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         {
             get
             {
-                var cir = (CosmosIdentityRepository<CosmosIdentityDbContext<TUserEntity>, TUserEntity>)_repo;
-                return cir.Users;
+                return (IQueryable<TUserEntity>)_repo.Users;
             }
         }
 
