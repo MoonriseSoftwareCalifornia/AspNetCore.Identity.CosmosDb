@@ -22,7 +22,7 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Company>Cosmos Software LLC</Company>
     <Copyright>Moonrise Software LLC</Copyright>
-    <PackageReleaseNotes>Updated Readme.md</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed issue #5</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
