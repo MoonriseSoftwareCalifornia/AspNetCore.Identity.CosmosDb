@@ -258,7 +258,7 @@ Here is an example of a `secrets.json` file created for the unit test project:
 ```json
 {
   "ConnectionStrings": {
-    "ApplicationDbContextConnection": "AccountEndpoint=https://cosmosunittest.documents.azure.com:443/;AccountKey=Wszmj4FW7gLTWG06OB0m9LYQ7dAWaNmQiFHJsXXZjBNakP3Sy3AOtewplc73CH3b6ZYaFm1VLY4i4DEyGLD2vw==;"
+    "ApplicationDbContextConnection": "AccountEndpoint=YOURCONNECTIONSTRING;"
   }
 }
 ```
