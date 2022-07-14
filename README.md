@@ -13,6 +13,10 @@ Need help getting started, or have feedback on how we can improve this product, 
 
 We appreciate feedback through this project's [discussion boards and issues list](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions)! That greatly helps us know what to improve with this project.
 
+## Help Find Bugs!
+
+Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub bug discussion](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions). Thank you in advance!
+
 # Installation (NuGet)
 
 To add this provider to your own Asp.Net 6 web project, add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb):
@@ -262,6 +266,15 @@ Here is an example of a `secrets.json` file created for the unit test project:
   }
 }
 ```
+
+## Choice of Cosmos DB Account Type
+
+Because this implementation uses multiple containers, it exceeds the minimum throughput requirements for the "free" Cosmos DB
+account.
+
+However, if you deploy a "[serverless](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless)" account, your
+monthly costs will be very low. For example, our serverless Cosmos account used for unit testing costs under $0.10 (US) a month as
+of July 2022.
 
 # References
 

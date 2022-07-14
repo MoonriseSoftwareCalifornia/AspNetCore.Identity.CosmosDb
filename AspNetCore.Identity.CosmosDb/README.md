@@ -5,6 +5,11 @@
 
 This is a **Cosmos DB** implementation of an ASP.NET Core Identity provider for .NET 6 that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli)
 
+## Help us find bugs!
+Find a bug or a problem? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub bug discussion](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions).
+
+## Install Instructions
+
 - For the latest install instructions [please see our project website on GitHub](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb#-cosmos-db-provider-for-aspnet-core-identity).
 - Questions or feedback are welcome! Please see our new [project discussion section](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions). We will reply as soon as possible.
 - An example web application that uses this package [is available for download](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb).
