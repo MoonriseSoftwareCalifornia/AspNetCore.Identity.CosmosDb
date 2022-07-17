@@ -17,8 +17,8 @@ Add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Iden
 PM> Install-Package AspNetCore.Identity.CosmosDb
 ```
 
-Create an [Azure Cosmos DB account](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/create-cosmosdb-resources-portal) - either the serverless or dedicated instance. For testinga and development purposes it is recommended to use a 'serverless instance'
-because it is very economical to use. See [documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless) to help choose which is best for you.
+Create an [Azure Cosmos DB account](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/create-cosmosdb-resources-portal) - either the serverless or dedicated instance. For testing and development purposes it is recommended to use a 'serverless instance'
+as it is [very economical to use](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb#choice-of-cosmos-db-account-type). See [documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless) to help choose which is best for you.
 
 Set your configuration settings with the connection string and database name. Below is an example of a `secrets.json` file:
 
