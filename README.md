@@ -7,7 +7,7 @@ This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that u
 
 ## Help Find Bugs!
 
-Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub bug discussion](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions). Thank you in advance!
+Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub issues section](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/issues). Thank you in advance!
 
 # Installation
 
