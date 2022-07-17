@@ -130,7 +130,7 @@ PM> Install-Package AspNetCore.Identity.Services.SendGrid
 
 Note: You can sign up for a [free SendGrid account](https://sendgrid.com/) if you do not already have one.
 
-## Configure app to support email
+### Configure app to support email
 
 Next we need to configure the application to support our Email provider. Start by adding the following code to your startup file:
 
@@ -142,7 +142,7 @@ var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "foo@myco
 builder.Services.AddSendGridEmailProvider(sendGridOptions);
 ```
 
-## Modify "Scaffolded" Identity UI
+### Modify "Scaffolded" Identity UI
 
 The example web project uses the "scaffolded" Identity UI. By default it does not use an IEmailProvider.
 But in our case we have installed one so we need to modify the UI to enable it.
