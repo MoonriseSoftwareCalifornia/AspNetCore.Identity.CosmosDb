@@ -3,57 +3,27 @@
 [![.NET 6 Build-Test](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml) [![CodeQL](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
 [![Unit Tests](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml)
 
-This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli)
-
-This project was forked from [Piero De Tomi's](https://github.com/pierodetomi) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos). If you are using .Net 5, it is highly recommended using that project instead of this one.
-
-# Questions and Feedback Welcome
-
-Need help getting started, or have feedback on how we can improve this product, [let us know](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions)!
-
-We appreciate feedback through this project's [discussion boards and issues list](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions)! That greatly helps us know what to improve with this project.
+This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli) that was forked from [Piero De Tomi's](https://github.com/pierodetomi) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos).
 
 ## Help Find Bugs!
 
 Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub bug discussion](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions). Thank you in advance!
 
-# Installation (NuGet)
+# Installation
 
-To add this provider to your own Asp.Net 6 web project, add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb):
+Add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb) to your project:
 
 ```shell
 PM> Install-Package AspNetCore.Identity.CosmosDb
 ```
 
-# Integration Steps
+Create an [Azure Cosmos DB account](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/create-cosmosdb-resources-portal) - either the serverless or dedicated instance. For testinga and development purposes it is recommended to use a 'serverless instance'
+because it is very economical to use. See [documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless) to help choose which is best for you.
 
-## Cosmos Account and optional SendGrid API Key
-
-The following instructions show how to install the Cosmos DB identity provider. To continue please have the following ready:
-
-- [Azure Cosmos DB account](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/create-cosmosdb-resources-portal) - either the serverless or dedicated instance. You do not have to create a database yet.
-- A SendGrid API Key if you are using the IEmailProvider used in these instructions
-
-Note: This provider requires too many containers to use the free version of Cosmos DB.  The serverless instance is very economical
-and is a good option to start with. See [documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless) to help choose which is best for you.
-
-## Application Configuration "Secrets"
-
-Three secrets need to be created for this example:
-
-- SendGridApiKey (The API key for your SendGrid account)
-- CosmosIdentityDbName (The name of the database you want to use)
-- ConnectionStrings:ApplicationDbContextConnection (The connection string for your Cosmos account)
-
-And if you want the provider to automatically setup the database and required containers, use this setting:
-
-- SetupCosmosDb
-
-Here is an example of how to set the secrets in a `secrets.json` file that would be used with Visual Studio:
+Set your configuration settings with the connection string and database name. Below is an example of a `secrets.json` file:
 
 ```json
 {
-  "SendGridApiKey": "YOUR SENDGRID API KEY",
   "SetupCosmosDb": "true", // Importat: Remove this after first run.
   "CosmosIdentityDbName": "YourDabatabaseName",
   "ConnectionStrings": {
@@ -62,14 +32,9 @@ Here is an example of how to set the secrets in a `secrets.json` file that would
 }
 ```
 
-## Update Database Context (ApplicationDbContext.cs)
+## Update Database Context
 
-Here you will need to modify the database context to inherit from the `CosmosIdentityDbContext.`  Often
-the database context can be found in this location:
-
-`/Data/ApplicationDbContext.cs`
-
-Now modify the file above to look like this:
+Modify the database context to inherit from the `CosmosIdentityDbContext` like this:
 
 ```csharp
 using Microsoft.AspNetCore.Identity;
@@ -117,7 +82,7 @@ var setupCosmosDb = builder.Configuration.GetValue<string>("SetupCosmosDb");
 
 ```
 
-Next, add the code that will trigger the provider to create the database and required containers:
+Add this code if you want the provider to create the database and required containers:
 
 ```csharp
 // If the following is set, it will create the Cosmos database and
@@ -135,17 +100,14 @@ if (bool.TryParse(setupCosmosDb, out var setup) && setup)
 
 ```
 
-Now add the database context that is required for this provider. Note: This context can be modified
-to add your own entities (documentation on that is being developed).
-
-Put this in your startup file:
+Now add the database context in your startup file like this:
 
 ```csharp
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseCosmos(connectionString: connectionString, databaseName: cosmosIdentityDbName));
 ```
 
-The next step is to add the identity provider to your starup file. Here is an example:
+Follow that up with the identity provider. Here is an example:
 
 ```csharp
 builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityRole>(
@@ -155,7 +117,7 @@ builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityR
     .AddDefaultTokenProviders();
 ```
 
-## Configure Email Provider
+## Configure Email Provider (Optional)
 
 When users register accounts or need to reset passwords, you will need (at a minimum), the ability
 to send tokens via an [Email provider](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/accconfirm?view=aspnetcore-6.0&tabs=visual-studio#configure-an-email-provider). The example below uses a SendGrid provider. Here is how to add it:
