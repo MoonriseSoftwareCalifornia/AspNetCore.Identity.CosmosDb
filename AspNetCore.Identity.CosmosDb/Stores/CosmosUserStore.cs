@@ -561,7 +561,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             if (role != null)
             {
-                var userRole = await _repo.Table<IdentityUserRole<string>>().SingleOrDefaultAsync(_ => _.RoleId == role.Id, cancellationToken);
+                var userRole = await _repo.Table<IdentityUserRole<string>>().SingleOrDefaultAsync(_ => _.RoleId == role.Id && _.UserId == user.Id, cancellationToken);
                 if (userRole != null)
                 {
                     _repo.Delete(userRole);
@@ -818,7 +818,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 throw new ArgumentNullException(nameof(claim));
 
             var doomed = await _repo.Table<IdentityUserClaim<string>>()
-                .FirstOrDefaultAsync(c => c.UserId == user.Id &&
+                .SingleOrDefaultAsync(c => c.UserId == user.Id &&
                     c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType, cancellationToken);
 
             _repo.Delete<IdentityUserClaim<string>>(doomed);
@@ -845,7 +845,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             foreach(var claim in claims)
             {
                 var doomed = await _repo.Table<IdentityUserClaim<string>>()
-                .FirstOrDefaultAsync(c => c.UserId == user.Id &&
+                .SingleOrDefaultAsync(c => c.UserId == user.Id &&
                     c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType, cancellationToken);
 
                 _repo.Delete(doomed);
