@@ -22,7 +22,7 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Company>Cosmos Software LLC</Company>
     <Copyright>Moonrise Software LLC</Copyright>
-    <PackageReleaseNotes>Updated NuGet packages.</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed bug with remove user from role method.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
