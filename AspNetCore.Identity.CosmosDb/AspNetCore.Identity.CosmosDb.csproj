@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>2.0.11</Version>
-    <AssemblyVersion>2.0.11.1</AssemblyVersion>
-    <FileVersion>2.0.11.1</FileVersion>
-    <Authors>Eric Kauffman</Authors>
+    <Version>2.0.12</Version>
+    <AssemblyVersion>2.0.12.1</AssemblyVersion>
+    <FileVersion>2.0.12.1</FileVersion>
+    <Authors>toiyabe62</Authors>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>Cosmos, CosmosDB, Identity, Provider, AspNetCore, Membership, Roles, AspNetCore.Identity, AspNetCore.Identity.CosmosDb, Microsoft.AspNetCore.Identity, aspnet, efcore</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -22,7 +22,7 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Company>Cosmos Software LLC</Company>
     <Copyright>Moonrise Software LLC</Copyright>
-    <PackageReleaseNotes>Fixed bug with remove user from role method.</PackageReleaseNotes>
+    <PackageReleaseNotes>Updated NuGet Readme.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 

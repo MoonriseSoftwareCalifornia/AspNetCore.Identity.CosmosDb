@@ -7,9 +7,9 @@ This is a **Cosmos DB** implementation of an ASP.NET Core Identity provider for 
 
 ## Install Instructions
 
-- For the latest install instructions [please see our project website on GitHub](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb#-cosmos-db-provider-for-aspnet-core-identity).
-- Questions or feedback are welcome! Please see our new [project discussion section](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions). We will reply as soon as possible.
-- An example web application that uses this package [is available for download](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb).
+- For the latest install instructions [please see our project website](https://www.moonrise.net/Open_Source/CosmosDb_Provider).
+- Questions or feedback are welcome! Please send us a note using our [contact form](https://www.moonrise.net/ContactUs), or post a message to our to our [project discussion section](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions). We will reply as soon as possible.
+- An example web application that uses this package [is available for download from GitHub](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb).
 
 ## More Information
 

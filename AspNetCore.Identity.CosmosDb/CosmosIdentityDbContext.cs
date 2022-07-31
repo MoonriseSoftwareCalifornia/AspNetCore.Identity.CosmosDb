@@ -1,5 +1,4 @@
-﻿using AspNetCore.Identity.CosmosDb.Containers;
-using AspNetCore.Identity.CosmosDb.Extensions;
+﻿using AspNetCore.Identity.CosmosDb.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +9,10 @@ namespace AspNetCore.Identity.CosmosDb
     /// Cosmos Identity Database Context
     /// </summary>
     /// <typeparam name="TUserEntity"></typeparam>
-    public class CosmosIdentityDbContext<TUserEntity, TRoleEntity> : 
-        IdentityDbContext<TUserEntity, TRoleEntity, string> 
-        where TUserEntity : IdentityUser
-        where TRoleEntity : IdentityRole
+    public class CosmosIdentityDbContext<TUser, TRole> : 
+        IdentityDbContext<TUser, TRole, string> 
+        where TUser : IdentityUser
+        where TRole : IdentityRole
     {
         /// <summary>
         /// Constructor
@@ -31,7 +30,7 @@ namespace AspNetCore.Identity.CosmosDb
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.ApplyIdentityMappings<TUserEntity>();
+            builder.ApplyIdentityMappings<TUser>();
         }
     }
 }
