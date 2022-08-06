@@ -223,6 +223,7 @@ Here is an example of a `secrets.json` file created for the unit test project:
 
 ```json
 {
+  "CosmosIdentityDbName" : "YOURDATABASENAME",
   "ConnectionStrings": {
     "ApplicationDbContextConnection": "AccountEndpoint=YOURCONNECTIONSTRING;"
   }
