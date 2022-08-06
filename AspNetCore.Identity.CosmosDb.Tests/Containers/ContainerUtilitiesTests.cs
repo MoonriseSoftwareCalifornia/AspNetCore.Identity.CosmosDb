@@ -49,7 +49,7 @@ namespace AspNetCore.Identity.CosmosDb.Containers.Tests
         [TestMethod()]
         public async Task A1_DeleteDatabaseIfExistsTest()
         {
-            var result = await containerUtilities.DeleteDatabaseIfExists(TestUtilities.DATABASENAME);
+            var result = await containerUtilities.DeleteDatabaseIfExists(utils.GetKeyValue("CosmosIdentityDbName"));
 
             Assert.IsTrue(result == null || result.StatusCode == System.Net.HttpStatusCode.OK || result.StatusCode == System.Net.HttpStatusCode.NoContent);
         }
@@ -57,7 +57,7 @@ namespace AspNetCore.Identity.CosmosDb.Containers.Tests
         [TestMethod()]
         public async Task A2_CreateDatabaseIfExistsTest()
         {
-            var result = await containerUtilities.CreateDatabaseAsync(TestUtilities.DATABASENAME);
+            var result = await containerUtilities.CreateDatabaseAsync(utils.GetKeyValue("CosmosIdentityDbName"));
 
             Assert.IsTrue(result.StatusCode == System.Net.HttpStatusCode.OK || result.StatusCode == System.Net.HttpStatusCode.NoContent || result.StatusCode == System.Net.HttpStatusCode.Created);
         }

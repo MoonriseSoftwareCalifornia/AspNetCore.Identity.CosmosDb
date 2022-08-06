@@ -26,7 +26,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests
 
         public const string IDENUSER1ID = "507b7565-493e-49d7-94c7-d60e21036b4a";
         public const string IDENUSER2ID = "55250c6f-7c91-465a-a9ce-ea9bbe6caf81";
-        public const string DATABASENAME = "cosmosdb";
+        //public const string DATABASENAME = "cosmosdb";
+        private readonly string _databaseName;
 
         /// <summary>
         /// Gets the configuration
@@ -93,7 +94,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
             }
 
             var builder = new DbContextOptionsBuilder();
-            builder.UseCosmos(connectionString, TestUtilities.DATABASENAME);
+            builder.UseCosmos(connectionString, GetKeyValue("CosmosIdentityDbName"));
 
             return builder.Options;
         }
@@ -113,7 +114,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
                 connectionString = GetKeyValue("ApplicationDbContextConnection");
             }
 
-            var utilities = new ContainerUtilities(connectionString, TestUtilities.DATABASENAME);
+            var utilities = new ContainerUtilities(connectionString, GetKeyValue("CosmosIdentityDbName"));
             return utilities;
         }
 
