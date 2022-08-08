@@ -24,4 +24,5 @@ jobs:
     - name: Test
       env:
           APPLICATIONDBCONTEXTCONNECTION: ${{ secrets.APPLICATIONDBCONTEXTCONNECTION }}
+          COSMOSIDENTITYDBNAME: ${{ secrets.COSMOSIDENTITYDBNAME }}
       run: dotnet test --no-build --verbosity normal
