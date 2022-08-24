@@ -12,6 +12,10 @@ This is a **Cosmos DB** implementation of an ASP.NET Core Identity provider for 
 - An example web application that uses this package [is available for download from GitHub](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb).
 - You can try a [live on-line demonstration website](https://moonrise.net/open_source/mars) that uses this provider to manage users.
 
+## Demonstration Website
+
+We have a [live demo website](https://moonrise.net/open_source/mars) called "Mars" that uses this provider. [Click here](https://moonrise.net/open_source/mars) to learn more.
+
 ## More Information
 
 To learn more about Asp.Net Identity and items realted to this project, please see the following:
