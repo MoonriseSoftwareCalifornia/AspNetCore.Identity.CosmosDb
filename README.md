@@ -9,6 +9,13 @@ This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that u
 
 We have a [live demo website](https://moonrise.net/open_source/mars) called "Mars" that uses this provider. There is a [one-click install](https://moonrise.net/open_source/mars) for with Microsoft Azure accounts.
 
+Log into the demo with the following:
+
+```shell
+  User name: admin@mason.com
+  Password: Star-Struck1 (case sensitive)
+```
+
 ## Help Find Bugs!
 
 Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub issues section](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/issues). Thank you in advance!
