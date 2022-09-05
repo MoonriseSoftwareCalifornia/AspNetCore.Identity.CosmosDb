@@ -3,11 +3,18 @@
 [![.NET 6 Build-Test](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml) [![CodeQL](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
 [![Unit Tests](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml)
 
-This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli) that was forked from [Piero De Tomi's](https://github.com/pierodetomi) excellent project: [efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos).
+This is a **Cosmos DB** implementation of an Identity provider for .NET 6 that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
 ## Demonstration Website
 
-We have a [live demo website](https://moonrise.net/open_source/mars) called "Mars" that uses this provider.  [Click here](https://moonrise.net/open_source/mars) to learn more.
+We have a [live demo website](https://moonrise.net/open_source/mars) called "Mars" that uses this provider. There is a [one-click install](https://moonrise.net/open_source/mars) for with Microsoft Azure accounts.
+
+Log into the demo with the following:
+
+```shell
+  User name: admin@mason.com
+  Password: Star-Struck1 (case sensitive)
+```
 
 ## Help Find Bugs!
 
