@@ -4,6 +4,7 @@
 [![Unit Tests](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml)
 
 This is a **Cosmos DB** implementation of an ASP.NET Core Identity provider for .NET 6 that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli)
+Special note: Plans are that when .Net 7 is released, this package will have installs for both 6 and 7.
 
 ## Install Instructions
 
