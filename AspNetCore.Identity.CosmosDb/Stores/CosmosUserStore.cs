@@ -1,11 +1,16 @@
 ﻿using AspNetCore.Identity.CosmosDb.Contracts;
 using AspNetCore.Identity.CosmosDb.Repositories;
+using IdentityModel;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,9 +30,16 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         IUserClaimStore<TUserEntity>,
         IUserSecurityStampStore<TUserEntity>,
         IUserTwoFactorStore<TUserEntity>,
+        IUserTwoFactorRecoveryCodeStore<TUserEntity>,
         IQueryableUserStore<TUserEntity>,
+        IUserAuthenticatorKeyStore<TUserEntity>,
         IUserLoginStore<TUserEntity> where TUserEntity : IdentityUser, new()
     {
+
+        private const string InternalLoginProvider = "[AspNetUserStore]";
+        private const string AuthenticatorKeyTokenName = "AuthenticatorKey";
+        private const string RecoveryCodeTokenName = "RecoveryCodes";
+
         private readonly IRepository _repo;
         private bool _disposed;
 
@@ -110,8 +122,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
                 if (claims.Any())
                     await RemoveClaimsAsync(user, claims, cancellationToken);
-                
-                foreach(var login in logins)
+
+                foreach (var login in logins)
                 {
                     await RemoveLoginAsync(user, login.ProviderDisplayName, login.ProviderKey, cancellationToken);
                 }
@@ -842,7 +854,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (claims == null || claims.Any() == false)
                 throw new ArgumentNullException(nameof(claims));
 
-            foreach(var claim in claims)
+            foreach (var claim in claims)
             {
                 var doomed = await _repo.Table<IdentityUserClaim<string>>()
                 .SingleOrDefaultAsync(c => c.UserId == user.Id &&
@@ -850,7 +862,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
                 _repo.Delete(doomed);
             }
-            
+
             await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
         }
 
@@ -924,6 +936,175 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             return Task.FromResult(
                 GetUserProperty(user, user => user.TwoFactorEnabled, cancellationToken));
+        }
+
+        #endregion
+
+        #region Methods implementing IUserAuthenticatorKeyStore<TUserEntity> interface
+
+        /// <summary>
+        /// Sets the authenticator key for the specified <paramref name="user"/>.
+        /// </summary>
+        /// <param name="user">The user whose authenticator key should be set.</param>
+        /// <param name="key">The authenticator key to set.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
+        public virtual Task SetAuthenticatorKeyAsync(TUserEntity user, string key, CancellationToken cancellationToken)
+            => SetTokenAsync(user, InternalLoginProvider, AuthenticatorKeyTokenName, key, cancellationToken);
+
+        /// <summary>
+        /// Sets the token value for a particular user.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="loginProvider">The authentication provider for the token.</param>
+        /// <param name="name">The name of the token.</param>
+        /// <param name="value">The value of the token.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
+        public virtual async Task SetTokenAsync(TUserEntity user, string loginProvider, string name, string? value, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (string.IsNullOrEmpty(value))
+            {
+                value = GenerateNewAuthenticatorKey();
+            }
+
+            var queryable = (IQueryable<IdentityUserToken<string>>)_repo.UserTokens;
+
+            var token = await queryable.FirstOrDefaultAsync(t => t.UserId == user.Id && t.LoginProvider == loginProvider && t.Name == name);
+
+            //var token = await FindTokenAsync(user, loginProvider, name, cancellationToken).ConfigureAwait(false);
+            if (token == null)
+            {
+                token = new IdentityUserToken<string>()
+                {
+                    LoginProvider = loginProvider,
+                    Name = name,
+                    UserId = user.Id,
+                    Value = value
+                };
+                try
+                {
+                    _repo.Add(token);
+                    await _repo.SaveChangesAsync();
+
+                }
+                catch (Exception e)
+                {
+                    ProcessExceptions(e);
+                }
+                //await AddUserTokenAsync(CreateUserToken(user, loginProvider, name, value)).ConfigureAwait(false);
+            }
+            else
+            {
+                token.Value = value;
+            }
+        }
+
+        /// <summary>
+        /// Get the authenticator key for the specified <paramref name="user" />.
+        /// </summary>
+        /// <param name="user">The user whose security stamp should be set.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the security stamp for the specified <paramref name="user"/>.</returns>
+        public async Task<string> GetAuthenticatorKeyAsync(TUserEntity user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            var queryable = (IQueryable<IdentityUserToken<string>>)_repo.UserTokens;
+
+            return await GetTokenAsync(user, InternalLoginProvider, AuthenticatorKeyTokenName, cancellationToken);
+        }
+
+
+        private async Task<string> GetTokenAsync(TUserEntity user, string provider, string tokenName, CancellationToken cancellationToken)
+        {
+            var queryable = (IQueryable<IdentityUserToken<string>>)_repo.UserTokens;
+            var token = await queryable.FirstOrDefaultAsync(t => t.UserId == user.Id && t.LoginProvider == provider && t.Name == tokenName, cancellationToken: cancellationToken);
+            if (token == null)
+            {
+                return null;
+            }
+            return token.Value;
+        }
+
+        private string GenerateNewAuthenticatorKey()
+            => NewSecurityStamp();
+
+        private static string NewSecurityStamp()
+        {
+            var _rng = new CryptoRandom();
+            byte[] bytes = new byte[20];
+            _rng.NextBytes(bytes);
+            return Encoding.UTF32.GetString(bytes);
+        }
+
+        #endregion
+
+        #region Methods that implement IUserTwoFactorRecoveryCodeStore<TUserEntity>
+
+        // <inheritdoc />
+        public Task ReplaceCodesAsync(TUserEntity user, IEnumerable<string> recoveryCodes, CancellationToken cancellationToken)
+        {
+            var mergedCodes = string.Join(";", recoveryCodes);
+            return SetTokenAsync(user, InternalLoginProvider, RecoveryCodeTokenName, mergedCodes, cancellationToken);
+        }
+
+        // <inheritdoc />
+        public async Task<bool> RedeemCodeAsync(TUserEntity user, string code, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            if (code == null)
+            {
+                throw new ArgumentNullException(nameof(code));
+            }
+
+            var mergedCodes = await GetTokenAsync(user, InternalLoginProvider, RecoveryCodeTokenName, cancellationToken).ConfigureAwait(false) ?? "";
+            var splitCodes = mergedCodes.Split(';');
+            if (splitCodes.Contains(code))
+            {
+                var updatedCodes = new List<string>(splitCodes.Where(s => s != code));
+                await ReplaceCodesAsync(user, updatedCodes, cancellationToken).ConfigureAwait(false);
+                return true;
+            }
+            return false;
+        }
+
+
+        // <inheritdoc />
+        public async Task<int> CountCodesAsync(TUserEntity user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            var mergedCodes = await GetTokenAsync(user, InternalLoginProvider, RecoveryCodeTokenName, cancellationToken).ConfigureAwait(false) ?? "";
+            if (mergedCodes.Length > 0)
+            {
+                return mergedCodes.Split(';').Length;
+            }
+            return 0;
         }
 
         #endregion

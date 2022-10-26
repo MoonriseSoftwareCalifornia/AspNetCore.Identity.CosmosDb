@@ -38,4 +38,8 @@
     <None Include="wwwroot\images\dev-01-sql-api.svg" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\qrcode\" />
+  </ItemGroup>
+
 </Project>
