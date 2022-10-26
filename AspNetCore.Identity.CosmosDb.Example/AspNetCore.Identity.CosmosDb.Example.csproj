@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>2.0.18.1</Version>
-    <AssemblyVersion>2.0.18.1</AssemblyVersion>
-    <FileVersion>2.0.18.1</FileVersion>
+    <Version>2.0.19.1</Version>
+    <AssemblyVersion>2.0.19.1</AssemblyVersion>
+    <FileVersion>2.0.19.1</FileVersion>
     <Authors>Eric Kauffman</Authors>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-AspNetCore.Identity.CosmosDb.Example-0017CFC3-2699-4172-8E2A-2D5B89D0E0D1</UserSecretsId>
