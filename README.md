@@ -199,9 +199,9 @@ documentation for more details.
 
 # Changelog
 
-## v2.0.20-rc (Release Candidate)
+## v2.0.20
 
-- Addressing [bug #9](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/issues/9), implemented interfaces IUserAuthenticatorKeyStore and IUserTwoFactorRecoveryCodeStore to support two factor authentication.  Example website updated to demonstrate capability.
+- Addressing [bug #9](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/issues/9), implemented interfaces IUserAuthenticatorKeyStore and IUserTwoFactorRecoveryCodeStore to support two factor authentication.  Example website updated to demonstrate capability with QR code generation.
 
 ## v1.0.6
 
