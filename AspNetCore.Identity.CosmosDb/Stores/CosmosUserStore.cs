@@ -10,6 +10,7 @@ using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -988,7 +989,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                     LoginProvider = loginProvider,
                     Name = name,
                     UserId = user.Id,
-                    Value = value
+                    Value = GenerateNewAuthenticatorKey()
                 };
                 try
                 {
@@ -1040,15 +1041,25 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return token.Value;
         }
 
-        private string GenerateNewAuthenticatorKey()
+        public string GenerateNewAuthenticatorKey()
             => NewSecurityStamp();
 
         private static string NewSecurityStamp()
         {
-            var _rng = new CryptoRandom();
-            byte[] bytes = new byte[20];
-            _rng.NextBytes(bytes);
-            return Encoding.UTF32.GetString(bytes);
+
+            using (var cryptoProvider = new RNGCryptoServiceProvider())
+            {
+                byte[] bytes = new byte[64];
+                cryptoProvider.GetBytes(bytes);
+
+                string secureRandomString = Convert.ToBase64String(bytes);
+
+                var lettersOrNumbers = new string(secureRandomString.Where(char.IsLetter).ToArray());
+
+                // Output example: Secure random string: OfGER+tSZIOSz314OlHk1aM+N8oNXDRHqTn3c5EVknYO5b5s0kqq40lJzoGj99ZXCvoFhkNG8KwQQvBPaR0FtQ==
+                // Works: auth enti cato rkey
+                return lettersOrNumbers.Substring(0,16);
+            }
         }
 
         #endregion
