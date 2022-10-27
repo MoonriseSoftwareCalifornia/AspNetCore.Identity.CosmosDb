@@ -698,5 +698,21 @@ namespace AspNetCore.Identity.CosmosDb.Stores.Tests
             Assert.IsTrue(result.Count > 0);
         }
 
+        [TestMethod()]
+        public async Task SetAndGetAuthenticatorKeyAsyncTest()
+        {
+            // Arrange
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
+
+            // Act
+            var loginInfo = GetMockLoginInfoAsync();
+            await userStore.AddLoginAsync(user, loginInfo);
+            await userStore.SetAuthenticatorKeyAsync(user, "AuthenticatorKey", default);
+            var code = await userStore.GetAuthenticatorKeyAsync(user, default);
+
+            // Assert
+            Assert.IsNotNull(code);
+        }
     }
 }
