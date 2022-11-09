@@ -22,7 +22,7 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Company>Cosmos Software LLC</Company>
     <Copyright>Moonrise Software LLC</Copyright>
-    <PackageReleaseNotes>Fixed bug #9 (2FA), added unit test for 2FA, updated packages, updated integraton test website for 2FA..</PackageReleaseNotes>
+    <PackageReleaseNotes>Documentation update.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
