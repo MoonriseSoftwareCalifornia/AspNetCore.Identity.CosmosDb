@@ -1,4 +1,4 @@
-name: Net6.0 Unit Tests
+name: Net6.0 Tests
 
 on:
   workflow_dispatch
