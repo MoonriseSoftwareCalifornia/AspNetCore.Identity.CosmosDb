@@ -5,8 +5,6 @@
 
 This is a **Cosmos DB** implementation of an ASP.NET Core Identity provider for .NET that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli)
 
-Special note: When .Net 7 is released, this package will have installs for both .Net 6 and 7.
-
 ## Install Instructions
 
 - For the latest install instructions [please see our project website](https://www.moonrise.net/Open_Source/CosmosDb_Provider).

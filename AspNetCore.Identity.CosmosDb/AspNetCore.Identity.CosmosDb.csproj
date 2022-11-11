@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
-    <Version>2.0.21</Version>
-    <AssemblyVersion>2.0.21.1</AssemblyVersion>
-    <FileVersion>2.0.21.1</FileVersion>
+    <Version>2.1.1</Version>
+    <AssemblyVersion>2.1.1.1</AssemblyVersion>
+    <FileVersion>2.1.1.1</FileVersion>
     <Authors>toiyabe62</Authors>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>Cosmos, CosmosDB, Identity, Provider, AspNetCore, Membership, Roles, AspNetCore.Identity, AspNetCore.Identity.CosmosDb, Microsoft.AspNetCore.Identity, aspnet, efcore</PackageTags>
@@ -22,7 +22,7 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Company>Cosmos Software LLC</Company>
     <Copyright>Moonrise Software LLC</Copyright>
-    <PackageReleaseNotes>Fixed bug #9 (2FA), added unit test for 2FA, updated packages, updated integraton test website for 2FA..</PackageReleaseNotes>
+    <PackageReleaseNotes>.Net 7 support added.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
