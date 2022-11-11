@@ -4,9 +4,9 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <Version>2.0.20.1</Version>
-    <AssemblyVersion>2.0.20.1</AssemblyVersion>
-    <FileVersion>2.0.20.1</FileVersion>
+    <Version>2.1.2.1</Version>
+    <AssemblyVersion>2.1.2.1</AssemblyVersion>
+    <FileVersion>2.1.2.1</FileVersion>
     <Authors>Eric Kauffman</Authors>
     <IsPackable>false</IsPackable>
 
@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.Identity.CosmosDb" Version="2.0.22" />
+    <PackageReference Include="AspNetCore.Identity.CosmosDb" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="6.0.10" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
