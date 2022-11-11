@@ -1,4 +1,4 @@
-name: Net6.0 Unit Tests
+name: Net7.0 Tests
 
 on:
   workflow_dispatch
@@ -16,7 +16,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 7.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -25,4 +25,4 @@ jobs:
       env:
           APPLICATIONDBCONTEXTCONNECTION: ${{ secrets.APPLICATIONDBCONTEXTCONNECTION }}
           COSMOSIDENTITYDBNAME: ${{ secrets.COSMOSIDENTITYDBNAME }}
-      run: dotnet test AspNetCore.Identity.CosmosDb.Tests/AspNetCore.Identity.CosmosDb.Tests.csproj --no-build --verbosity normal
+      run: dotnet test AspNetCore.Identity.CosmosDb.Tests.Net7/AspNetCore.Identity.CosmosDb.Tests.Net7.csproj --no-build --verbosity normal

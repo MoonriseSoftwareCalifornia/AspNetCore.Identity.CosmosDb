@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <Version>2.0.21</Version>
     <AssemblyVersion>2.0.21.1</AssemblyVersion>
     <FileVersion>2.0.21.1</FileVersion>
@@ -24,17 +24,24 @@
     <Copyright>Moonrise Software LLC</Copyright>
     <PackageReleaseNotes>Fixed bug #9 (2FA), added unit test for 2FA, updated packages, updated integraton test website for 2FA..</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.1.7" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="6.0.10" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
+  </ItemGroup>
   
   <ItemGroup>
     <Content Include="_res\icons\nuget-icon.ico" />
+    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.1.7" />
   </ItemGroup>
 
   <ItemGroup>
