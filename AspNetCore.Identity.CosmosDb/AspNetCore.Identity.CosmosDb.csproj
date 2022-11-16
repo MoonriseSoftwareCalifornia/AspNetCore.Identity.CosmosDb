@@ -2,16 +2,16 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
-    <Version>2.1.1</Version>
-    <AssemblyVersion>2.1.1.1</AssemblyVersion>
-    <FileVersion>2.1.1.1</FileVersion>
+    <Version>2.1.2</Version>
+    <AssemblyVersion>2.1.2.1</AssemblyVersion>
+    <FileVersion>2.1.2.1</FileVersion>
     <Authors>toiyabe62</Authors>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>Cosmos, CosmosDB, Identity, Provider, AspNetCore, Membership, Roles, AspNetCore.Identity, AspNetCore.Identity.CosmosDb, Microsoft.AspNetCore.Identity, aspnet, efcore</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>AspNetCore.Identity.CosmosDb</PackageId>
     <RepositoryUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</RepositoryUrl>
-    <PackageProjectUrl>https://www.moonrise.net/Open_Source/CosmosDb_Provider</PackageProjectUrl>
+    <PackageProjectUrl>https://www.moonrise.net/</PackageProjectUrl>
     <PackageIcon>nuget-icon.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -22,7 +22,7 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Company>Cosmos Software LLC</Company>
     <Copyright>Moonrise Software LLC</Copyright>
-    <PackageReleaseNotes>.Net 7 support added.</PackageReleaseNotes>
+    <PackageReleaseNotes>Documentation update.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>

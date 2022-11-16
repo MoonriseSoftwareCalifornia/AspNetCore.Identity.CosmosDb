@@ -1,13 +1,13 @@
 # Cosmos DB Provider for ASP.NET Core Identity
 
-[![.NET 6 Build-Test](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/dotnet.yml) [![CodeQL](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
+[![CodeQL](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
 [![Unit Tests](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml)
 
 This is a **Cosmos DB** implementation of an ASP.NET Core Identity provider for .NET that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli)
 
 ## Install Instructions
 
-- For the latest install instructions [please see our project website](https://www.moonrise.net/Open_Source/CosmosDb_Provider).
+- For the latest install instructions [please see our project website](https://www.moonrise.net).
 - Questions or feedback are welcome! Please send us a note using our [contact form](https://www.moonrise.net/ContactUs), or post a message to our to our [project discussion section](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/discussions). We will reply as soon as possible.
 - An example web application that uses this package [is available for download from GitHub](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb).
 - You can try a [live on-line demonstration website](https://moonrise.net/open_source/mars) that uses this provider to manage users.
