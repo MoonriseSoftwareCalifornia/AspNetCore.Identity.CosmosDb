@@ -28,20 +28,20 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="6.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="6.0.12" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.1" />
   </ItemGroup>
   
   <ItemGroup>
     <Content Include="_res\icons\nuget-icon.ico" />
-    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.1.7" />
+    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.2.0" />
   </ItemGroup>
 
   <ItemGroup>
