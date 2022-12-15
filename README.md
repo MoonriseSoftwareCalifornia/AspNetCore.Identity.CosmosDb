@@ -7,21 +7,6 @@
 
 This is a **Cosmos DB** implementation of an Identity provider for .NET 6 and 7 that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
-## Demonstration Website
-
-We have a [live demo website](https://moonrise.net/open_source/mars) called "Mars" that uses this provider. There is a [one-click install](https://moonrise.net/open_source/mars) for with Microsoft Azure accounts.
-
-Log into the demo with the following:
-
-```shell
-  User name: admin@mason.com
-  Password: Star-Struck1 (case sensitive)
-```
-
-## Help Find Bugs!
-
-Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub issues section](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/issues). Thank you in advance!
-
 # Installation
 
 Add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb) to your project:
@@ -198,6 +183,10 @@ var roleResults = roleManager.Roles.Where (r => r.Name.Contains("water"));
 
 For a list of supported LINQ operations, please see the ["Supported LINQ Operations"](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/sql-query-linq-to-sql#SupportedLinqOperators)
 documentation for more details.
+
+## Help Find Bugs!
+
+Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub issues section](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/issues). Thank you in advance!
 
 # Changelog
 
