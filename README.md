@@ -1,8 +1,8 @@
 # Cosmos DB Provider for ASP.NET Core Identity
 
-[![CodeQL](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
-[![Net6.0 Tests](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml) 
-[![Net7.0 Tests](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml/badge.svg)](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml)
+[![CodeQL](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
+[![Net6.0 Tests](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml) 
+[![Net7.0 Tests](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml)
 [![NuGet](https://img.shields.io/nuget/v/AspNetCore.Identity.CosmosDb.svg)](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb)
 
 This is a **Cosmos DB** implementation of an Identity provider for .NET 6 and 7 that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
@@ -16,7 +16,7 @@ PM> Install-Package AspNetCore.Identity.CosmosDb
 ```
 
 Create an [Azure Cosmos DB account](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/create-cosmosdb-resources-portal) - either the serverless or dedicated instance. For testing and development purposes it is recommended to use a 'serverless instance'
-as it is [very economical to use](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb#choice-of-cosmos-db-account-type). See [documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless) to help choose which is best for you.
+as it is [very economical to use](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb#choice-of-cosmos-db-account-type). See [documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless) to help choose which is best for you.
 
 Set your configuration settings with the connection string and database name. Below is an example of a `secrets.json` file:
 
@@ -169,7 +169,7 @@ file configured to work with this provider, scaffolded identity web pages, and t
 
 - [Program.cs](/AspNetCore.Identity.CosmosDb.Example/Program.cs)
 
-An [example website](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/tree/master/AspNetCore.Identity.CosmosDb.Example) is available for you to download and try.
+An [example website](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/tree/master/AspNetCore.Identity.CosmosDb.Example) is available for you to download and try.
 
 # Supported LINQ Operators User and Role Stores
 
@@ -186,7 +186,7 @@ documentation for more details.
 
 ## Help Find Bugs!
 
-Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub issues section](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/issues). Thank you in advance!
+Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub issues section](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/issues). Thank you in advance!
 
 # Changelog
 
@@ -195,7 +195,7 @@ Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packa
 
 ## v2.0.20
 
-- Addressing [bug #9](https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb/issues/9), implemented interfaces IUserAuthenticatorKeyStore and IUserTwoFactorRecoveryCodeStore to support two factor authentication.  Example website updated to demonstrate capability with QR code generation.
+- Addressing [bug #9](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/issues/9), implemented interfaces IUserAuthenticatorKeyStore and IUserTwoFactorRecoveryCodeStore to support two factor authentication.  Example website updated to demonstrate capability with QR code generation.
 
 ## v1.0.6
 

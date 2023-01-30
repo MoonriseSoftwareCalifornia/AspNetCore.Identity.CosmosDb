@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
-    <Version>2.1.3</Version>
-    <AssemblyVersion>2.1.3.1</AssemblyVersion>
-    <FileVersion>2.1.3.1</FileVersion>
+    <Version>2.1.4</Version>
+    <AssemblyVersion>2.1.4.1</AssemblyVersion>
+    <FileVersion>2.1.4.1</FileVersion>
     <Authors>toiyabe62</Authors>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>Cosmos, CosmosDB, Identity, Provider, AspNetCore, Membership, Roles, AspNetCore.Identity, AspNetCore.Identity.CosmosDb, Microsoft.AspNetCore.Identity, aspnet, efcore</PackageTags>
@@ -28,20 +28,20 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.12" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="6.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="6.0.13" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.2" />
   </ItemGroup>
   
   <ItemGroup>
     <Content Include="_res\icons\nuget-icon.ico" />
-    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.2.0" />
+    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.2.2" />
   </ItemGroup>
 
   <ItemGroup>
