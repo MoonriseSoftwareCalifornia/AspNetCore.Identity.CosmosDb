@@ -15,8 +15,8 @@ Add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Iden
 PM> Install-Package AspNetCore.Identity.CosmosDb
 ```
 
-Create an [Azure Cosmos DB account](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/create-cosmosdb-resources-portal) - either the serverless or dedicated instance. For testing and development purposes it is recommended to use a 'serverless instance'
-as it is [very economical to use](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb#choice-of-cosmos-db-account-type). See [documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless) to help choose which is best for you.
+Create an [Azure Cosmos DB account](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/create-cosmosdb-resources-portal) - either the free, serverless or dedicated instance. For testing and development purposes it is recommended to use a free
+account. [See documentation](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb#choice-of-cosmos-db-account-type) to help choose which type of Cosmos account is best for you.
 
 Set your configuration settings with the connection string and database name. Below is an example of a `secrets.json` file:
 
@@ -59,8 +59,6 @@ You will likely need to add these usings:
 using AspNetCore.Identity.CosmosDb;
 using AspNetCore.Identity.CosmosDb.Containers;
 using AspNetCore.Identity.CosmosDb.Extensions;
-using AspNetCore.Identity.Services.SendGrid;
-using AspNetCore.Identity.Services.SendGrid.Extensions;
 ```
 
 Next, the configuration variables need to be retrieved. Add the following to your startup file:
@@ -115,52 +113,6 @@ builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityR
     .AddDefaultTokenProviders();
 ```
 
-## Configure Email Provider (Optional)
-
-When users register accounts or need to reset passwords, you will need (at a minimum), the ability
-to send tokens via an [Email provider](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/accconfirm?view=aspnetcore-6.0&tabs=visual-studio#configure-an-email-provider). The example below uses a SendGrid provider. Here is how to add it:
-
-Start by adding the following NuGet package to your project:
-
-```shell
-PM> Install-Package AspNetCore.Identity.Services.SendGrid
-```
-
-Note: You can sign up for a [free SendGrid account](https://sendgrid.com/) if you do not already have one.
-
-### Configure app to support email
-
-Next we need to configure the application to support our Email provider. Start by adding the following code to your startup file:
-
-```csharp
-var sendGridApiKey = builder.Configuration.GetValue<string>("SendGridApiKey");
-// Modify 'from' email address to your own.
-var sendGridOptions = new SendGridEmailProviderOptions(sendGridApiKey, "foo@mycompany.com");
-
-builder.Services.AddSendGridEmailProvider(sendGridOptions);
-```
-
-### Modify "Scaffolded" Identity UI
-
-The example web project uses the "scaffolded" Identity UI. By default it does not use an IEmailProvider.
-But in our case we have installed one so we need to modify the UI to enable it.
-
-In your project, find this file:
-
-`/Areas/Identity/Pages/Account/RegisterConfirmation.cshtml.cs`
-
-Find the `OnGetAsync()` method, then look for the following line:
-
-```csharp
-DisplayConfirmAccountLink = true;
-```
-
-Change that line to `false` like the following:
-
-```csharp
-DisplayConfirmAccountLink = false;
-```
-
 # Complete Startup File Example
 
 The above instructions showed how to modify the startup file to make use of this provider. Sometimes
@@ -189,6 +141,8 @@ documentation for more details.
 Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub issues section](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/issues). Thank you in advance!
 
 # Changelog
+
+This change log notes major changes beyond routine documentation and NuGet dependency updates.
 
 ## v2.1.1
 - Added support for .Net 6 and .Net 7.
@@ -241,12 +195,9 @@ Here is an example of a `secrets.json` file created for the unit test project:
 
 ## Choice of Cosmos DB Account Type
 
-Because this implementation uses multiple containers, it exceeds the minimum throughput requirements for the "free" Cosmos DB
-account.
+This implementation will work with the "Free" Cosmos DB tier.  You can have one per account.
 
-However, if you deploy a "[serverless](https://docs.microsoft.com/en-us/azure/cosmos-db/throughput-serverless)" account, your
-monthly costs will be very low. For example, our serverless Cosmos account used for unit testing costs under $0.10 (US) a month as
-of July 2022.
+It also works the "serverless" and "provisioned" account types.
 
 # References
 
