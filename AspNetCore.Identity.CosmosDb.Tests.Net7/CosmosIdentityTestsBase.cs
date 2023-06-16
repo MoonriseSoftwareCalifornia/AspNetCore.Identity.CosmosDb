@@ -47,7 +47,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// Gets a mock <see cref="IdentityRole"/> for unit testing purposes
         /// </summary>
         /// <returns></returns>
-        protected async Task<IdentityRole> GetMockRandomRoleAsync(CosmosRoleStore<IdentityUser, IdentityRole> roleStore, bool saveToDatabase = true)
+        protected async Task<IdentityRole> GetMockRandomRoleAsync(
+            CosmosRoleStore<IdentityUser, IdentityRole, string> roleStore, bool saveToDatabase = true)
         {
             var role = new IdentityRole(GetNextRandomNumber(1000, 9999).ToString());
             role.NormalizedName = role.Name.ToUpper();
@@ -56,8 +57,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
             {
                 var result = await roleStore.CreateAsync(role);
                 role = await roleStore.FindByIdAsync(role.Id);
-                Assert.IsTrue(result.Succeeded);//Confirm success
+                Assert.IsTrue(result.Succeeded); //Confirm success
             }
+
             return role;
         }
 
@@ -65,7 +67,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// Gets a mock <see cref="IdentityUser"/> for unit testing purposes
         /// </summary>
         /// <returns></returns>
-        protected async Task<IdentityUser> GetMockRandomUserAsync(CosmosUserStore<IdentityUser> userStore, bool saveToDatabase = true)
+        protected async Task<IdentityUser> GetMockRandomUserAsync(
+            CosmosUserStore<IdentityUser, IdentityRole, string> userStore, bool saveToDatabase = true)
         {
             var randomEmail = $"{GetNextRandomNumber(1000, 9999)}@{GetNextRandomNumber(10000, 99999)}.com";
             var user = new IdentityUser(randomEmail) { Email = randomEmail, Id = Guid.NewGuid().ToString() };
@@ -76,9 +79,10 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
             if (userStore != null && saveToDatabase)
             {
                 var result = await userStore.CreateAsync(user);
-                Assert.IsTrue(result.Succeeded);//Confirm success
+                Assert.IsTrue(result.Succeeded); //Confirm success
                 user = await userStore.FindByNameAsync(user.UserName.ToUpper());
             }
+
             return user;
         }
 
@@ -102,7 +106,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// <typeparam name="TUser"></typeparam>
         /// <param name="store"></param>
         /// <returns></returns>
-        public UserManager<TUser> GetTestUserManager<TUser>(IUserStore<TUser> store) where TUser : class
+        public UserManager<TUser> GetTestUserManager<TUser>(IUserStore<TUser> store)
+            where TUser : class
         {
             var builder = new IdentityBuilder(typeof(IdentityUser), new ServiceCollection());
 
@@ -134,7 +139,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
 
             return userManager;
         }
-        public RoleManager<TRole> GetTestRoleManager<TRole>(IRoleStore<TRole> store) where TRole : class
+
+        public RoleManager<TRole> GetTestRoleManager<TRole>(IRoleStore<TRole> store)
+            where TRole : class
         {
             store = store ?? new Mock<IRoleStore<TRole>>().Object;
             var roles = new List<IRoleValidator<TRole>>();
@@ -143,6 +150,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
                 new IdentityErrorDescriber(), new Mock<ILogger<RoleManager<TRole>>>().Object);
             return roleManager;
         }
+
         public ILookupNormalizer MockLookupNormalizer()
         {
             var normalizerFunc = new Func<string, string>(i =>

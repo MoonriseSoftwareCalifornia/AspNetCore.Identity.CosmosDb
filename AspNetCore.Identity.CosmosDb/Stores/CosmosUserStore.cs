@@ -21,7 +21,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
     /// Cosmos DB User store
     /// </summary>
     /// <typeparam name="TUserEntity"></typeparam>
-    public class CosmosUserStore<TUserEntity> : IdentityStoreBase,
+    public class CosmosUserStore<TUserEntity, TRoleEntity, TKey> : IdentityStoreBase,
         IUserStore<TUserEntity>,
         IUserRoleStore<TUserEntity>,
         IUserEmailStore<TUserEntity>,
@@ -34,9 +34,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         IUserTwoFactorRecoveryCodeStore<TUserEntity>,
         IQueryableUserStore<TUserEntity>,
         IUserAuthenticatorKeyStore<TUserEntity>,
-        IUserLoginStore<TUserEntity> where TUserEntity : IdentityUser, new()
+        IUserLoginStore<TUserEntity>
+        where TUserEntity : IdentityUser<TKey>, new()
+        where TRoleEntity : IdentityRole<TKey>, new()
+        where TKey : IEquatable<TKey>
     {
-
         private const string InternalLoginProvider = "[AspNetUserStore]";
         private const string AuthenticatorKeyTokenName = "AuthenticatorKey";
         private const string RecoveryCodeTokenName = "RecoveryCodes";
@@ -46,10 +48,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
         public IQueryable<TUserEntity> Users
         {
-            get
-            {
-                return (IQueryable<TUserEntity>)_repo.Users;
-            }
+            get { return (IQueryable<TUserEntity>)_repo.Users; }
         }
 
         /// <summary>
@@ -67,13 +66,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// Constructor
         /// </summary>
         /// <param name="repo"></param>
-        public CosmosUserStore(IRepository repo) : base(repo)
+        public CosmosUserStore(IRepository repo)
+            : base(repo)
         {
             _repo = repo;
         }
 
         /// <inheritdoc/>
-        public async Task<IdentityResult> CreateAsync(TUserEntity user, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IdentityResult> CreateAsync(TUserEntity user,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -91,7 +92,6 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             {
                 _repo.Add(user);
                 await _repo.SaveChangesAsync();
-
             }
             catch (Exception e)
             {
@@ -102,7 +102,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task<IdentityResult> DeleteAsync(TUserEntity user, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IdentityResult> DeleteAsync(TUserEntity user,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -141,7 +142,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task<TUserEntity> FindByEmailAsync(string normalizedEmailName, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<TUserEntity> FindByEmailAsync(string normalizedEmailName,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -150,13 +152,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 throw new ArgumentNullException(nameof(normalizedEmailName));
 
             var user = await _repo.Table<TUserEntity>()
-                .SingleOrDefaultAsync(_ => _.NormalizedEmail == normalizedEmailName, cancellationToken: cancellationToken);
+                .SingleOrDefaultAsync(_ => _.NormalizedEmail == normalizedEmailName,
+                    cancellationToken: cancellationToken);
 
             return user;
         }
 
         // <inheritdoc />
-        public async Task<TUserEntity> FindByIdAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<TUserEntity> FindByIdAsync(string userId,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -172,7 +176,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task<TUserEntity> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<TUserEntity> FindByNameAsync(string normalizedUserName,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -180,7 +185,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (string.IsNullOrEmpty(normalizedUserName))
                 throw new ArgumentNullException(nameof(normalizedUserName));
 
-            return await _repo.Table<TUserEntity>().SingleOrDefaultAsync(_ => _.NormalizedUserName == normalizedUserName);
+            return await _repo.Table<TUserEntity>()
+                .SingleOrDefaultAsync(_ => _.NormalizedUserName == normalizedUserName);
         }
 
         // <inheritdoc />
@@ -258,7 +264,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             ThrowIfDisposed();
 
             return Task.FromResult(
-                 GetUserProperty(user, user => user.Id.ToString(), cancellationToken));
+                GetUserProperty(user, user => user.Id.ToString(), cancellationToken));
         }
 
         /// <summary>
@@ -318,7 +324,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="confirmed"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task SetEmailConfirmedAsync(TUserEntity user, bool confirmed, CancellationToken cancellationToken = default)
+        public Task SetEmailConfirmedAsync(TUserEntity user, bool confirmed,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -328,7 +335,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task SetNormalizedEmailAsync(TUserEntity user, string normalizedEmail, CancellationToken cancellationToken = default)
+        public Task SetNormalizedEmailAsync(TUserEntity user, string normalizedEmail,
+            CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(normalizedEmail))
                 throw new ArgumentNullException(nameof(normalizedEmail));
@@ -341,7 +349,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task SetNormalizedUserNameAsync(TUserEntity user, string normalizedName, CancellationToken cancellationToken = default)
+        public Task SetNormalizedUserNameAsync(TUserEntity user, string normalizedName,
+            CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(normalizedName))
                 throw new ArgumentNullException(nameof(normalizedName));
@@ -354,7 +363,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task SetPasswordHashAsync(TUserEntity user, string passwordHash, CancellationToken cancellationToken = default)
+        public Task SetPasswordHashAsync(TUserEntity user, string passwordHash,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -364,7 +374,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task SetPhoneNumberAsync(TUserEntity user, string phoneNumber, CancellationToken cancellationToken = default)
+        public Task SetPhoneNumberAsync(TUserEntity user, string phoneNumber,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -374,7 +385,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task SetPhoneNumberConfirmedAsync(TUserEntity user, bool confirmed, CancellationToken cancellationToken = default)
+        public Task SetPhoneNumberConfirmedAsync(TUserEntity user, bool confirmed,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -413,7 +425,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return IdentityResult.Success;
         }
 
-        private T GetUserProperty<T>(TUserEntity user, Func<TUserEntity, T> accessor, CancellationToken cancellationToken = default)
+        private T GetUserProperty<T>(TUserEntity user, Func<TUserEntity, T> accessor,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -424,7 +437,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return accessor(user);
         }
 
-        private void SetUserProperty<T>(TUserEntity user, T value, Action<TUserEntity, T> setter, CancellationToken cancellationToken = default)
+        private void SetUserProperty<T>(TUserEntity user, T value, Action<TUserEntity, T> setter,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -436,7 +450,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task AddLoginAsync(TUserEntity user, UserLoginInfo login, CancellationToken cancellationToken = default)
+        public async Task AddLoginAsync(TUserEntity user, UserLoginInfo login,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -446,7 +461,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             try
             {
-                IdentityUserLogin<string> loginEntity = new IdentityUserLogin<string>
+                IdentityUserLogin<TKey> loginEntity = new IdentityUserLogin<TKey>
                 {
                     UserId = user.Id,
                     LoginProvider = login.LoginProvider,
@@ -466,7 +481,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task RemoveLoginAsync(TUserEntity user, string loginProvider, string providerKey, CancellationToken cancellationToken = default)
+        public async Task RemoveLoginAsync(TUserEntity user, string loginProvider, string providerKey,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -477,9 +493,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             try
             {
-                var login = await _repo.Table<IdentityUserLogin<string>>()
+                var login = await _repo.Table<IdentityUserLogin<TKey>>()
                     .SingleOrDefaultAsync(l =>
-                        l.UserId == user.Id &&
+                        l.UserId.Equals(user.Id) &&
                         l.LoginProvider == loginProvider &&
                         l.ProviderKey == providerKey
                     );
@@ -490,11 +506,14 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                     await _repo.SaveChangesAsync();
                 }
             }
-            catch { }
+            catch
+            {
+            }
         }
 
         // <inheritdoc />
-        public Task<IList<UserLoginInfo>> GetLoginsAsync(TUserEntity user, CancellationToken cancellationToken = default)
+        public Task<IList<UserLoginInfo>> GetLoginsAsync(TUserEntity user,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -503,8 +522,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 throw new ArgumentNullException(nameof(user));
 
             IList<UserLoginInfo> res = _repo
-                .Table<IdentityUserLogin<string>>()
-                .Where(l => l.UserId == user.Id)
+                .Table<IdentityUserLogin<TKey>>()
+                .Where(l => l.UserId.Equals(user.Id))
                 .Select(l => new UserLoginInfo(l.LoginProvider, l.ProviderKey, user.UserName)
                 {
                     ProviderDisplayName = l.ProviderDisplayName
@@ -515,7 +534,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task<TUserEntity> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken = default)
+        public async Task<TUserEntity> FindByLoginAsync(string loginProvider, string providerKey,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -523,32 +543,36 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (loginProvider == null) throw new ArgumentNullException(nameof(loginProvider));
             if (providerKey == null) throw new ArgumentNullException(nameof(providerKey));
 
-            var userId = (
-                await _repo.Table<IdentityUserLogin<string>>().SingleOrDefaultAsync(l => l.LoginProvider == loginProvider && l.ProviderKey == providerKey)
-            )?.UserId;
+            var user =
+                await _repo.Table<IdentityUserLogin<TKey>>().SingleOrDefaultAsync(l =>
+                    l.LoginProvider == loginProvider && l.ProviderKey == providerKey);
 
-            return string.IsNullOrEmpty(userId)
+
+            return user is null
                 ? default(TUserEntity)
-                : await FindByIdAsync(userId, cancellationToken);
+                : await FindByIdAsync(user.UserId?.ToString(), cancellationToken);
         }
 
         // <inheritdoc />
-        public async Task AddToRoleAsync(TUserEntity user, string normalizedRoleName, CancellationToken cancellationToken = default)
+        public async Task AddToRoleAsync(TUserEntity user, string normalizedRoleName,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
             if (user == null) throw new ArgumentNullException(nameof(user));
-            if (string.IsNullOrWhiteSpace(normalizedRoleName)) throw new ArgumentNullException(nameof(normalizedRoleName));
+            if (string.IsNullOrWhiteSpace(normalizedRoleName))
+                throw new ArgumentNullException(nameof(normalizedRoleName));
 
-            var role = await _repo.Table<IdentityRole>()
-                .SingleOrDefaultAsync(_ => _.NormalizedName == normalizedRoleName, cancellationToken: cancellationToken);
+            var role = await _repo.Table<TRoleEntity>()
+                .SingleOrDefaultAsync(_ => _.NormalizedName == normalizedRoleName,
+                    cancellationToken: cancellationToken);
 
             if (role == null) throw new InvalidOperationException("Role not found.");
 
             try
             {
-                IdentityUserRole<string> userRole = new IdentityUserRole<string>
+                IdentityUserRole<TKey> userRole = new IdentityUserRole<TKey>
                 {
                     RoleId = role.Id,
                     UserId = user.Id
@@ -557,11 +581,14 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 _repo.Add(userRole);
                 await _repo.SaveChangesAsync();
             }
-            catch { }
+            catch
+            {
+            }
         }
 
         /// <inheritdoc/>>
-        public async Task RemoveFromRoleAsync(TUserEntity user, string roleName, CancellationToken cancellationToken = default)
+        public async Task RemoveFromRoleAsync(TUserEntity user, string roleName,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -569,12 +596,13 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (user == null) throw new ArgumentNullException(nameof(user));
             if (string.IsNullOrWhiteSpace(roleName)) throw new ArgumentNullException(nameof(roleName));
 
-            var role = await _repo.Table<IdentityRole>()
+            var role = await _repo.Table<TRoleEntity>()
                 .SingleOrDefaultAsync(_ => _.NormalizedName == roleName, cancellationToken: cancellationToken);
 
             if (role != null)
             {
-                var userRole = await _repo.Table<IdentityUserRole<string>>().SingleOrDefaultAsync(_ => _.RoleId == role.Id && _.UserId == user.Id, cancellationToken);
+                var userRole = await _repo.Table<IdentityUserRole<TKey>>()
+                    .SingleOrDefaultAsync(_ => _.RoleId.Equals(role.Id) && _.UserId.Equals(user.Id), cancellationToken);
                 if (userRole != null)
                 {
                     _repo.Delete(userRole);
@@ -593,13 +621,13 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 throw new ArgumentNullException(nameof(user));
 
             var roleIds = await _repo
-                .Table<IdentityUserRole<string>>()
-                .Where(m => m.UserId == user.Id)
+                .Table<IdentityUserRole<TKey>>()
+                .Where(m => m.UserId.Equals(user.Id))
                 .Select(m => m.RoleId)
                 .ToListAsync(cancellationToken);
 
             IList<string> res = await _repo
-                .Table<IdentityRole>()
+                .Table<TRoleEntity>()
                 .Where(m => roleIds.Contains(m.Id))
                 .Select(m => m.Name)
                 .ToListAsync(cancellationToken);
@@ -608,7 +636,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task<bool> IsInRoleAsync(TUserEntity user, string roleName, CancellationToken cancellationToken = default)
+        public async Task<bool> IsInRoleAsync(TUserEntity user, string roleName,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -621,8 +650,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             if (role != null)
             {
-                var userRole = await _repo.Table<IdentityUserRole<string>>()
-                    .SingleOrDefaultAsync(_ => _.RoleId == role.Id && _.UserId == user.Id, cancellationToken);
+                var userRole = await _repo.Table<IdentityUserRole<TKey>>()
+                    .SingleOrDefaultAsync(_ => _.RoleId.Equals(role.Id) && _.UserId.Equals(user.Id), cancellationToken);
 
                 return userRole != null;
             }
@@ -631,7 +660,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task<IList<TUserEntity>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken = default)
+        public async Task<IList<TUserEntity>> GetUsersInRoleAsync(string roleName,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -639,12 +669,12 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (string.IsNullOrWhiteSpace(roleName)) throw new ArgumentNullException(nameof(roleName));
 
             var role = await _repo.Table<IdentityRole>()
-                            .SingleOrDefaultAsync(_ => _.NormalizedName == roleName, cancellationToken: cancellationToken);
+                .SingleOrDefaultAsync(_ => _.NormalizedName == roleName, cancellationToken: cancellationToken);
 
             if (role != null)
             {
-                var userIds = await _repo.Table<IdentityUserRole<string>>()
-                    .Where(m => m.RoleId == role.Id)
+                var userIds = await _repo.Table<IdentityUserRole<TKey>>()
+                    .Where(m => m.RoleId.Equals(role.Id))
                     .Select(m => m.UserId)
                     .ToListAsync(cancellationToken);
 
@@ -667,7 +697,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         #region IUserLockoutStore methods
 
         // <inheritdoc />
-        public async Task<DateTimeOffset?> GetLockoutEndDateAsync(TUserEntity user, CancellationToken cancellationToken = default)
+        public async Task<DateTimeOffset?> GetLockoutEndDateAsync(TUserEntity user,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -675,13 +706,14 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 throw new ArgumentNullException(nameof(user));
 
             var entity = await _repo.Table<TUserEntity>()
-                .FirstOrDefaultAsync(m => m.Id == user.Id, cancellationToken);
+                .FirstOrDefaultAsync(m => m.Id.Equals(user.Id), cancellationToken);
 
             return entity.LockoutEnd;
         }
 
         // <inheritdoc />
-        public Task SetLockoutEndDateAsync(TUserEntity user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken = default)
+        public Task SetLockoutEndDateAsync(TUserEntity user, DateTimeOffset? lockoutEnd,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -693,7 +725,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task<int> IncrementAccessFailedCountAsync(TUserEntity user, CancellationToken cancellationToken = default)
+        public async Task<int> IncrementAccessFailedCountAsync(TUserEntity user,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -701,7 +734,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 throw new ArgumentNullException(nameof(user));
 
             var entity = await _repo.Table<TUserEntity>()
-                .FirstOrDefaultAsync(m => m.Id == user.Id, cancellationToken);
+                .FirstOrDefaultAsync(m => m.Id.Equals(user.Id), cancellationToken);
 
             var count = entity.AccessFailedCount + 1;
             SetUserProperty(user, count, (u, v) => user.AccessFailedCount = v, cancellationToken);
@@ -776,14 +809,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
-            var claims = await _repo.Table<IdentityUserClaim<string>>().Where(c => c.UserId == user.Id).ToListAsync(cancellationToken);
+            var claims = await _repo.Table<IdentityUserClaim<TKey>>().Where(c => c.UserId.Equals(user.Id))
+                .ToListAsync(cancellationToken);
 
             return claims.Select(c => c.ToClaim()).ToList();
-
         }
 
         // <inheritdoc />
-        public async Task AddClaimsAsync(TUserEntity user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
+        public async Task AddClaimsAsync(TUserEntity user, IEnumerable<Claim> claims,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -798,14 +832,14 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
                 try
                 {
-                    nextId = (await _repo.Table<IdentityUserClaim<string>>().MaxAsync(m => m.Id)) + 1;
+                    nextId = (await _repo.Table<IdentityUserClaim<TKey>>().MaxAsync(m => m.Id)) + 1;
                 }
                 catch (Exception e)
                 {
                     var t = e; // for debugging
                 }
 
-                var identityUserClaim = new IdentityUserClaim<string>()
+                var identityUserClaim = new IdentityUserClaim<TKey>()
                 {
                     ClaimType = claim.Type,
                     ClaimValue = claim.Value,
@@ -819,7 +853,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task ReplaceClaimAsync(TUserEntity user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        public async Task ReplaceClaimAsync(TUserEntity user, Claim claim, Claim newClaim,
+            CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -830,23 +865,25 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (newClaim == null)
                 throw new ArgumentNullException(nameof(claim));
 
-            var doomed = await _repo.Table<IdentityUserClaim<string>>()
-                .SingleOrDefaultAsync(c => c.UserId == user.Id &&
-                    c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType, cancellationToken);
+            var doomed = await _repo.Table<IdentityUserClaim<TKey>>()
+                .SingleOrDefaultAsync(c => c.UserId.Equals(user.Id) &&
+                                           c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType,
+                    cancellationToken);
 
-            _repo.Delete<IdentityUserClaim<string>>(doomed);
-            _repo.Add<IdentityUserClaim<string>>(new IdentityUserClaim<string>()
+            _repo.Delete<IdentityUserClaim<TKey>>(doomed);
+            _repo.Add<IdentityUserClaim<TKey>>(new IdentityUserClaim<TKey>()
             {
                 ClaimType = newClaim.Type,
                 ClaimValue = newClaim.Value,
                 UserId = user.Id
             });
 
-            await _repo.SaveChangesAsync().WaitAsync(cancellationToken); ;
+            await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
         }
 
         // <inheritdoc />
-        public async Task RemoveClaimsAsync(TUserEntity user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
+        public async Task RemoveClaimsAsync(TUserEntity user, IEnumerable<Claim> claims,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -857,9 +894,10 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             foreach (var claim in claims)
             {
-                var doomed = await _repo.Table<IdentityUserClaim<string>>()
-                .SingleOrDefaultAsync(c => c.UserId == user.Id &&
-                    c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType, cancellationToken);
+                var doomed = await _repo.Table<IdentityUserClaim<TKey>>()
+                    .SingleOrDefaultAsync(c => c.UserId.Equals(user.Id) &&
+                                               c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType,
+                        cancellationToken);
 
                 _repo.Delete(doomed);
             }
@@ -870,7 +908,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public async Task<IList<TUserEntity>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
         {
-            var userIds = await _repo.Table<IdentityUserClaim<string>>()
+            var userIds = await _repo.Table<IdentityUserClaim<TKey>>()
                 .Where(c => c.ClaimType == claim.Type && c.ClaimValue == claim.Value)
                 .Select(s => s.UserId).ToArrayAsync(cancellationToken);
 
@@ -879,7 +917,6 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             return (IList<TUserEntity>)users;
         }
-
 
         #endregion
 
@@ -962,7 +999,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// <param name="value">The value of the token.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
-        public virtual async Task SetTokenAsync(TUserEntity user, string loginProvider, string name, string? value, CancellationToken cancellationToken)
+        public virtual async Task SetTokenAsync(TUserEntity user, string loginProvider, string name, string? value,
+            CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -977,14 +1015,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 value = GenerateNewAuthenticatorKey();
             }
 
-            var queryable = (IQueryable<IdentityUserToken<string>>)_repo.UserTokens;
+            var queryable = (IQueryable<IdentityUserToken<TKey>>)_repo.UserTokens;
 
-            var token = await queryable.FirstOrDefaultAsync(t => t.UserId == user.Id && t.LoginProvider == loginProvider && t.Name == name);
+            var token = await queryable.FirstOrDefaultAsync(t =>
+                t.UserId.Equals(user.Id) && t.LoginProvider == loginProvider && t.Name == name);
 
             //var token = await FindTokenAsync(user, loginProvider, name, cancellationToken).ConfigureAwait(false);
             if (token == null)
             {
-                token = new IdentityUserToken<string>()
+                token = new IdentityUserToken<TKey>()
                 {
                     LoginProvider = loginProvider,
                     Name = name,
@@ -995,7 +1034,6 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 {
                     _repo.Add(token);
                     await _repo.SaveChangesAsync();
-
                 }
                 catch (Exception e)
                 {
@@ -1024,20 +1062,25 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             {
                 throw new ArgumentNullException(nameof(user));
             }
-            var queryable = (IQueryable<IdentityUserToken<string>>)_repo.UserTokens;
+
+            var queryable = (IQueryable<IdentityUserToken<TKey>>)_repo.UserTokens;
 
             return await GetTokenAsync(user, InternalLoginProvider, AuthenticatorKeyTokenName, cancellationToken);
         }
 
 
-        private async Task<string> GetTokenAsync(TUserEntity user, string provider, string tokenName, CancellationToken cancellationToken)
+        private async Task<string> GetTokenAsync(TUserEntity user, string provider, string tokenName,
+            CancellationToken cancellationToken)
         {
-            var queryable = (IQueryable<IdentityUserToken<string>>)_repo.UserTokens;
-            var token = await queryable.FirstOrDefaultAsync(t => t.UserId == user.Id && t.LoginProvider == provider && t.Name == tokenName, cancellationToken: cancellationToken);
+            var queryable = (IQueryable<IdentityUserToken<TKey>>)_repo.UserTokens;
+            var token = await queryable.FirstOrDefaultAsync(
+                t => t.UserId.Equals(user.Id) && t.LoginProvider == provider && t.Name == tokenName,
+                cancellationToken: cancellationToken);
             if (token == null)
             {
                 return null;
             }
+
             return token.Value;
         }
 
@@ -1046,7 +1089,6 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
         private static string NewSecurityStamp()
         {
-
             using (var cryptoProvider = new RNGCryptoServiceProvider())
             {
                 byte[] bytes = new byte[64];
@@ -1058,7 +1100,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
                 // Output example: Secure random string: OfGER+tSZIOSz314OlHk1aM+N8oNXDRHqTn3c5EVknYO5b5s0kqq40lJzoGj99ZXCvoFhkNG8KwQQvBPaR0FtQ==
                 // Works: auth enti cato rkey
-                return lettersOrNumbers.Substring(0,16);
+                return lettersOrNumbers.Substring(0, 16);
             }
         }
 
@@ -1067,7 +1109,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         #region Methods that implement IUserTwoFactorRecoveryCodeStore<TUserEntity>
 
         // <inheritdoc />
-        public Task ReplaceCodesAsync(TUserEntity user, IEnumerable<string> recoveryCodes, CancellationToken cancellationToken)
+        public Task ReplaceCodesAsync(TUserEntity user, IEnumerable<string> recoveryCodes,
+            CancellationToken cancellationToken)
         {
             var mergedCodes = string.Join(";", recoveryCodes);
             return SetTokenAsync(user, InternalLoginProvider, RecoveryCodeTokenName, mergedCodes, cancellationToken);
@@ -1083,12 +1126,14 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             if (code == null)
             {
                 throw new ArgumentNullException(nameof(code));
             }
 
-            var mergedCodes = await GetTokenAsync(user, InternalLoginProvider, RecoveryCodeTokenName, cancellationToken).ConfigureAwait(false) ?? "";
+            var mergedCodes = await GetTokenAsync(user, InternalLoginProvider, RecoveryCodeTokenName, cancellationToken)
+                .ConfigureAwait(false) ?? "";
             var splitCodes = mergedCodes.Split(';');
             if (splitCodes.Contains(code))
             {
@@ -1096,6 +1141,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 await ReplaceCodesAsync(user, updatedCodes, cancellationToken).ConfigureAwait(false);
                 return true;
             }
+
             return false;
         }
 
@@ -1110,11 +1156,14 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             {
                 throw new ArgumentNullException(nameof(user));
             }
-            var mergedCodes = await GetTokenAsync(user, InternalLoginProvider, RecoveryCodeTokenName, cancellationToken).ConfigureAwait(false) ?? "";
+
+            var mergedCodes = await GetTokenAsync(user, InternalLoginProvider, RecoveryCodeTokenName, cancellationToken)
+                .ConfigureAwait(false) ?? "";
             if (mergedCodes.Length > 0)
             {
                 return mergedCodes.Split(';').Length;
             }
+
             return 0;
         }
 

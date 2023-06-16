@@ -38,13 +38,13 @@ if (bool.TryParse(setupCosmosDb, out var setup) && setup)
 // Add the Cosmos database context here
 //
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-  options.UseCosmos(connectionString: connectionString, databaseName: cosmosIdentityDbName));
+    options.UseCosmos(connectionString: connectionString, databaseName: cosmosIdentityDbName));
 
 //
 // Add Cosmos Identity here
 //
-builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityRole>(
-      options => options.SignIn.RequireConfirmedAccount = true
+builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityRole, string>(
+        options => options.SignIn.RequireConfirmedAccount = true
     )
     .AddDefaultUI() // Use this if Identity Scaffolding added
     .AddDefaultTokenProviders();

@@ -18,6 +18,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// Non-normalized email address for user 1
         /// </summary>
         public const string IDENUSER1EMAIL = "Foo1@acme.com";
+
         /// <summary>
         /// Non-normalized email address for user 2
         /// </summary>
@@ -25,7 +26,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests
 
 
         public const string IDENUSER1ID = "507b7565-493e-49d7-94c7-d60e21036b4a";
+
         public const string IDENUSER2ID = "55250c6f-7c91-465a-a9ce-ea9bbe6caf81";
+
         //public const string DATABASENAME = "cosmosdb";
         private readonly string _databaseName;
 
@@ -76,6 +79,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
                     data = Environment.GetEnvironmentVariable(key.ToUpper());
                 }
             }
+
             return string.IsNullOrEmpty(data) ? string.Empty : data;
         }
 
@@ -123,9 +127,11 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// </summary>
         /// <param name="connectionName"></param>
         /// <returns></returns>
-        public CosmosIdentityDbContext<IdentityUser, IdentityRole> GetDbContext(string connectionName = "ApplicationDbContextConnection")
+        public CosmosIdentityDbContext<IdentityUser, IdentityRole, string> GetDbContext(
+            string connectionName = "ApplicationDbContextConnection")
         {
-            var dbContext = new CosmosIdentityDbContext<IdentityUser, IdentityRole>(GetDbOptions(connectionName));
+            var dbContext =
+                new CosmosIdentityDbContext<IdentityUser, IdentityRole, string>(GetDbOptions(connectionName));
             return dbContext;
         }
 
@@ -134,12 +140,17 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// </summary>
         /// <param name="connectionName"></param>
         /// <returns></returns>
-        public CosmosUserStore<IdentityUser> GetUserStore(string connectionName = "ApplicationDbContextConnection")
+        public CosmosUserStore<IdentityUser, IdentityRole, string> GetUserStore(
+            string connectionName = "ApplicationDbContextConnection")
         {
+            var repository =
+                new CosmosIdentityRepository<
+                    CosmosIdentityDbContext<IdentityUser, IdentityRole, string>,
+                    IdentityUser,
+                    IdentityRole,
+                    string>(GetDbContext());
 
-            var repository = new CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser, IdentityRole>, IdentityUser, IdentityRole>(GetDbContext());
-
-            var userStore = new CosmosUserStore<IdentityUser>(repository);
+            var userStore = new CosmosUserStore<IdentityUser, IdentityRole, string>(repository);
 
             return userStore;
         }
@@ -148,11 +159,13 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         /// Get an instance of the Cosmos DB role store
         /// </summary>
         /// <returns></returns>
-        public CosmosRoleStore<IdentityUser, IdentityRole> GetRoleStore()
+        public CosmosRoleStore<IdentityUser, IdentityRole, string> GetRoleStore()
         {
-            var repository = new CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser, IdentityRole>, IdentityUser, IdentityRole>(GetDbContext());
+            var repository =
+                new CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser, IdentityRole, string>, IdentityUser,
+                    IdentityRole, string>(GetDbContext());
 
-            var rolestore = new CosmosRoleStore<IdentityUser, IdentityRole>(repository);
+            var rolestore = new CosmosRoleStore<IdentityUser, IdentityRole, string>(repository);
 
             return rolestore;
         }
@@ -164,7 +177,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests
         public RoleManager<IdentityRole> GetRoleManager()
         {
             var userStore = GetRoleStore();
-            var userManager = new RoleManager<IdentityRole>(userStore, null, null, null, GetLogger<RoleManager<IdentityRole>>());
+            var userManager =
+                new RoleManager<IdentityRole>(userStore, null, null, null, GetLogger<RoleManager<IdentityRole>>());
             return userManager;
         }
 

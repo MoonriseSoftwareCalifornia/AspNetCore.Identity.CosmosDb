@@ -5,7 +5,8 @@ using System;
 
 namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
 {
-    public class UserClaimEntityTypeConfiguration : IEntityTypeConfiguration<IdentityUserClaim<string>>
+    public class UserClaimEntityTypeConfiguration<TKey> : IEntityTypeConfiguration<IdentityUserClaim<TKey>>
+        where TKey : IEquatable<TKey>
     {
         private readonly string _tableName;
 
@@ -14,7 +15,7 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
             _tableName = tableName;
         }
 
-        public void Configure(EntityTypeBuilder<IdentityUserClaim<string>> builder)
+        public void Configure(EntityTypeBuilder<IdentityUserClaim<TKey>> builder)
         {
             builder
                 .Property(_ => _.Id)

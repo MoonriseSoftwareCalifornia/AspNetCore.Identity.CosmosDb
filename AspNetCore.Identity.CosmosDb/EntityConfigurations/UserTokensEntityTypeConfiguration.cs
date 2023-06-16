@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
 {
-    public class UserTokensEntityTypeConfiguration : IEntityTypeConfiguration<IdentityUserToken<string>>
+    public class UserTokensEntityTypeConfiguration<TKey> : IEntityTypeConfiguration<IdentityUserToken<TKey>>
+        where TKey : IEquatable<TKey>
     {
         private readonly string _tableName;
 
@@ -13,7 +15,7 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
             _tableName = tableName;
         }
 
-        public void Configure(EntityTypeBuilder<IdentityUserToken<string>> builder)
+        public void Configure(EntityTypeBuilder<IdentityUserToken<TKey>> builder)
         {
             builder
                 .UseETagConcurrency()
