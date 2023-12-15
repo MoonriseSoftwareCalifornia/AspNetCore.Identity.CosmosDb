@@ -105,7 +105,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 Follow that up with the identity provider. Here is an example:
 
 ```csharp
-builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityRole>(
+builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityRole, string>(
       options => options.SignIn.RequireConfirmedAccount = true // Always a good idea :)
     )
     .AddDefaultUI() // Use this if Identity Scaffolding is in use
