@@ -114,13 +114,14 @@ builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityR
 
 ## Adding Google or Microsoft OAuth providers
 
-This library works with external OAuth providers.  Below is an example of how you might add Google and/or Microsoft.
-To begin, for the example below to work, you will likely need to add these two NuGet packages:
+This library works with external OAuth providers, and below is an example of how we implement this.
+
+For the example below to work, please add these two NuGet packages:
 - [Microsoft.AspNetCore.Authentication.Google](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Google)
 - [Microsoft.AspNetCore.Authentication.MicrosoftAccount](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.MicrosoftAccount)
 
-The first is to support Google OAuth authentication, and the second for Microsoft. To learn more
-please see the [Microsoft documentation(https://learn.microsoft.com/en-us/aspnet/web-api/overview/security/external-authentication-services)] on this subject.
+Then add the code below to your Project.cs file.
+
 
 ```csharp
 // Example of adding OAuth Providers
@@ -128,6 +129,7 @@ please see the [Microsoft documentation(https://learn.microsoft.com/en-us/aspnet
 var googleClientId = Configuration["Authentication_Google_ClientId"];
 var googleClientSecret = Configuration["Authentication_Google_ClientSecret"];
 
+// If Google ID and secret are both found, then add the provider.
 if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientSecret))
 {
     builder.Services.AddAuthentication().AddGoogle(options =>
@@ -141,6 +143,7 @@ if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientS
 var microsoftClientId = Configuration["Authentication_Microsoft_ClientId"];
 var microsoftClientSecret = Configuration["Authentication_Microsoft_ClientSecret"];
 
+// If Microsoft ID and secret are both found, then add the provider.
 if (!string.IsNullOrEmpty(microsoftClientId) && !string.IsNullOrEmpty(microsoftClientSecret))
 {
     builder.Services.AddAuthentication().AddMicrosoftAccount(options =>
@@ -151,6 +154,8 @@ if (!string.IsNullOrEmpty(microsoftClientId) && !string.IsNullOrEmpty(microsoftC
 }
 
 ```
+
+To learn more about external OAuth providers, please see the [Microsoft documentation](https://learn.microsoft.com/en-us/aspnet/web-api/overview/security/external-authentication-services) on this subject.
 
 ## Complete Startup File Example
 
