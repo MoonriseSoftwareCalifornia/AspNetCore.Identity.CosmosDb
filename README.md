@@ -112,6 +112,46 @@ builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityR
     .AddDefaultTokenProviders();
 ```
 
+## Adding Google or Microsoft OAuth providers
+
+If you would like to use this library with external OAuth providers, please [see the Microsoft documentation](https://learn.microsoft.com/en-us/aspnet/web-api/overview/security/external-authentication-services).
+
+For the example below to work, you will likely need to add these two NuGet packages:
+- [Microsoft.AspNetCore.Authentication.Google](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Google)
+- [Microsoft.AspNetCore.Authentication.MicrosoftAccount](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.MicrosoftAccount)
+
+The first is to support Google OAuth authentication, and the second for Microsoft.
+
+```csharp
+// Example of adding OAuth Providers
+// Add Google if keys are present
+var googleClientId = Configuration["Authentication_Google_ClientId"];
+var googleClientSecret = Configuration["Authentication_Google_ClientSecret"];
+
+if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientSecret))
+{
+    builder.Services.AddAuthentication().AddGoogle(options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = googleClientSecret;
+    });
+}
+
+// Add Microsoft if keys are present
+var microsoftClientId = Configuration["Authentication_Microsoft_ClientId"];
+var microsoftClientSecret = Configuration["Authentication_Microsoft_ClientSecret"];
+
+if (!string.IsNullOrEmpty(microsoftClientId) && !string.IsNullOrEmpty(microsoftClientSecret))
+{
+    builder.Services.AddAuthentication().AddMicrosoftAccount(options =>
+    {
+        options.ClientId = microsoftClientId;
+        options.ClientSecret = microsoftClientSecret;
+    });
+}
+
+```
+
 ## Complete Startup File Example
 
 The above instructions showed how to modify the startup file to make use of this provider. Sometimes
