@@ -188,7 +188,7 @@ Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packa
 
 This change log notes major changes beyond routine documentation and NuGet dependency updates.
 
-### v8.0.0.2
+### v8.0.0.3
 
 - Now supports generic keys.
 

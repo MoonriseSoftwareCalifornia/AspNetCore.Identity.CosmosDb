@@ -4,9 +4,9 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 
-		<Version>8.0.0.2</Version>
-		<AssemblyVersion>8.0.0.2</AssemblyVersion>
-		<FileVersion>8.0.0.2</FileVersion>
+		<Version>8.0.0.3</Version>
+		<AssemblyVersion>8.0.0.3</AssemblyVersion>
+		<FileVersion>8.0.0.3</FileVersion>
 		<IsPackable>false</IsPackable>
 
 		<UserSecretsId>e5f1f76e-e6ac-4f45-ac55-02e401325c2b</UserSecretsId>
