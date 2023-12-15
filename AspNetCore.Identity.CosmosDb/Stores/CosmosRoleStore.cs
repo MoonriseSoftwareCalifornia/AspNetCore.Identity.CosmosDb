@@ -309,7 +309,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             try
             {
-                nextId = (await _repo.Table<IdentityRoleClaim<TKey>>().MaxAsync(m => m.Id)) + 1;
+                var keys = await _repo.Table<IdentityRoleClaim<TKey>>().Select(m => m.Id).ToArrayAsync(); // Convert to int array here.
+                nextId = keys.Max() + 1; // Max should now work.
             }
             catch (Exception e)
             {
