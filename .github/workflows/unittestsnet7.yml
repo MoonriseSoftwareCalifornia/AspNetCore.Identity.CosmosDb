@@ -25,4 +25,4 @@ jobs:
       env:
           APPLICATIONDBCONTEXTCONNECTION: ${{ secrets.APPLICATIONDBCONTEXTCONNECTION }}
           COSMOSIDENTITYDBNAME: ${{ secrets.COSMOSIDENTITYDBNAME }}
-      run: dotnet test AspNetCore.Identity.CosmosDb.Tests.Net7/AspNetCore.Identity.CosmosDb.Tests.Net7.csproj --no-build --verbosity normal
+      run: dotnet test AspNetCore.Identity.CosmosDb.Tests.Net7/AspNetCore.Identity.CosmosDb.Tests.Net.csproj --no-build --verbosity normal
