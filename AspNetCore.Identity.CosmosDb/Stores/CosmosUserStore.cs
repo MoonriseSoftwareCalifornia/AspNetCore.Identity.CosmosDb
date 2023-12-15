@@ -1047,7 +1047,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         private static string NewSecurityStamp()
         {
 
-            using (var cryptoProvider = new RNGCryptoServiceProvider())
+            using (var cryptoProvider = RandomNumberGenerator.Create())
             {
                 byte[] bytes = new byte[64];
                 cryptoProvider.GetBytes(bytes);

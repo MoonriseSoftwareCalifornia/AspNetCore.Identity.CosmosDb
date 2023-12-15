@@ -1,13 +1,11 @@
 # Cosmos DB Provider for ASP.NET Core Identity
 
 [![CodeQL](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
-[![Net6.0 Tests](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittests.yml) 
-[![Net7.0 Tests](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml)
 [![NuGet](https://img.shields.io/nuget/v/AspNetCore.Identity.CosmosDb.svg)](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb)
 
-This is a **Cosmos DB** implementation of an Identity provider for .NET 6 and 7 that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
+This is a **Cosmos DB** implementation of an Identity provider for .NET 8 that uses the ["EF Core Azure Cosmos DB Provider"](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
-# Installation
+## Installation
 
 Add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb) to your project:
 
@@ -30,7 +28,7 @@ Set your configuration settings with the connection string and database name. Be
 }
 ```
 
-## Update Database Context
+### Update Database Context
 
 Modify the database context to inherit from the `CosmosIdentityDbContext` like this:
 
@@ -48,7 +46,7 @@ namespace AspNetCore.Identity.CosmosDb.Example.Data
 }
 ```
 
-## Modify Program.cs or Startup.cs File
+### Modify Program.cs or Startup.cs File
 
 After the "secrets" have been set, the next task is to modify your project's startup file.  For Asp.net
 6 and higher that might be the `Project.cs` file. For other projects it might be your `Startup.cs.`
@@ -113,7 +111,7 @@ builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityR
     .AddDefaultTokenProviders();
 ```
 
-# Complete Startup File Example
+## Complete Startup File Example
 
 The above instructions showed how to modify the startup file to make use of this provider. Sometimes
 it is easier to see the end result rather than peicemeal.  Here is an example Asp.Net 6 Project.cs
@@ -123,7 +121,7 @@ file configured to work with this provider, scaffolded identity web pages, and t
 
 An [example website](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/tree/master/AspNetCore.Identity.CosmosDb.Example) is available for you to download and try.
 
-# Supported LINQ Operators User and Role Stores
+## Supported LINQ Operators User and Role Stores
 
 Both the user and role stores now support queries via LINQ using Entity Framework.
 Here is an example:
@@ -136,34 +134,40 @@ var roleResults = roleManager.Roles.Where (r => r.Name.Contains("water"));
 For a list of supported LINQ operations, please see the ["Supported LINQ Operations"](https://docs.microsoft.com/en-us/azure/cosmos-db/sql/sql-query-linq-to-sql#SupportedLinqOperators)
 documentation for more details.
 
-## Help Find Bugs!
+### Help Find Bugs
 
 Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb/2.0.10/ContactOwners) or submit a bug report on our [GitHub issues section](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/issues). Thank you in advance!
 
-# Changelog
+## Changelog
 
 This change log notes major changes beyond routine documentation and NuGet dependency updates.
 
-## v2.1.1
+### v8.0.0.1
+
+- Now built for .Net 8, and removed support for 6 and 7.
+- Updated NuGet packages to latest releases.
+
+### v2.1.1
+
 - Added support for .Net 6 and .Net 7.
 
-## v2.0.20
+### v2.0.20
 
 - Addressing [bug #9](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/issues/9), implemented interfaces IUserAuthenticatorKeyStore and IUserTwoFactorRecoveryCodeStore to support two factor authentication.  Example website updated to demonstrate capability with QR code generation.
 
-## v1.0.6
+### v1.0.6
 
 - Introduced support for `IUserLoginStore<TUser>` in User Store
 
-## v1.0.5
+### v1.0.5
 
 - Introduced support for `IUserPhoneNumberStore<TUser>` in User Store
 
-## v1.0.4
+### v1.0.4
 
 - Introduced support for `IUserEmailStore<TUser>` in User Store
 
-## v2.0.0-alpha
+### v2.0.0-alpha
 
 - Forked from source repository [pierodetomi/efcore-identity-cosmos](https://github.com/pierodetomi/efcore-identity-cosmos).
 - Refactored for .Net 6 LTS.
@@ -171,15 +175,15 @@ This change log notes major changes beyond routine documentation and NuGet depen
 - Namespace changed to one more generic: `AspNetCore.Identity.CosmosDb`
 - Implemented `IUserLockoutStore` interface for `UserStore`
 
-## v2.0.1.0
+### v2.0.1.0
 
 - Added example web project
 
-## v2.0.5.1
+### v2.0.5.1
 
 - Implemented IQueryableUserStore and IQueryableRoleStore
 
-# Unit Test Instructions
+## Unit Test Instructions
 
 To run the unit tests you will need two things: (1) A Cosmos DB Account, and (2) a connection string to that account.
 Here is an example of a `secrets.json` file created for the unit test project:
@@ -193,13 +197,13 @@ Here is an example of a `secrets.json` file created for the unit test project:
 }
 ```
 
-## Choice of Cosmos DB Account Type
+### Choice of Cosmos DB Account Type
 
 This implementation will work with the "Free" Cosmos DB tier.  You can have one per account.
 
 It also works the "serverless" and "provisioned" account types.
 
-# References
+## References
 
 To learn more about Asp.Net Identity and items realted to this project, please see the following:
 

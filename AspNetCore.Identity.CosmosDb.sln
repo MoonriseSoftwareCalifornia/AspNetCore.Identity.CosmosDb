@@ -5,11 +5,9 @@ VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Identity.CosmosDb", "AspNetCore.Identity.CosmosDb\AspNetCore.Identity.CosmosDb.csproj", "{12186667-B247-4A53-BCA4-3A440C73E6DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Identity.CosmosDb.Tests", "AspNetCore.Identity.CosmosDb.Tests\AspNetCore.Identity.CosmosDb.Tests.csproj", "{BB763169-B77A-4979-9B9B-CFEA0E151F59}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Identity.CosmosDb.Example", "AspNetCore.Identity.CosmosDb.Example\AspNetCore.Identity.CosmosDb.Example.csproj", "{1E369D30-E081-4EFC-A5A6-2407FEEA8149}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.Identity.CosmosDb.Tests.Net7", "AspNetCore.Identity.CosmosDb.Tests.Net7\AspNetCore.Identity.CosmosDb.Tests.Net7.csproj", "{C3ADD077-BDA8-4C33-ACAC-5405B1ADE02D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Identity.CosmosDb.Tests", "AspNetCore.Identity.CosmosDb.Tests.Net7\AspNetCore.Identity.CosmosDb.Tests.csproj", "{C3ADD077-BDA8-4C33-ACAC-5405B1ADE02D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +19,6 @@ Global
 		{12186667-B247-4A53-BCA4-3A440C73E6DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12186667-B247-4A53-BCA4-3A440C73E6DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12186667-B247-4A53-BCA4-3A440C73E6DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BB763169-B77A-4979-9B9B-CFEA0E151F59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BB763169-B77A-4979-9B9B-CFEA0E151F59}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB763169-B77A-4979-9B9B-CFEA0E151F59}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BB763169-B77A-4979-9B9B-CFEA0E151F59}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E369D30-E081-4EFC-A5A6-2407FEEA8149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1E369D30-E081-4EFC-A5A6-2407FEEA8149}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E369D30-E081-4EFC-A5A6-2407FEEA8149}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
-    <Version>2.1.5</Version>
-    <AssemblyVersion>2.1.5.1</AssemblyVersion>
-    <FileVersion>2.1.5.1</FileVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <Version>8.0.0.1</Version>
+    <AssemblyVersion>8.0.0.1</AssemblyVersion>
+    <FileVersion>8.0.0.1</FileVersion>
     <Authors>toiyabe62</Authors>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>Cosmos, CosmosDB, Identity, Provider, AspNetCore, Membership, Roles, AspNetCore.Identity, AspNetCore.Identity.CosmosDb, Microsoft.AspNetCore.Identity, aspnet, efcore</PackageTags>
@@ -16,32 +16,27 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <RepositoryType>git</RepositoryType>
-    <Description>A Cosmos DB implementation of ASP.NET Core Identity for .NET 6 and 7.</Description>
+    <Description>A Cosmos DB implementation of ASP.NET Core Identity.</Description>
     <ApplicationIcon>_res\icons\nuget-icon.ico</ApplicationIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Company>Cosmos Software LLC</Company>
     <Copyright>Moonrise Software LLC</Copyright>
-    <PackageReleaseNotes>Nuget dependencies and documentation update.</PackageReleaseNotes>
+    <PackageReleaseNotes>Now for .Net 8 with Nuget package updates. New versions now version 8.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.13" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.13" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="6.0.13" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.2" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="8.0.0" />
   </ItemGroup>
   
   <ItemGroup>
     <Content Include="_res\icons\nuget-icon.ico" />
-    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.2.2" />
+    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.3.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>

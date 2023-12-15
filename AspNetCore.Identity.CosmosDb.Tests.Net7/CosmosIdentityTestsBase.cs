@@ -23,12 +23,15 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
 
             // Arrange class - remove prior data
             using var dbContext = _testUtilities.GetDbContext();
-            dbContext.UserRoles.RemoveRange(dbContext.UserRoles.ToList());
-            dbContext.Roles.RemoveRange(dbContext.Roles.ToList());
-            dbContext.RoleClaims.RemoveRange(dbContext.RoleClaims.ToList());
-            dbContext.UserClaims.RemoveRange(dbContext.UserClaims.ToList());
-            dbContext.UserLogins.RemoveRange(dbContext.UserLogins.ToList());
-            dbContext.Users.RemoveRange(dbContext.Users.ToList());
+            try
+            {
+                dbContext.UserRoles.RemoveRange(dbContext.UserRoles.ToList());
+                dbContext.Roles.RemoveRange(dbContext.Roles.ToList());
+                dbContext.RoleClaims.RemoveRange(dbContext.RoleClaims.ToList());
+                dbContext.UserClaims.RemoveRange(dbContext.UserClaims.ToList());
+                dbContext.UserLogins.RemoveRange(dbContext.UserLogins.ToList());
+                dbContext.Users.RemoveRange(dbContext.Users.ToList());
+            } catch (Exception ex) { }
             var result = dbContext.SaveChanges();
         }
 
