@@ -114,13 +114,13 @@ builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityR
 
 ## Adding Google or Microsoft OAuth providers
 
-If you would like to use this library with external OAuth providers, please [see the Microsoft documentation](https://learn.microsoft.com/en-us/aspnet/web-api/overview/security/external-authentication-services).
-
-For the example below to work, you will likely need to add these two NuGet packages:
+This library works with external OAuth providers.  Below is an example of how you might add Google and/or Microsoft.
+To begin, for the example below to work, you will likely need to add these two NuGet packages:
 - [Microsoft.AspNetCore.Authentication.Google](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Google)
 - [Microsoft.AspNetCore.Authentication.MicrosoftAccount](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.MicrosoftAccount)
 
-The first is to support Google OAuth authentication, and the second for Microsoft.
+The first is to support Google OAuth authentication, and the second for Microsoft. To learn more
+please see the [Microsoft documentation(https://learn.microsoft.com/en-us/aspnet/web-api/overview/security/external-authentication-services)] on this subject.
 
 ```csharp
 // Example of adding OAuth Providers
