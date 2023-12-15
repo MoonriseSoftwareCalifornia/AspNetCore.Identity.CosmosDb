@@ -28,7 +28,6 @@ namespace AspNetCore.Identity.CosmosDb.Containers
                                   string databaseName,
                                   CosmosClientOptions clientOptions = null)
         {
-
             if (string.IsNullOrEmpty(connectionString))
                 throw new ArgumentNullException(nameof(connectionString));
 
@@ -125,7 +124,7 @@ namespace AspNetCore.Identity.CosmosDb.Containers
             if (string.IsNullOrEmpty(partitionKeyPath))
                 throw new ArgumentNullException(nameof(partitionKeyPath));
 
-            if (!partitionKeyPath.StartsWith("/"))
+            if (!partitionKeyPath.StartsWith('/'))
                 throw new ArgumentException(nameof(partitionKeyPath), "Path must begin with /");
 
             try
@@ -145,7 +144,6 @@ namespace AspNetCore.Identity.CosmosDb.Containers
                 var t = e;
                 throw;
             }
-
         }
 
         /// <summary>

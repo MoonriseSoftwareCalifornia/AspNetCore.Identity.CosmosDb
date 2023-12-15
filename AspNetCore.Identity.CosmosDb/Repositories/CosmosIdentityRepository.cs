@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace AspNetCore.Identity.CosmosDb.Repositories
 {
-    public class CosmosIdentityRepository<TDbContext, TUserEntity, TRoleEntity> : IRepository
-        where TDbContext : CosmosIdentityDbContext<TUserEntity, TRoleEntity>
-        where TUserEntity : IdentityUser
-        where TRoleEntity : IdentityRole
+    public class CosmosIdentityRepository<TDbContext, TUserEntity, TRoleEntity, TKey> : IRepository
+        where TDbContext : CosmosIdentityDbContext<TUserEntity, TRoleEntity, TKey>
+        where TUserEntity : IdentityUser<TKey>
+        where TRoleEntity : IdentityRole<TKey>
+        where TKey : IEquatable<TKey>
     {
         protected TDbContext _db;
 
@@ -55,49 +56,58 @@ namespace AspNetCore.Identity.CosmosDb.Repositories
             _db = db;
         }
 
-        public DbSet<TEntity> Table<TEntity>() where TEntity : class, new()
+        public DbSet<TEntity> Table<TEntity>()
+            where TEntity : class, new()
         {
             return _db.Set<TEntity>();
         }
 
-        public TEntity GetById<TEntity>(string id) where TEntity : class, new()
+        public TEntity GetById<TEntity>(string id)
+            where TEntity : class, new()
         {
             return _db.Set<TEntity>().WithPartitionKey(id).Single();
         }
 
-        public TEntity TryFindOne<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class, new()
+        public TEntity TryFindOne<TEntity>(Expression<Func<TEntity, bool>> predicate)
+            where TEntity : class, new()
         {
             return _db.Set<TEntity>().SingleOrDefault(predicate);
         }
 
-        public IQueryable<TEntity> Find<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class, new()
+        public IQueryable<TEntity> Find<TEntity>(Expression<Func<TEntity, bool>> predicate)
+            where TEntity : class, new()
         {
             return _db.Set<TEntity>().Where(predicate);
         }
 
-        public void Add<TEntity>(TEntity entity) where TEntity : class, new()
+        public void Add<TEntity>(TEntity entity)
+            where TEntity : class, new()
         {
             _db.Add(entity);
         }
 
-        public void Update<TEntity>(TEntity entity) where TEntity : class, new()
+        public void Update<TEntity>(TEntity entity)
+            where TEntity : class, new()
         {
             var dbEntry = _db.Entry(entity);
             dbEntry.State = EntityState.Modified;
         }
 
-        public void DeleteById<TEntity>(string id) where TEntity : class, new()
+        public void DeleteById<TEntity>(string id)
+            where TEntity : class, new()
         {
             var entity = GetById<TEntity>(id);
             Delete(entity);
         }
 
-        public void Delete<TEntity>(TEntity entity) where TEntity : class, new()
+        public void Delete<TEntity>(TEntity entity)
+            where TEntity : class, new()
         {
             _db.Remove(entity);
         }
 
-        public void Delete<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class, new()
+        public void Delete<TEntity>(Expression<Func<TEntity, bool>> predicate)
+            where TEntity : class, new()
         {
             var entities = _db.Set<TEntity>().Where(predicate).ToList();
             entities.ForEach(entity => _db.Remove(entity));

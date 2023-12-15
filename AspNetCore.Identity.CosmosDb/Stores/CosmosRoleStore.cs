@@ -15,11 +15,12 @@ namespace AspNetCore.Identity.CosmosDb.Stores
     /// Cosmos DB Role Store
     /// </summary>
     /// <typeparam name="TRoleEntity"></typeparam>
-    public class CosmosRoleStore<TUserRoleEntity, TRoleEntity> : IRoleStore<TRoleEntity>,
+    public class CosmosRoleStore<TUserRoleEntity, TRoleEntity, TKey> : IRoleStore<TRoleEntity>,
         IQueryableRoleStore<TRoleEntity>,
-        IRoleClaimStore<TRoleEntity> 
-        where TRoleEntity : IdentityRole
-        , new()
+        IRoleClaimStore<TRoleEntity>
+        where TRoleEntity : IdentityRole<TKey>, new()
+        where TKey : IEquatable<TKey>
+
     {
         private readonly IRepository _repo;
         private bool _disposed;
@@ -40,32 +41,23 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         /// </summary>
         public IQueryable<TRoleEntity> Roles
         {
-            get
-            {
-                return (IQueryable<TRoleEntity>)_repo.Roles;
-            }
+            get { return (IQueryable<TRoleEntity>)_repo.Roles; }
         }
 
         /// <summary>
         /// UserRoles query
         /// </summary>
-        public IQueryable<IdentityUserRole<string>> UserRoles
+        public IQueryable<IdentityUserRole<TKey>> UserRoles
         {
-            get
-            {
-                return (IQueryable<IdentityUserRole<string>>)_repo.UserRoles;
-            }
+            get { return (IQueryable<IdentityUserRole<TKey>>)_repo.UserRoles; }
         }
 
         /// <summary>
         /// UserRoles query
         /// </summary>
-        public IQueryable<IdentityRoleClaim<string>> RoleClaims
+        public IQueryable<IdentityRoleClaim<TKey>> RoleClaims
         {
-            get
-            {
-                return (IQueryable<IdentityRoleClaim<string>>)_repo.RoleClaims;
-            }
+            get { return (IQueryable<IdentityRoleClaim<TKey>>)_repo.RoleClaims; }
         }
 
         /// <summary>
@@ -113,16 +105,18 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             try
             {
-                var userRoles = await UserRoles.Where(w => w.RoleId == role.Id).ToListAsync();
-                foreach(var userRole in userRoles)
+                var userRoles = await UserRoles.Where(w => w.RoleId.Equals(role.Id)).ToListAsync(cancellationToken);
+                foreach (var userRole in userRoles)
                 {
                     _repo.Delete(userRole);
                 }
-                var roleClaims = await RoleClaims.Where(w => w.RoleId == role.Id).ToListAsync();
-                foreach(var roleClaim in roleClaims)
+
+                var roleClaims = await RoleClaims.Where(w => w.RoleId.Equals(role.Id)).ToListAsync(cancellationToken);
+                foreach (var roleClaim in roleClaims)
                 {
                     _repo.Delete(roleClaim);
                 }
+
                 _repo.Delete(role);
                 await _repo.SaveChangesAsync();
             }
@@ -144,13 +138,14 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 throw new ArgumentNullException(nameof(roleId));
 
             var role = await _repo.Table<TRoleEntity>()
-                .SingleOrDefaultAsync(_ => _.Id == roleId, cancellationToken: cancellationToken);
+                .SingleOrDefaultAsync(_ => _.Id.Equals(roleId), cancellationToken: cancellationToken);
 
             return role;
         }
 
         // <inheritdoc />
-        public async Task<TRoleEntity> FindByNameAsync(string normalizedName, CancellationToken cancellationToken = default)
+        public async Task<TRoleEntity> FindByNameAsync(string normalizedName,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -189,7 +184,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 throw new ArgumentNullException(nameof(role));
             }
 
-            return Task.FromResult(role.Id);
+            return Task.FromResult(role.Id.ToString());
         }
 
         // <inheritdoc />
@@ -207,7 +202,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task SetNormalizedRoleNameAsync(TRoleEntity role, string normalizedName, CancellationToken cancellationToken = default)
+        public Task SetNormalizedRoleNameAsync(TRoleEntity role, string normalizedName,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -235,7 +231,6 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             SetRoleProperty(role, roleName, (u, m) => u.Name = roleName, cancellationToken);
 
             return Task.CompletedTask;
-
         }
 
         // <inheritdoc />
@@ -266,7 +261,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             return IdentityResult.Success;
         }
 
-        private void SetRoleProperty<T>(TRoleEntity user, T value, Action<TRoleEntity, T> setter, CancellationToken cancellationToken = default)
+        private void SetRoleProperty<T>(TRoleEntity user, T value, Action<TRoleEntity, T> setter,
+            CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -293,10 +289,10 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
 
-            var claims = await _repo.Table<IdentityRoleClaim<string>>().Where(c => c.RoleId == role.Id).ToListAsync(cancellationToken);
+            var claims = await _repo.Table<IdentityRoleClaim<TKey>>().Where(c => c.RoleId.Equals(role.Id))
+                .ToListAsync(cancellationToken);
 
             return claims.Select(c => c.ToClaim()).ToList();
-
         }
 
         // <inheritdoc />
@@ -313,14 +309,14 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             try
             {
-                nextId = (await _repo.Table<IdentityRoleClaim<string>>().MaxAsync(m => m.Id)) + 1;
+                nextId = (await _repo.Table<IdentityRoleClaim<TKey>>().MaxAsync(m => m.Id)) + 1;
             }
             catch (Exception e)
             {
                 var t = e; // for debugging
             }
 
-            var identityRoleClaim = new IdentityRoleClaim<string>()
+            var identityRoleClaim = new IdentityRoleClaim<TKey>()
             {
                 ClaimType = claim.Type,
                 ClaimValue = claim.Value,
@@ -328,7 +324,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 Id = nextId
             };
 
-            _repo.Add<IdentityRoleClaim<string>>(identityRoleClaim);
+            _repo.Add<IdentityRoleClaim<TKey>>(identityRoleClaim);
             await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
         }
 
@@ -342,9 +338,9 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (claim == null)
                 throw new ArgumentNullException(nameof(claim));
 
-            var doomed = await _repo.Table<IdentityRoleClaim<string>>()
-                .FirstOrDefaultAsync(c => c.RoleId == role.Id &&
-                    c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType, cancellationToken);
+            var doomed = await _repo.Table<IdentityRoleClaim<TKey>>()
+                .FirstOrDefaultAsync(c => c.RoleId.Equals(role.Id) &&
+                                          c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType, cancellationToken);
 
             _repo.Delete(doomed);
             await _repo.SaveChangesAsync().WaitAsync(cancellationToken);

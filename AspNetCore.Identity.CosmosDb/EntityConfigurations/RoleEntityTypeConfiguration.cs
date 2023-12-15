@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
 {
-    public class RoleEntityTypeConfiguration : IEntityTypeConfiguration<IdentityRole>
+    public class RoleEntityTypeConfiguration<TRoleEntity, TKey> : IEntityTypeConfiguration<TRoleEntity>
+        where TRoleEntity : IdentityRole<TKey>
+        where TKey : IEquatable<TKey>
     {
         private readonly string _tableName;
 
@@ -13,7 +16,7 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
             _tableName = tableName;
         }
 
-        public void Configure(EntityTypeBuilder<IdentityRole> builder)
+        public void Configure(EntityTypeBuilder<TRoleEntity> builder)
         {
             builder.HasKey(_ => _.Id);
             builder.HasPartitionKey(_ => _.Id);

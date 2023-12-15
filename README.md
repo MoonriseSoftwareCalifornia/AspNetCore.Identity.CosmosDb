@@ -142,7 +142,7 @@ Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packa
 
 This change log notes major changes beyond routine documentation and NuGet dependency updates.
 
-### v8.0.0.1
+### v8.0.0.2
 
 - Now built for .Net 8, and removed support for 6 and 7.
 - Updated NuGet packages to latest releases.

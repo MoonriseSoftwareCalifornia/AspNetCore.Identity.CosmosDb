@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
 {
-    public class UserEntityTypeConfiguration<TUserEntity> : IEntityTypeConfiguration<TUserEntity> where TUserEntity : IdentityUser
+    public class UserEntityTypeConfiguration<TUserEntity, TKey>
+        : IEntityTypeConfiguration<TUserEntity>
+        where TUserEntity : IdentityUser<TKey>
+        where TKey : IEquatable<TKey>
     {
         private readonly string _tableName;
 

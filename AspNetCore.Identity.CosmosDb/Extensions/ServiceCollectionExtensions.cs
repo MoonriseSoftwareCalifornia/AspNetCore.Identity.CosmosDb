@@ -19,10 +19,11 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
         /// <typeparam name="TRole">The type representing a Role in the system.</typeparam>
         /// <param name="services">The services available in the application.</param>
         /// <returns>An <see cref="IdentityBuilder"/> for creating and configuring the identity system.</returns>
-        public static IdentityBuilder AddCosmosIdentity<TUser, TRole>(
+        public static IdentityBuilder AddCosmosIdentity<TUser, TRole, TKey>(
             this IServiceCollection services)
-            where TUser : class
-            where TRole : class
+            where TUser : IdentityUser<TKey>, new()
+            where TRole : class, new()
+            where TKey : IEquatable<TKey>
             => services.AddIdentity<TUser, TRole>(setupAction: null!);
 
         /// <summary>
@@ -36,61 +37,61 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
         /// <remarks>
         /// This class is based on the <see href="https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Core/src/IdentityServiceCollectionExtensions.cs">AddIdentity()</see>.
         /// </remarks>
-        public static IdentityBuilder AddCosmosIdentity<TDbContext, TUser, TRole>(
+        public static IdentityBuilder AddCosmosIdentity<TDbContext, TUser, TRole, TKey>(
             this IServiceCollection services,
             Action<IdentityOptions> setupAction
         )
-            where TDbContext : CosmosIdentityDbContext<TUser, TRole>
-            where TUser : IdentityUser, new()
-            where TRole : IdentityRole, new()
+            where TDbContext : CosmosIdentityDbContext<TUser, TRole, TKey>
+            where TUser : IdentityUser<TKey>, new()
+            where TRole : IdentityRole<TKey>, new()
+            where TKey : IEquatable<TKey>
         {
-
             //services.AddAuthentication().AddCookie(IdentityConstants.ExternalScheme).AddApplicationCookie();
             //services.TryAddSingleton<ISystemClock, SystemClock>();
 
             // Services used by identity
             services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            })
-            .AddCookie(IdentityConstants.ApplicationScheme, o =>
-            {
-                o.LoginPath = new PathString("/Account/Login");
-                o.Events = new CookieAuthenticationEvents
                 {
-                    OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
-                };
-            })
-            .AddCookie(IdentityConstants.ExternalScheme, o =>
-            {
-                o.Cookie.Name = IdentityConstants.ExternalScheme;
-                o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-            })
-            .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, o =>
-            {
-                o.Cookie.Name = IdentityConstants.TwoFactorRememberMeScheme;
-                o.Events = new CookieAuthenticationEvents
+                    options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+                    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+                    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+                })
+                .AddCookie(IdentityConstants.ApplicationScheme, o =>
                 {
-                    OnValidatePrincipal = SecurityStampValidator.ValidateAsync<ITwoFactorSecurityStampValidator>
-                };
-            })
-            .AddCookie(IdentityConstants.TwoFactorUserIdScheme, o =>
-            {
-                o.Cookie.Name = IdentityConstants.TwoFactorUserIdScheme;
-                o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-            });
+                    o.LoginPath = new PathString("/Account/Login");
+                    o.Events = new CookieAuthenticationEvents
+                    {
+                        OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
+                    };
+                })
+                .AddCookie(IdentityConstants.ExternalScheme, o =>
+                {
+                    o.Cookie.Name = IdentityConstants.ExternalScheme;
+                    o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                })
+                .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, o =>
+                {
+                    o.Cookie.Name = IdentityConstants.TwoFactorRememberMeScheme;
+                    o.Events = new CookieAuthenticationEvents
+                    {
+                        OnValidatePrincipal = SecurityStampValidator.ValidateAsync<ITwoFactorSecurityStampValidator>
+                    };
+                })
+                .AddCookie(IdentityConstants.TwoFactorUserIdScheme, o =>
+                {
+                    o.Cookie.Name = IdentityConstants.TwoFactorUserIdScheme;
+                    o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                });
 
             // Hosting doesn't add IHttpContextAccessor by default
             services.AddHttpContextAccessor();
 
             // Add repository service (Connects to Cosmos DB)
-            services.AddTransient<IRepository, CosmosIdentityRepository<TDbContext, TUser, TRole>>();
+            services.AddTransient<IRepository, CosmosIdentityRepository<TDbContext, TUser, TRole, TKey>>();
 
             // Data stores
-            services.TryAddScoped<IUserStore<TUser>, CosmosUserStore<TUser>>();
-            services.TryAddScoped<IRoleStore<TRole>, CosmosRoleStore<TUser, TRole>>();
+            services.TryAddScoped<IUserStore<TUser>, CosmosUserStore<TUser,TRole, TKey>>();
+            services.TryAddScoped<IRoleStore<TRole>, CosmosRoleStore<TUser, TRole, TKey>>();
 
             // Identity services
             services.TryAddScoped<IUserValidator<TUser>, UserValidator<TUser>>();

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AspNetCore.Identity.CosmosDb.EntityConfigurations;
 
@@ -6,15 +7,18 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
 {
     public static class ModelBuilderExtensions
     {
-        public static ModelBuilder ApplyIdentityMappings<TUserEntity>(this ModelBuilder builder) where TUserEntity : IdentityUser
+        public static ModelBuilder ApplyIdentityMappings<TUserEntity, TRoleEntity, TKey>(this ModelBuilder builder)
+            where TUserEntity : IdentityUser<TKey>
+            where TRoleEntity : IdentityRole<TKey>
+            where TKey : IEquatable<TKey>
         {
-            builder.ApplyConfiguration(new UserEntityTypeConfiguration<TUserEntity> { });
-            builder.ApplyConfiguration(new UserRoleEntityTypeConfiguration { });
-            builder.ApplyConfiguration(new RoleEntityTypeConfiguration { });
-            builder.ApplyConfiguration(new RoleClaimEntityTypeConfiguration { });
-            builder.ApplyConfiguration(new UserClaimEntityTypeConfiguration { });
-            builder.ApplyConfiguration(new UserLoginEntityTypeConfiguration { });
-            builder.ApplyConfiguration(new UserTokensEntityTypeConfiguration { });
+            builder.ApplyConfiguration(new UserEntityTypeConfiguration<TUserEntity, TKey> { });
+            builder.ApplyConfiguration(new UserRoleEntityTypeConfiguration<TKey> { });
+            builder.ApplyConfiguration(new RoleEntityTypeConfiguration<TRoleEntity, TKey> { });
+            builder.ApplyConfiguration(new RoleClaimEntityTypeConfiguration<TKey> { });
+            builder.ApplyConfiguration(new UserClaimEntityTypeConfiguration<TKey> { });
+            builder.ApplyConfiguration(new UserLoginEntityTypeConfiguration<TKey> { });
+            builder.ApplyConfiguration(new UserTokensEntityTypeConfiguration<TKey> { });
             // The following may required a license for production.
             // See: https://modlogix.com/blog/identityserver4-alternatives-best-options-and-the-near-future-of-identityserver/
             builder.ApplyConfiguration(new DeviceFlowCodesEntityTypeConfiguration { });
