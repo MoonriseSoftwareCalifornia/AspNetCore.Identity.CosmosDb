@@ -144,6 +144,10 @@ This change log notes major changes beyond routine documentation and NuGet depen
 
 ### v8.0.0.2
 
+- Now supports generic keys.
+
+### v8.0.0.1
+
 - Now built for .Net 8, and removed support for 6 and 7.
 - Updated NuGet packages to latest releases.
 
