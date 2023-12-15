@@ -116,7 +116,7 @@ builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityR
 
 This library works with external OAuth providers, and below is an example of how we implement this.
 
-For the example below to work, please add these two NuGet packages:
+Begin by adding these two NuGet packages to your project:
 - [Microsoft.AspNetCore.Authentication.Google](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Google)
 - [Microsoft.AspNetCore.Authentication.MicrosoftAccount](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.MicrosoftAccount)
 
