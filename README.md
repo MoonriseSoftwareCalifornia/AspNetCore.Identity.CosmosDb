@@ -6,6 +6,34 @@
 
 This is a **Cosmos DB** implementation of an Identity provider for .NET 8 that uses the ["EF Core Azure Cosmos DB Provider"](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
+## Upgrading to version 8.x from 2.x
+
+When upgrading to version 8 from 2, you will need to make two changes to your project:
+
+The old way of creating the Database Context looked like this:
+
+```csharp
+public class ApplicationDbContext : CosmosIdentityDbContext<IdentityUser, IdentityRole>
+```
+
+The new way is like this (with 'string' added):
+
+```csharp
+public class ApplicationDbContext : CosmosIdentityDbContext<IdentityUser, IdentityRole, string>
+```
+
+Next, in your Program.cs or Startup.cs files, change from this:
+
+```csharp
+ builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityRole>
+```
+
+To this (with 'string' added):
+
+```csharp
+ builder.Services.AddCosmosIdentity<ApplicationDbContext, IdentityUser, IdentityRole, string>
+```
+
 ## Installation
 
 Add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb) to your project:
