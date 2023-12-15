@@ -1,4 +1,4 @@
-name: Net8 Tests
+name: .Net 8 Tests
 
 on:
   workflow_dispatch
