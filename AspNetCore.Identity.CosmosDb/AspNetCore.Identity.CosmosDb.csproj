@@ -11,7 +11,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>AspNetCore.Identity.CosmosDb</PackageId>
     <RepositoryUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</RepositoryUrl>
-    <PackageProjectUrl>https://www.moonrise.net/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</PackageProjectUrl>
     <PackageIcon>nuget-icon.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

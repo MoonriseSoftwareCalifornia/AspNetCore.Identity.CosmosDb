@@ -1,5 +1,6 @@
 # Cosmos DB Provider for ASP.NET Core Identity
 
+[![.Net 8 Tests](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml)
 [![CodeQL](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
 
 This is a **Cosmos DB** implementation of an ASP.NET Core Identity provider for .NET that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli)
