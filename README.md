@@ -219,7 +219,7 @@ This change log notes major changes beyond routine documentation and NuGet depen
 ### v8.0.0.3
 
 - Now supports generic keys.
-- Applied path for issue #14.
+- Applied patch for issue #14.
 
 ### v8.0.0.1
 
