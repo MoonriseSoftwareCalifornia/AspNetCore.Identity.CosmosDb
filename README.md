@@ -6,7 +6,7 @@
 
 This is a **Cosmos DB** implementation of an Identity provider for .NET 8 that uses the ["EF Core Azure Cosmos DB Provider"](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
-## Upgrading to version 8.x from 2.x
+## Upgrading from version 2.x to 8.x
 
 When upgrading to version 8 from 2, you will need to make two changes to your project:
 
