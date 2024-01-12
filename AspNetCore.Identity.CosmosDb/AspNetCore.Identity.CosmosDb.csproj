@@ -22,7 +22,7 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Company>Cosmos Software LLC</Company>
     <Copyright>Moonrise Software LLC</Copyright>
-    <PackageReleaseNotes>Now for .Net 8 with Nuget package updates. New versions now version 8.</PackageReleaseNotes>
+    <PackageReleaseNotes>Nuget dependencies updated to keep current.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
