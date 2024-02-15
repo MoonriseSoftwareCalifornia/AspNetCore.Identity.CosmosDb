@@ -1,0 +1,10 @@
+{
+    "SubscriptionId": "{Your subscription ID}",
+    "ResourceGroupName": "MyResourceGroupName",
+    "FrontDoorName": "{Your front door name}",
+    "EndpointName": "{The endpoint name}",
+    "TenantId": "{Your tenant ID}",
+    "ClientId": "{Your client ID}",
+    "ClientSecret": "{Your client secret}",
+    "DnsNames": "{DNS names assocated with endpoint}"
+}
