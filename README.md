@@ -36,6 +36,11 @@ To this (with 'string' added):
 
 ## Installation
 
+Tip: This package uses multiple "[containers](https://learn.microsoft.com/en-us/azure/cosmos-db/resource-model#azure-cosmos-db-containers)" because the keys are not the same for all entities used.  If RU throughput is
+configured at the "Container" level, this may result in needing to provision a large amout of RU for your database.
+
+To keep costs down, consider sharing throughput at the database level as described here in the [documentation](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-provision-database-throughput?tabs=dotnetv2#provision-throughput-using-azure-portal).
+
 Add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb) to your project:
 
 ```shell
