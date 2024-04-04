@@ -41,6 +41,8 @@ configured at the "***container***" level, this can require your Cosmos DB Accou
 
 To keep costs down, consider ***sharing throughput at the database level*** as described here in the [documentation](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-provision-database-throughput?tabs=dotnetv2#provision-throughput-using-azure-portal).  This allows you to, for example, set the RU at the database to be 1,000 RU, then have all containers within that database ***share*** those RU's.
 
+Next, set the RU to "***[autoscale](https://learn.microsoft.com/en-us/azure/cosmos-db/provision-throughput-autoscale)***."  According to [documentation](https://learn.microsoft.com/en-us/azure/cosmos-db/provision-throughput-autoscale), "*Autoscale provisioned throughput in Azure Cosmos DB allows you to scale the throughput (RU/s) of your database or container automatically and instantly.*" This will allow your database to scale down and up as needed, thus reducing your monthly costs further.
+
 Add the following [NuGet package](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb) to your project:
 
 ```shell
