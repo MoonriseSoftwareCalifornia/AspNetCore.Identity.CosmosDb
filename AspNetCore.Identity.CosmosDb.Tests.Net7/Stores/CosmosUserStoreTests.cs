@@ -133,6 +133,21 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         }
 
         [TestMethod()]
+        public async Task FindByNameEmailAsyncTest()
+        {
+            // Arrange
+            using var userStore = _testUtilities.GetUserStore();
+            var user = await GetMockRandomUserAsync(userStore);
+
+            // Act
+            var user1 = await userStore.FindByNameAsync(user.Email.ToUpper());
+
+            // Assert
+            Assert.IsNotNull(user);
+            Assert.AreEqual(user.UserName, user1.UserName);
+        }
+
+        [TestMethod()]
         public async Task GetEmailAsyncTest()
         {
             // Arrange
