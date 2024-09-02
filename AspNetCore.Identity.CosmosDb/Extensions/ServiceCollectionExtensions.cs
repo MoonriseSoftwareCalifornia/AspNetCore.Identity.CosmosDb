@@ -55,6 +55,8 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
         /// <typeparam name="TRole">The type representing a Role in the system.</typeparam>
         /// <param name="services">The services available in the application.</param>
         /// <param name="setupAction">An action to configure the <see cref="IdentityOptions"/>.</param>
+        /// <param name="cookieExpireTimeSpan">How long to allow the authentication cookie to exist before expiring.</param>
+        /// <param name="slidingExpiration">Whether accessing the site and using the cookie will extend the expiration of the authentication cookie.</param>
         /// <returns>An <see cref="IdentityBuilder"/> for creating and configuring the identity system.</returns>
         /// <remarks>
         /// This class is based on the <see href="https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Core/src/IdentityServiceCollectionExtensions.cs">AddIdentity()</see>.
