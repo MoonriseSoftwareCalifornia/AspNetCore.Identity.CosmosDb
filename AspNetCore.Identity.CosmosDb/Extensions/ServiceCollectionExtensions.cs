@@ -64,13 +64,11 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
                         OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
                     };
                     o.ExpireTimeSpan = TimeSpan.FromDays(7);
-                    o.Cookie.Expiration = TimeSpan.FromDays(7);
                     o.SlidingExpiration = true; // renew the cookie if it is accessed before expiration
                 })
                 .AddCookie(IdentityConstants.ExternalScheme, o =>
                 {
                     o.Cookie.Name = IdentityConstants.ExternalScheme;
-                    o.Cookie.Expiration = TimeSpan.FromDays(7);
                     o.ExpireTimeSpan = TimeSpan.FromDays(7);
                     o.SlidingExpiration = true;
                 })
@@ -85,7 +83,6 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
                 .AddCookie(IdentityConstants.TwoFactorUserIdScheme, o =>
                 {
                     o.Cookie.Name = IdentityConstants.TwoFactorUserIdScheme;
-                    o.Cookie.Expiration = TimeSpan.FromDays(7);
                     o.ExpireTimeSpan = TimeSpan.FromDays(7);
                     o.SlidingExpiration = true;
                 });
