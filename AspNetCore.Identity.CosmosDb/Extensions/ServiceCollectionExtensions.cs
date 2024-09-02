@@ -72,6 +72,7 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
                     o.Cookie.Name = IdentityConstants.ExternalScheme;
                     o.Cookie.Expiration = TimeSpan.FromDays(7);
                     o.ExpireTimeSpan = TimeSpan.FromDays(7);
+                    o.SlidingExpiration = true;
                 })
                 .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, o =>
                 {
@@ -86,6 +87,7 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
                     o.Cookie.Name = IdentityConstants.TwoFactorUserIdScheme;
                     o.Cookie.Expiration = TimeSpan.FromDays(7);
                     o.ExpireTimeSpan = TimeSpan.FromDays(7);
+                    o.SlidingExpiration = true;
                 });
 
             // Hosting doesn't add IHttpContextAccessor by default
