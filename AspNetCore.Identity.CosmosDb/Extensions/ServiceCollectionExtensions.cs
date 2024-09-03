@@ -46,16 +46,42 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
             where TRole : IdentityRole<TKey>, new()
             where TKey : IEquatable<TKey>
         {
+            return ServiceCollectionExtensions.AddCosmosIdentity<TDbContext, TUser, TRole, TKey>(services, setupAction, TimeSpan.FromMinutes(5), slidingExpiration: false);
+        }
+        /// <summary>
+        /// Adds and configures the identity system for the specified User and Role types, using Cosmos DB as the data store.
+        /// </summary>
+        /// <typeparam name="TUser">The type representing a User in the system.</typeparam>
+        /// <typeparam name="TRole">The type representing a Role in the system.</typeparam>
+        /// <param name="services">The services available in the application.</param>
+        /// <param name="setupAction">An action to configure the <see cref="IdentityOptions"/>.</param>
+        /// <param name="cookieExpireTimeSpan">How long to allow the authentication cookie to exist before expiring.</param>
+        /// <param name="slidingExpiration">Whether accessing the site and using the cookie will extend the expiration of the authentication cookie.</param>
+        /// <returns>An <see cref="IdentityBuilder"/> for creating and configuring the identity system.</returns>
+        /// <remarks>
+        /// This class is based on the <see href="https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Core/src/IdentityServiceCollectionExtensions.cs">AddIdentity()</see>.
+        /// </remarks>
+        public static IdentityBuilder AddCosmosIdentity<TDbContext, TUser, TRole, TKey>(
+            this IServiceCollection services,
+            Action<IdentityOptions> setupAction,
+            TimeSpan cookieExpireTimeSpan,
+            bool slidingExpiration = false
+        )
+            where TDbContext : CosmosIdentityDbContext<TUser, TRole, TKey>
+            where TUser : IdentityUser<TKey>, new()
+            where TRole : IdentityRole<TKey>, new()
+            where TKey : IEquatable<TKey>
+        {
             //services.AddAuthentication().AddCookie(IdentityConstants.ExternalScheme).AddApplicationCookie();
             //services.TryAddSingleton<ISystemClock, SystemClock>();
 
             // Services used by identity
             services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-                    options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-                    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-                })
+            {
+                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
                 .AddCookie(IdentityConstants.ApplicationScheme, o =>
                 {
                     o.LoginPath = new PathString("/Account/Login");
@@ -63,11 +89,14 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
                     {
                         OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
                     };
+                    o.ExpireTimeSpan = cookieExpireTimeSpan;
+                    o.SlidingExpiration = slidingExpiration;
                 })
                 .AddCookie(IdentityConstants.ExternalScheme, o =>
                 {
                     o.Cookie.Name = IdentityConstants.ExternalScheme;
-                    o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                    o.ExpireTimeSpan = cookieExpireTimeSpan;
+                    o.SlidingExpiration = slidingExpiration;
                 })
                 .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, o =>
                 {
@@ -80,7 +109,8 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
                 .AddCookie(IdentityConstants.TwoFactorUserIdScheme, o =>
                 {
                     o.Cookie.Name = IdentityConstants.TwoFactorUserIdScheme;
-                    o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                    o.ExpireTimeSpan = cookieExpireTimeSpan;
+                    o.SlidingExpiration = slidingExpiration;
                 });
 
             // Hosting doesn't add IHttpContextAccessor by default
@@ -90,7 +120,7 @@ namespace AspNetCore.Identity.CosmosDb.Extensions
             services.AddTransient<IRepository, CosmosIdentityRepository<TDbContext, TUser, TRole, TKey>>();
 
             // Data stores
-            services.TryAddScoped<IUserStore<TUser>, CosmosUserStore<TUser,TRole, TKey>>();
+            services.TryAddScoped<IUserStore<TUser>, CosmosUserStore<TUser, TRole, TKey>>();
             services.TryAddScoped<IRoleStore<TRole>, CosmosRoleStore<TUser, TRole, TKey>>();
 
             // Identity services
