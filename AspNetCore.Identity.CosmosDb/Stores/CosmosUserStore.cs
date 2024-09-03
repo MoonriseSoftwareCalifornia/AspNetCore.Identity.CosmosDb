@@ -1,17 +1,11 @@
 ﻿using AspNetCore.Identity.CosmosDb.Contracts;
-using AspNetCore.Identity.CosmosDb.Repositories;
-using IdentityModel;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -186,7 +180,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 throw new ArgumentNullException(nameof(normalizedUserName));
 
             return await _repo.Table<TUserEntity>()
-                .SingleOrDefaultAsync(_ => _.NormalizedUserName == normalizedUserName);
+                .SingleOrDefaultAsync(_ => _.NormalizedUserName == normalizedUserName || _.NormalizedEmail == normalizedUserName);
         }
 
         // <inheritdoc />
