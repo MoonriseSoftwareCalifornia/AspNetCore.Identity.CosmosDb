@@ -1,4 +1,4 @@
-name: .Net 8 Tests (123 total)
+name: .Net 8 Tests
 
 on:
   workflow_dispatch
