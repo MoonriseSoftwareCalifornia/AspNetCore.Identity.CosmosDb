@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>8.0.7.0</Version>
-    <AssemblyVersion>8.0.7.0</AssemblyVersion>
-    <FileVersion>8.0.7.0</FileVersion>
+    <Version>8.0.8.0</Version>
+    <AssemblyVersion>8.0.8.0</AssemblyVersion>
+    <FileVersion>8.0.8.0</FileVersion>
     <Authors>Eric Kauffman</Authors>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-AspNetCore.Identity.CosmosDb.Example-0017CFC3-2699-4172-8E2A-2D5B89D0E0D1</UserSecretsId>
@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.Identity.Services.SendGrid" Version="2.1.1" />
-    <PackageReference Include="Azure.Identity" Version="1.12.0" />
+    <PackageReference Include="Azure.Identity" Version="1.12.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.8" />
@@ -28,9 +28,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.4" />
-    <PackageReference Include="NuGet.Common" Version="6.11.0" />
-    <PackageReference Include="NuGet.Protocol" Version="6.11.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
+    <PackageReference Include="NuGet.Common" Version="6.11.1" />
+    <PackageReference Include="NuGet.Protocol" Version="6.11.1" />
   </ItemGroup>
 
   <ItemGroup>
