@@ -4,7 +4,20 @@
 [![.Net 8 Tests](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml)
 [![NuGet](https://img.shields.io/nuget/v/AspNetCore.Identity.CosmosDb.svg)](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb)
 
-This is a **Cosmos DB** implementation of an Identity provider for .NET 8 that uses the ["EF Core Azure Cosmos DB Provider"](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
+This is a **Cosmos DB** implementation of an Identity provider for .NET 9 that uses the ["EF Core Azure Cosmos DB Provider"](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
+
+## Upgrading from 8.x to 9.x
+
+Upgrading from 8.x to 9.x means you will have to update your projects to use .Net 9, and update other Nuget packages to 9 so that required dependencies will
+be found.
+
+Version 9.x of this project is not compatible with .Net 8 projects.
+
+When upgrading the dependency [Microsoft.EntityFrameworkCore.Cosmos](https://github.com/dotnet/efcore/blob/main/src/EFCore.Cosmos) from version 8 to 9, two issues were encountered. These are important to be aware of for your own Cosmos DB entity framework projects:
+
+* [dotnet/efcore#35224](https://github.com/dotnet/efcore/issues/35224) Cosmos: EF Core 9 fails to find document with '|' character in it's id.
+* [dotnet/efcore#35264](https://github.com/dotnet/efcore/issues/35264) How do I handle: The Azure Cosmos DB provider for EF Core currently does not support index definitions.'
+
 
 ## Upgrading from version 2.x to 8.x
 

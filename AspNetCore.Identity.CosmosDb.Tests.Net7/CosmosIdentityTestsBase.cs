@@ -32,7 +32,10 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
                 dbContext.UserLogins.RemoveRange(dbContext.UserLogins.ToList());
                 dbContext.Users.RemoveRange(dbContext.Users.ToList());
             }
-            catch (Exception ex) { }
+            catch (Exception ex)
+            {
+                var trap = ex.Message; //Trap
+            }
             var result = dbContext.SaveChanges();
         }
 

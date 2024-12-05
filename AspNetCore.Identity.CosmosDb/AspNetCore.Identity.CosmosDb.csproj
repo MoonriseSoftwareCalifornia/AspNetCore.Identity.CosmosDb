@@ -1,60 +1,51 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Version>8.0.8.0</Version>
-    <AssemblyVersion>8.0.8.0</AssemblyVersion>
-    <FileVersion>8.0.8.0</FileVersion>
-    <Authors>toiyabe62</Authors>
-    <RepositoryType>GitHub</RepositoryType>
-    <PackageTags>Cosmos, CosmosDB, Identity, Provider, AspNetCore, Membership, Roles, AspNetCore.Identity, AspNetCore.Identity.CosmosDb, Microsoft.AspNetCore.Identity, aspnet, efcore</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>AspNetCore.Identity.CosmosDb</PackageId>
-    <RepositoryUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</PackageProjectUrl>
-    <PackageIcon>nuget-icon.png</PackageIcon>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <RepositoryType>git</RepositoryType>
-    <Description>A Cosmos DB implementation of ASP.NET Core Identity.</Description>
-    <ApplicationIcon>_res\icons\nuget-icon.ico</ApplicationIcon>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <Company>Cosmos Software LLC</Company>
-    <Copyright>Moonrise Software LLC</Copyright>
-    <PackageReleaseNotes>Nuget package update.</PackageReleaseNotes>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <NoWin32Manifest>true</NoWin32Manifest>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Version>9.0.0.1</Version>
+		<AssemblyVersion>9.0.0.1</AssemblyVersion>
+		<FileVersion>9.0.0.1</FileVersion>
+		<Authors>toiyabe62</Authors>
+		<Nullable>enable</Nullable>
+		<RepositoryType>GitHub</RepositoryType>
+		<PackageTags>Cosmos, CosmosDB, Identity, Provider, AspNetCore, Membership, Roles, AspNetCore.Identity, AspNetCore.Identity.CosmosDb, Microsoft.AspNetCore.Identity, aspnet, efcore</PackageTags>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageId>AspNetCore.Identity.CosmosDb</PackageId>
+		<RepositoryUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</PackageProjectUrl>
+		<PackageIcon>nuget-icon.png</PackageIcon>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<RepositoryType>git</RepositoryType>
+		<Description>A Cosmos DB implementation of ASP.NET Core Identity.</Description>
+		<ApplicationIcon>_res\icons\nuget-icon.ico</ApplicationIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<Company>Cosmos Software LLC</Company>
+		<Copyright>Moonrise Software LLC</Copyright>
+		<PackageReleaseNotes>Updated for .Net 9 Entity Framework.</PackageReleaseNotes>
+		<NoWin32Manifest>true</NoWin32Manifest>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="8.0.8" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Content Include="_res\icons\nuget-icon.ico" />
-    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="7.0.7" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
+		<PackageReference Include="System.Text.Json" Version="9.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="_res\icons\nuget-icon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="_res\icons\nuget-icon.ico" />
+		<PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="7.0.8" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="_res\icons\nuget-icon.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>

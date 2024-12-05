@@ -522,7 +522,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                 {
                     ProviderDisplayName = l.ProviderDisplayName
                 })
-                .ToList();
+                .ToListAsync().Result;
 
             return Task.FromResult(res);
         }
