@@ -589,7 +589,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
             var result4 = await userManager.AddToRolesAsync(user, roles);
 
             // Assert
-            Assert.IsTrue(result2.Succeeded);
+            Assert.IsTrue(result4.Succeeded);
             var result5 = await userManager.GetRolesAsync(user);
             Assert.AreEqual(3, result5.Count);
         }
