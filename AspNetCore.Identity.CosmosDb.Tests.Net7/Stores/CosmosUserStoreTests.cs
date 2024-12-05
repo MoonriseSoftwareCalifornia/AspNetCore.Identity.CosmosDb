@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
 {
@@ -81,10 +82,10 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
 
             // Assert
             Assert.IsTrue(result.Succeeded);
-            Assert.IsTrue(dbContext.Users.Where(a => a.Id == userId).Count() == 0);
-            Assert.IsTrue(dbContext.UserClaims.Where(a => a.UserId == userId).Count() == 0);
-            Assert.IsTrue(dbContext.UserLogins.Where(a => a.UserId == userId).Count() == 0);
-            Assert.IsTrue(dbContext.UserRoles.Where(a => a.UserId == userId).Count() == 0);           // Assert
+            Assert.IsTrue(await dbContext.Users.Where(a => a.Id == userId).CountAsync() == 0);
+            Assert.IsTrue(await dbContext.UserClaims.Where(a => a.UserId == userId).CountAsync() == 0);
+            Assert.IsTrue(await dbContext.UserLogins.Where(a => a.UserId == userId).CountAsync() == 0);
+            Assert.IsTrue(await dbContext.UserRoles.Where(a => a.UserId == userId).CountAsync() == 0);           // Assert
         }
 
         [TestMethod()]
@@ -704,7 +705,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
             var user1 = await GetMockRandomUserAsync(userStore);
 
             // Act
-            var result = userStore.Users.ToList();
+            var result = await userStore.Users.ToListAsync();
 
             // Assert
             Assert.IsInstanceOfType(userStore.Users, typeof(IQueryable<IdentityUser>));

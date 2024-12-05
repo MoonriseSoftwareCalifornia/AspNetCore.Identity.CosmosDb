@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AspNetCore.Identity.CosmosDb.Contracts;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using AspNetCore.Identity.CosmosDb.Contracts;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Linq;
-using AspNetCore.Identity.CosmosDb.Repositories;
 
 namespace AspNetCore.Identity.CosmosDb.Stores
 {
@@ -160,7 +159,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task<string> GetNormalizedRoleNameAsync(TRoleEntity role, CancellationToken cancellationToken = default)
+        public Task<string?> GetNormalizedRoleNameAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -174,7 +173,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task<string> GetRoleIdAsync(TRoleEntity role, CancellationToken cancellationToken = default)
+        public Task<string?> GetRoleIdAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -188,7 +187,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task<string> GetRoleNameAsync(TRoleEntity role, CancellationToken cancellationToken = default)
+        public Task<string?> GetRoleNameAsync(TRoleEntity role, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -202,8 +201,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task SetNormalizedRoleNameAsync(TRoleEntity role, string normalizedName,
-            CancellationToken cancellationToken = default)
+        public Task SetNormalizedRoleNameAsync(TRoleEntity role, string? normalizedName,
+            CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -219,7 +218,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public Task SetRoleNameAsync(TRoleEntity role, string roleName, CancellationToken cancellationToken = default)
+        public Task SetRoleNameAsync(TRoleEntity role, string? roleName, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
@@ -238,13 +237,8 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            if (role == null)
-                throw new ArgumentNullException(nameof(role));
 
-            if (role == null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
+            ArgumentNullException.ThrowIfNull(role);
 
             role.ConcurrencyStamp = Guid.NewGuid().ToString();
 
@@ -268,7 +262,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             ThrowIfDisposed();
 
             if (user == null) throw new ArgumentNullException(nameof(user));
-            if (value == null) throw new ArgumentNullException(nameof(value));
+            if (object.Equals(value, default(T))) throw new ArgumentNullException(nameof(value));
 
             setter(user, value);
         }

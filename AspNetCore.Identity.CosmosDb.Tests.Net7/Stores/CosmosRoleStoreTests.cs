@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
@@ -6,10 +7,6 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
     [TestClass()]
     public class CosmosRoleStoreTests : CosmosIdentityTestsBase
     {
-        //private static TestUtilities? utils;
-        //private static CosmosUserStore<IdentityUser>? _userStore;
-        //private static CosmosRoleStore<IdentityRole>? roleStore;
-        //private static Random _random;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -37,14 +34,14 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
             // Act
             // Create a bunch of roles in rapid succession
             using var dbContext = _testUtilities.GetDbContext();
-            var currentCount = dbContext.Roles.Count();
+            var currentCount = await dbContext.Roles.CountAsync();
             for (int i = 0; i < 35; i++)
             {
                 var r = await GetMockRandomRoleAsync();
             }
 
             // Assert
-            Assert.AreEqual(35 + currentCount, dbContext.Roles.Count());
+            Assert.AreEqual(35 + currentCount, await dbContext.Roles.CountAsync());
 
         }
 
@@ -68,9 +65,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
 
             // Assert
             Assert.IsTrue(result.Succeeded);
-            Assert.IsTrue(dbContext.Roles.Where(a => a.Name == role.Name).Count() == 0);
-            Assert.IsTrue(dbContext.RoleClaims.Where(a => a.RoleId == roleId).Count() == 0);
-            Assert.IsTrue(dbContext.UserRoles.Where(a => a.RoleId == roleId).Count() == 0);
+            Assert.IsTrue(await dbContext.Roles.Where(a => a.Name == role.Name).CountAsync() == 0);
+            Assert.IsTrue(await dbContext.RoleClaims.Where(a => a.RoleId == roleId).CountAsync() == 0);
+            Assert.IsTrue(await dbContext.UserRoles.Where(a => a.RoleId == roleId).CountAsync() == 0);
         }
 
         [TestMethod()]
@@ -152,7 +149,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
             var newName = $"WOW{Guid.NewGuid().ToString()}";
 
             // Act
-            await roleStore.SetNormalizedRoleNameAsync(role, newName.ToUpper());
+            await roleStore.SetNormalizedRoleNameAsync(role, newName.ToUpper(), default);
 
             // Assert
             var result = await roleStore.GetNormalizedRoleNameAsync(role);
@@ -258,7 +255,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
             var user1 = await GetMockRandomRoleAsync(roletore);
 
             // Act
-            var result = roletore.Roles.ToList();
+            var result = await roletore.Roles.ToListAsync();
 
             // Assert
             Assert.IsTrue(result.Count > 0);

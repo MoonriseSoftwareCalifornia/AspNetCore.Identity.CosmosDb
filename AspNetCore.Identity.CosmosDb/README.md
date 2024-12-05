@@ -3,7 +3,7 @@
 [![.Net 8 Tests](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/unittestsnet7.yml)
 [![CodeQL](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
 
-This is a **Cosmos DB** implementation of an ASP.NET Core Identity provider for .NET that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli)
+This is a **Cosmos DB** implementation of an ASP.NET Core Identity provider for .NET that uses the ["EF Core Azure Cosmos DB Provider."](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
 ## Install Instructions
 
@@ -11,6 +11,7 @@ This is a **Cosmos DB** implementation of an ASP.NET Core Identity provider for 
 - Questions and feedback are welcome! Please post a message to our to our [project discussion section](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/discussions). We will reply as soon as possible.
 - An example web application that uses this package [is available for download from GitHub](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb).
 - If UPGRADING from version 2x to 8x, [please see the repository README](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb#cosmos-db-provider-for-aspnet-core-identity).
+- - If UPGRADING from version 8x to 9x, [please see the repository README](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb#cosmos-db-provider-for-aspnet-core-identity).
 
 ## More Information
 

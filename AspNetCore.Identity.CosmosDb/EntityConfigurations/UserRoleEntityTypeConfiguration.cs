@@ -21,6 +21,8 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
                 .UseETagConcurrency()
                 .HasPartitionKey(_ => _.UserId);
 
+            builder.HasKey(r => new { r.UserId, r.RoleId });
+
             builder.ToContainer(_tableName);
         }
     }
