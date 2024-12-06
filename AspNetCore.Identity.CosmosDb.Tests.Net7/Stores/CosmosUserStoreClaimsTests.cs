@@ -58,7 +58,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
             var testAny = result3.Any(a => a.Type == newClaim.Type);
             if (!testAny)
             {
-                Assert.Fail($"Replace failed with {result3.Count} with types { string.Join(",", result3.Select(s => s.Type).ToArray()) }).");
+                throw new Exception($"Replace failed with {result3.Count} with types { string.Join(",", result3.Select(s => s.Type).ToArray()) }).");
             }
 
             Assert.IsTrue(testAny);
