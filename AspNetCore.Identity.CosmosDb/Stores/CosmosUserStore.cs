@@ -869,10 +869,20 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (newClaim == null)
                 throw new ArgumentNullException(nameof(claim));
 
+            // Make sure new claim does not already exist.
+            var doomedNewClaim = await _repo.Table<IdentityUserClaim<TKey>>()
+                .SingleOrDefaultAsync(c => c.UserId.Equals(user.Id) &&
+                                           c.ClaimValue == newClaim.Value && c.ClaimType == newClaim.Type, cancellationToken);
+
+            if (doomedNewClaim != null)
+            {
+                _repo.Delete<IdentityUserClaim<TKey>>(doomedNewClaim);
+                await _repo.SaveChangesAsync().WaitAsync(cancellationToken); // Save the delete before continuing.
+            }
+
             var doomed = await _repo.Table<IdentityUserClaim<TKey>>()
                 .SingleOrDefaultAsync(c => c.UserId.Equals(user.Id) &&
-                                           c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType,
-                    cancellationToken);
+                                           c.ClaimValue == claim.Value && c.ClaimType == claim.Type, cancellationToken);
 
             if (doomed == null)
                 throw new InvalidOperationException("Original claim not found.");
@@ -905,10 +915,11 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             {
                 var doomed = await _repo.Table<IdentityUserClaim<TKey>>()
                     .SingleOrDefaultAsync(c => c.UserId.Equals(user.Id) &&
-                                               c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType,
+                                               c.ClaimValue == claim.Value && c.ClaimType == claim.Type,
                         cancellationToken);
 
-                _repo.Delete(doomed);
+                if (doomed != null)
+                    _repo.Delete<IdentityUserClaim<TKey>>(doomed);
             }
 
             await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
