@@ -102,9 +102,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
             return new UserLoginInfo("Twitter", Guid.NewGuid().ToString(), "Twitter");
         }
 
-        protected Claim GetMockClaim()
+        protected Claim GetMockClaim(string seed = "")
         {
-            return new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+            return new Claim(Guid.NewGuid().ToString(), $"{Guid.NewGuid().ToString()}{seed}");
         }
 
         /// <summary>

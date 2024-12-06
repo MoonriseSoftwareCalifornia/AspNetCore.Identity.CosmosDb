@@ -37,7 +37,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
                 await userStore.RemoveClaimsAsync(user1, claims, default);
             }
 
-            var claim = new Claim[] { GetMockClaim(), GetMockClaim(), GetMockClaim() };
+            var claim = new Claim[] { GetMockClaim("a"), GetMockClaim("b"), GetMockClaim("c") };
             var newClaim = GetMockClaim();
 
             await userStore.AddClaimsAsync(user1, claim, default);
