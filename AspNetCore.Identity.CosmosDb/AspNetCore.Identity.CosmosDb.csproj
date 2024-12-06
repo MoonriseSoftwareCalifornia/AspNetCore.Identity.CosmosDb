@@ -5,7 +5,9 @@
 		<Version>9.0.0.1</Version>
 		<AssemblyVersion>9.0.0.1</AssemblyVersion>
 		<FileVersion>9.0.0.1</FileVersion>
+		
 		<PackageVersion>9.0.0</PackageVersion>
+		
 		<Authors>toiyabe62</Authors>
 		<Nullable>enable</Nullable>
 		<RepositoryType>GitHub</RepositoryType>
