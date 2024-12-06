@@ -29,9 +29,18 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
             // Arrange
             using var userStore = _testUtilities.GetUserStore();
             var user1 = await GetMockRandomUserAsync(userStore);
-            var claims = new Claim[] { GetMockClaim(), GetMockClaim(), GetMockClaim() };
+
+            // Clean up claims before starting
+            var claims = await userStore.GetClaimsAsync(user1, default);
+            if (claims.Any())
+            {
+                await userStore.RemoveClaimsAsync(user1, claims, default);
+            }
+
+            var claim = new Claim[] { GetMockClaim(), GetMockClaim(), GetMockClaim() };
             var newClaim = GetMockClaim();
-            await userStore.AddClaimsAsync(user1, claims, default);
+
+            await userStore.AddClaimsAsync(user1, claim, default);
 
             // Act - Create
             var result2 = await userStore.GetClaimsAsync(user1, default);
@@ -40,11 +49,11 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
             Assert.AreEqual(3, result2.Count);
 
             // Act - Replace
-            await userStore.ReplaceClaimAsync(user1, claims.FirstOrDefault(), newClaim, default);
+            await userStore.ReplaceClaimAsync(user1, claim.FirstOrDefault(), newClaim, default);
 
             // Assert - Replace
             var result3 = await userStore.GetClaimsAsync(user1, default);
-            Assert.IsFalse(result3.Any(a => a.Type == claims.FirstOrDefault().Type));
+            Assert.IsFalse(result3.Any(a => a.Type == claim.FirstOrDefault().Type));
             Assert.IsTrue(result3.Any(a => a.Type == newClaim.Type));
 
             // Act - Delete
