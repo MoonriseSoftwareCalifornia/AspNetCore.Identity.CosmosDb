@@ -51,10 +51,17 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
             // Act - Replace
             await userStore.ReplaceClaimAsync(user1, claim.FirstOrDefault(), newClaim, default);
 
-            // Assert - Replace
+            // test - Replace
             var result3 = await userStore.GetClaimsAsync(user1, default);
             Assert.IsFalse(result3.Any(a => a.Type == claim.FirstOrDefault().Type));
-            Assert.IsTrue(result3.Any(a => a.Type == newClaim.Type));
+
+            var testAny = result3.Any(a => a.Type == newClaim.Type);
+            if (!testAny)
+            {
+                Assert.Fail($"Replace failed with {result3.Count} with types { string.Join(",", result3.Select(s => s.Type).ToArray()) }).");
+            }
+
+            Assert.IsTrue(testAny);
 
             // Act - Delete
             await userStore.RemoveClaimsAsync(user1, result3, default);
