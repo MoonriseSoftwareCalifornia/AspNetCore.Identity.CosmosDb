@@ -874,7 +874,12 @@ namespace AspNetCore.Identity.CosmosDb.Stores
                                            c.ClaimValue == claim.Value && c.ClaimType == c.ClaimType,
                     cancellationToken);
 
+            if (doomed == null)
+                throw new InvalidOperationException("Original claim not found.");
+
             _repo.Delete<IdentityUserClaim<TKey>>(doomed);
+            await _repo.SaveChangesAsync().WaitAsync(cancellationToken); // Save the delete before continuing.
+
             _repo.Add<IdentityUserClaim<TKey>>(new IdentityUserClaim<TKey>()
             {
                 ClaimType = newClaim.Type,
