@@ -5,6 +5,7 @@
 		<Version>9.0.0.1</Version>
 		<AssemblyVersion>9.0.0.1</AssemblyVersion>
 		<FileVersion>9.0.0.1</FileVersion>
+		<PackageVersion>9.0.0</PackageVersion>
 		<Authors>toiyabe62</Authors>
 		<Nullable>enable</Nullable>
 		<RepositoryType>GitHub</RepositoryType>
@@ -14,6 +15,7 @@
 		<RepositoryUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/CosmosSoftware/AspNetCore.Identity.CosmosDb</PackageProjectUrl>
 		<PackageIcon>nuget-icon.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<RepositoryType>git</RepositoryType>
@@ -37,6 +39,7 @@
 
 	<ItemGroup>
 		<Content Include="_res\icons\nuget-icon.ico" />
+		<None Include="../README.md" Pack="true" PackagePath="\"/>
 		<PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="7.0.8" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>

@@ -5,14 +5,14 @@
 ![Net 9 Tests](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/donet9tests.yml/badge.svg)
 [![NuGet](https://img.shields.io/nuget/v/AspNetCore.Identity.CosmosDb.svg)](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb)
 
-This is a **Cosmos DB** implementation of an Identity provider for .NET 9 that uses the ["EF Core Azure Cosmos DB Provider"](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
+This is a **Cosmos DB** implementation of an Identity provider that uses the ["Entity Framework Core, Azure Cosmos DB Provider"](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
 
 ## Upgrading from 8.x to 9.x
 
 Upgrading from 8.x to 9.x means you will have to update your projects to use .Net 9, and update other Nuget packages to 9 so that required dependencies will
 be found.
 
-Version 9.x of this project is not compatible with .Net 8 projects.
+Note: The Version 9.x of this project is not compatible with .Net 8 projects.
 
 When upgrading the dependency [Microsoft.EntityFrameworkCore.Cosmos](https://github.com/dotnet/efcore/blob/main/src/EFCore.Cosmos) from version 8 to 9, two issues were encountered. These are important to be aware of for your own Cosmos DB entity framework projects:
 
@@ -240,6 +240,10 @@ Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packa
 ## Changelog
 
 This change log notes major changes beyond routine documentation and NuGet dependency updates.
+
+### v9.0.0.1
+
+- Updated for .Net 9, and version 9 of the Entity Framework.
 
 ### v8.0.0.3
 

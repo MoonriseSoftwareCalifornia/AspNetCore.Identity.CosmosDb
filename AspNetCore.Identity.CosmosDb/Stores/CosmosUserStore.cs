@@ -1085,19 +1085,14 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
         private static string NewSecurityStamp()
         {
-            using (var cryptoProvider = new RNGCryptoServiceProvider())
-            {
-                byte[] bytes = new byte[64];
-                cryptoProvider.GetBytes(bytes);
+            byte[] bytes = new byte[64];
+            RandomNumberGenerator.Fill(bytes);
 
-                string secureRandomString = Convert.ToBase64String(bytes);
+            string secureRandomString = Convert.ToBase64String(bytes);
 
-                var lettersOrNumbers = new string(secureRandomString.Where(char.IsLetter).ToArray());
+            var lettersOrNumbers = new string(secureRandomString.Where(char.IsLetter).ToArray());
 
-                // Output example: Secure random string: OfGER+tSZIOSz314OlHk1aM+N8oNXDRHqTn3c5EVknYO5b5s0kqq40lJzoGj99ZXCvoFhkNG8KwQQvBPaR0FtQ==
-                // Works: auth enti cato rkey
-                return lettersOrNumbers.Substring(0, 16);
-            }
+            return lettersOrNumbers.Substring(0, 16);
         }
 
         #endregion

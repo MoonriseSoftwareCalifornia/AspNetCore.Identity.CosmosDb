@@ -26,7 +26,7 @@ namespace AspNetCore.Identity.CosmosDb.Containers
         /// <param name="clientOptions"></param>
         public ContainerUtilities(string connectionString,
                                   string databaseName,
-                                  CosmosClientOptions clientOptions = null)
+                                  CosmosClientOptions? clientOptions = null)
         {
             if (string.IsNullOrEmpty(connectionString))
                 throw new ArgumentNullException(nameof(connectionString));
