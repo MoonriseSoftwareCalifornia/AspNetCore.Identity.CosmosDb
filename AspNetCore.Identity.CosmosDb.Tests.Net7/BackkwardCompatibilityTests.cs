@@ -4,8 +4,14 @@ using Microsoft.EntityFrameworkCore;
 namespace AspNetCore.Identity.CosmosDb.Tests
 {
     [TestClass]
-    public class BackkwardCompatibilityTests
+    public class BackkwardCompatibilityTests : CosmosIdentityTestsBase
     {
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            InitializeClass();
+        }
+
         [TestMethod]
         public async Task ReadIdentityUsers()
         {
@@ -14,7 +20,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests
 
             var dbContext = testUtilities.GetDbContext(backwardCompatibility: true, dbName: "cosmoscms");
 
-            // Assert
+            //// Assert
             var users = await dbContext.Users.ToListAsync();
             Assert.IsNotNull(users);
             Assert.IsTrue(users.Count > 0);
