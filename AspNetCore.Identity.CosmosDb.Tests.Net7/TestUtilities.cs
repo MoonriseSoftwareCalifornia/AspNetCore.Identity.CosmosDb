@@ -87,8 +87,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// Get Cosmos DB Options
         /// </summary>
         /// <param name="connectionName"></param>
+        /// <param name="dbName"></param>
         /// <returns></returns>
-        public DbContextOptions GetDbOptions(string connectionName = "ApplicationDbContextConnection")
+        public DbContextOptions GetDbOptions(string connectionName = "ApplicationDbContextConnection", string dbName = "CosmosIdentityDbName")
         {
             var config = GetConfig();
             var connectionString = config.GetConnectionString("ApplicationDbContextConnection");
@@ -98,7 +99,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
             }
 
             var builder = new DbContextOptionsBuilder();
-            builder.UseCosmos(connectionString, GetKeyValue("CosmosIdentityDbName"));
+            builder.UseCosmos(connectionString, GetKeyValue(dbName));
 
             return builder.Options;
         }
@@ -108,7 +109,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// </summary>
         /// <param name="connectionName"></param>
         /// <returns></returns>
-        public ContainerUtilities GetContainerUtilities(string connectionName = "ApplicationDbContextConnection")
+        public ContainerUtilities GetContainerUtilities(string connectionName = "ApplicationDbContextConnection", string dbName = "CosmosIdentityDbName")
         {
             var config = GetConfig();
             var connectionString = config.GetConnectionString(connectionName);
@@ -118,7 +119,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
                 connectionString = GetKeyValue("ApplicationDbContextConnection");
             }
 
-            var utilities = new ContainerUtilities(connectionString, GetKeyValue("CosmosIdentityDbName"));
+            var utilities = new ContainerUtilities(connectionString, GetKeyValue(dbName));
             return utilities;
         }
 
@@ -126,12 +127,13 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// Get an instance of the Cosmos DB context.
         /// </summary>
         /// <param name="connectionName"></param>
+        /// <param name="backwardCompatibility"
         /// <returns></returns>
         public CosmosIdentityDbContext<IdentityUser, IdentityRole, string> GetDbContext(
-            string connectionName = "ApplicationDbContextConnection")
+            string connectionName = "ApplicationDbContextConnection", bool backwardCompatibility = false, string dbName = "CosmosIdentityDbName")
         {
             var dbContext =
-                new CosmosIdentityDbContext<IdentityUser, IdentityRole, string>(GetDbOptions(connectionName));
+                new CosmosIdentityDbContext<IdentityUser, IdentityRole, string>(GetDbOptions(connectionName, dbName), backwardCompatibility);
             return dbContext;
         }
 

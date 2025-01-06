@@ -22,6 +22,8 @@ namespace AspNetCore.Identity.CosmosDb
         where TKey : IEquatable<TKey>
     {
 
+        private readonly bool _backwardCompatibility;
+
         private StoreOptions? GetStoreOptions() => this.GetService<IDbContextOptions>()
                         .Extensions.OfType<CoreOptionsExtension>()
                         .FirstOrDefault()?.ApplicationServiceProvider
@@ -34,9 +36,11 @@ namespace AspNetCore.Identity.CosmosDb
         /// <param name="options"></param>
         /// <param name="createDbAndContainers">Context with create the database and containers upon model creating.</param>
         public CosmosIdentityDbContext(
-            DbContextOptions options)
+            DbContextOptions options,
+            bool backwardCompatibility = false)
             : base(options)
         {
+            _backwardCompatibility = backwardCompatibility;
         }
 
         /// <summary>
@@ -79,6 +83,11 @@ namespace AspNetCore.Identity.CosmosDb
 
             // Cosmos DB Modifications
             builder.ApplyIdentityMappings<TUser, TRole, TKey>(dataConverter, maxKeyLength);
+
+            if (_backwardCompatibility)
+            {
+                builder.HasEmbeddedDiscriminatorName("Discriminator");
+            }
         }
 
     }
