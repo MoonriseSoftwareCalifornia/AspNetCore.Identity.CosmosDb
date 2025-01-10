@@ -25,7 +25,7 @@ jobs:
       env:
           APPLICATIONDBCONTEXTCONNECTION: ${{ secrets.APPLICATIONDBCONTEXTCONNECTION }}
           COSMOSIDENTITYDBNAME: ${{ secrets.COSMOSIDENTITYDBNAME }}
-      run: dotnet test AspNetCore.Identity.CosmosDb.Tests.Net7/AspNetCore.Identity.CosmosDb.Tests.csproj --no-build --verbosity normal
+      run: dotnet test AspNetCore.Identity.CosmosDbV9.Tests/AspNetCore.Identity.CosmosDbV9.Tests.csproj --no-build --verbosity normal
     - name: EF 8 DB compatibility tests  
       env:
           APPLICATIONDBCONTEXTCONNECTION2: ${{ secrets.APPLICATIONDBCONTEXTCONNECTION2 }}
