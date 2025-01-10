@@ -12,14 +12,15 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         //private static CosmosRoleStore<IdentityRole>? _roleStore;
         private static string phoneNumber = "0000000000";
         //private static Random? _random;
+        private static string connectionString;
+        private static string databaseName;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            //
-            // Setup context.
-            //
-            InitializeClass();
+            connectionString = TestUtilities.GetKeyValue("ApplicationDbContextConnection");
+            databaseName = TestUtilities.GetKeyValue("CosmosIdentityDbName");
+            InitializeClass(connectionString, databaseName);
         }
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         [TestMethod()]
         public async Task CreateAsyncTest()
         {
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             // Create a bunch of users in rapid succession
             for (int i = 0; i < 35; i++)
             {
@@ -65,9 +66,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task DeleteAsyncTest()
         {
             // Arrange - setup the new user
-            using var userStore = _testUtilities.GetUserStore();
-            using var roleStore = _testUtilities.GetRoleStore();
-            using var dbContext = _testUtilities.GetDbContext();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
+            using var dbContext = _testUtilities.GetDbContext(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var userId = user.Id;
             var role = await GetMockRandomRoleAsync(roleStore);
@@ -92,7 +93,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task FindByEmailAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -107,7 +108,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task FindByIdAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -122,7 +123,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task FindByNameAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -137,7 +138,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task FindByNameEmailAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -152,7 +153,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetEmailAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -167,7 +168,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetEmailConfirmedAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var result = await userStore.GetEmailConfirmedAsync(user);
             Assert.IsNotNull(result);
@@ -188,7 +189,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetEmailConfirmedAsyncTestFail()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var result = await userStore.GetEmailConfirmedAsync(user);
             Assert.IsNotNull(result);
@@ -207,7 +208,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetNormalizedEmailAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -222,7 +223,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetNormalizedUserNameAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -237,7 +238,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetPasswordHashAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var hash = await userStore.GetPasswordHashAsync(user); // Should be no hash now
             Assert.IsTrue(string.IsNullOrEmpty(hash));
@@ -256,7 +257,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetPhoneNumberAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var phoneNumber = "1234567899";
             await userStore.SetPhoneNumberAsync(user, phoneNumber);
@@ -274,7 +275,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetPhoneNumberConfirmedAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             await userStore.SetPhoneNumberAsync(user, phoneNumber);
             //user = await userStore.FindByIdAsync(user.Id);
@@ -292,7 +293,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetUserIdAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -307,7 +308,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetUserNameAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -322,7 +323,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task HasPasswordAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var hash = await userStore.GetPasswordHashAsync(user); // Should be no hash now
             Assert.IsTrue(string.IsNullOrEmpty(hash));
@@ -341,7 +342,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task SetEmailAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -360,7 +361,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task SetEmailConfirmedAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             Assert.IsFalse(user.EmailConfirmed);
 
@@ -379,7 +380,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task SetNormalizedEmailAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var newEmail = $"A{GetNextRandomNumber(111, 9999).ToString()}@foo.com";
 
@@ -396,7 +397,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task SetNormalizedUserNameAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var newEmail = $"A{GetNextRandomNumber(111, 9999).ToString()}@foo.com";
 
@@ -412,7 +413,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task SetPasswordHashAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             Assert.IsTrue(string.IsNullOrEmpty(user.PasswordHash));
 
@@ -429,7 +430,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task SetPhoneNumberAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             Assert.IsTrue(string.IsNullOrEmpty(user.PhoneNumber));
 
@@ -445,7 +446,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task SetPhoneNumberConfirmedAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             Assert.IsFalse(user.PhoneNumberConfirmed);
 
@@ -463,7 +464,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task SetUserNameAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var newUserName = "A" + user.UserName;
 
@@ -481,7 +482,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task UpdateAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var phoneNumber = "1234567890";
 
@@ -508,7 +509,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task AddLoginAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -527,7 +528,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         {
 
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var loginInfo = GetMockLoginInfoAsync();
             await userStore.AddLoginAsync(user, loginInfo);
@@ -548,7 +549,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetLoginsAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var loginInfo = GetMockLoginInfoAsync();
             await userStore.AddLoginAsync(user, loginInfo);
@@ -565,7 +566,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task FindByLoginAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var loginInfo = GetMockLoginInfoAsync();
             await userStore.AddLoginAsync(user, loginInfo);
@@ -584,8 +585,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task AddToRoleAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var role = await GetMockRandomRoleAsync(roleStore);
             var users = await userStore.GetUsersInRoleAsync(role.Name);
@@ -605,8 +606,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task RemoveFromRoleAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var role = await GetMockRandomRoleAsync(roleStore);
             var users = await userStore.GetUsersInRoleAsync(role.Name);
@@ -630,8 +631,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetRolesAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var role1 = await GetMockRandomRoleAsync(roleStore);
             var role2 = await GetMockRandomRoleAsync(roleStore);
@@ -660,8 +661,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task IsInRoleAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
             var role = await GetMockRandomRoleAsync(roleStore);
             var users = await userStore.GetUsersInRoleAsync(role.Name);
@@ -679,8 +680,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetUsersInRoleAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var user1 = await GetMockRandomUserAsync(userStore);
             var user2 = await GetMockRandomUserAsync(userStore);
             var role = await GetMockRandomRoleAsync(roleStore);
@@ -701,7 +702,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task QueryUsersTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user1 = await GetMockRandomUserAsync(userStore);
 
             // Act
@@ -716,7 +717,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task SetAndGetAuthenticatorKeyAsyncTest()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user = await GetMockRandomUserAsync(userStore);
 
             // Act

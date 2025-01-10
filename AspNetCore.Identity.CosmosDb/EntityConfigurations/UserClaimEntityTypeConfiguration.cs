@@ -18,9 +18,6 @@ namespace AspNetCore.Identity.CosmosDb.EntityConfigurations
         public void Configure(EntityTypeBuilder<IdentityUserClaim<TKey>> builder)
         {
             builder
-                .HasDiscriminator().HasValue("IdentityUserClaim<string>"); // Backward compatibility.
-
-            builder
                 .Property(_ => _.Id)
                 .HasConversion(_ => _.ToString(), _ => Convert.ToInt32(_));
 

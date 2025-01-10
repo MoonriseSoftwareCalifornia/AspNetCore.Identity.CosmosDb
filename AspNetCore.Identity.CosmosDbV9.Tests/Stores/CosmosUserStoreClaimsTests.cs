@@ -12,13 +12,16 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         // private static string phoneNumber = "0000000000";
         //private static Random? _random;
 
+
+        private static string connectionString;
+        private static string databaseName;
+
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            //
-            // Setup context.
-            //
-            InitializeClass();
+            connectionString = TestUtilities.GetKeyValue("ApplicationDbContextConnection");
+            databaseName = TestUtilities.GetKeyValue("CosmosIdentityDbName");
+            InitializeClass(connectionString, databaseName);
         }
 
         #region methods implementing IUserClaimStore<TUserEntity>
@@ -27,7 +30,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task Consolidated_ClaimsAsync_CRUD_Tests()
         {
             // Arrange
-            using var userStore = _testUtilities.GetUserStore();
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
             var user1 = await GetMockRandomUserAsync(userStore);
 
             // Clean up claims before starting
@@ -75,19 +78,19 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
             // Arrange
             var val = Guid.NewGuid().ToString();
             var claims = new Claim[] { new Claim(val, val) };
-            using (var userStore = _testUtilities.GetUserStore())
+            using (var userStore = _testUtilities.GetUserStore(connectionString, databaseName))
             {
                 var user1 = await GetMockRandomUserAsync(userStore);
                 await userStore.AddClaimsAsync(user1, claims, default);
             }
 
-            using (var userStore = _testUtilities.GetUserStore())
+            using (var userStore = _testUtilities.GetUserStore(connectionString, databaseName))
             {
                 var user2 = await GetMockRandomUserAsync(userStore);
                 await userStore.AddClaimsAsync(user2, claims, default);
             }
 
-            using (var userStore = _testUtilities.GetUserStore())
+            using (var userStore = _testUtilities.GetUserStore(connectionString, databaseName))
             {
                 // Act
                 var result1 = await userStore.GetUsersForClaimAsync(claims.FirstOrDefault(), default);

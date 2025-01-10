@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -43,6 +44,14 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         public IQueryable<TUserEntity> Users
         {
             get { return (IQueryable<TUserEntity>)_repo.Users; }
+        }
+
+        /// <summary>
+        /// UserClaims query.
+        /// </summary>
+        public IQueryable<IdentityUserClaim<TKey>> UserClaims
+        {
+            get { return (IQueryable<IdentityUserClaim<TKey>>)_repo.UserClaims; }
         }
 
         /// <summary>
@@ -822,38 +831,23 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
             foreach (var claim in claims)
             {
-                var nextId = 1;
-
-                try
-                {
-                    var keys = await _repo.Table<IdentityUserClaim<TKey>>().Select(m => m.Id).ToListAsync(); // Convert to int array here.
-
-                    if (keys.Any())
-                    {
-                        nextId = keys.Max() + 1; // Max should now work.
-                    }
-                    else
-                    {
-                        nextId = 1;
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    var t = e; // for debugging
-                }
-
-                var identityUserClaim = new IdentityUserClaim<TKey>()
-                {
-                    ClaimType = claim.Type,
-                    ClaimValue = claim.Value,
-                    UserId = user.Id,
-                    Id = nextId
-                };
-
-                _repo.Add(identityUserClaim);
-                await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
+                // Since the IdentityUserClaim requires an integer ID, we need to get the last ID used and increment by one.
+                // This means that if this fails, because of a concurrency issue, we need to retry.
+                await Retry.Do(async () => await InternalAddClaimAsync(user, claim, cancellationToken), TimeSpan.FromSeconds(1));
             }
+        }
+
+        private async Task InternalAddClaimAsync(TUserEntity user, Claim claim, CancellationToken cancellationToken)
+        {
+            var identityUserClaim = new IdentityUserClaim<TKey>()
+            {
+                ClaimType = claim.Type,
+                ClaimValue = claim.Value,
+                UserId = user.Id,
+                Id = Utilities.GenerateRandomInt()
+            };
+            _repo.Add(identityUserClaim);
+            await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
         }
 
         // <inheritdoc />

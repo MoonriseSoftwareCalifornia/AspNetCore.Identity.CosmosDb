@@ -13,7 +13,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         protected static TestUtilities _testUtilities;
         protected static Random _random;
 
-        protected static void InitializeClass()
+        protected static void InitializeClass(string connectionString, string databaseName, bool backwardCompatibility = false)
         {
             //
             // Setup context.
@@ -22,15 +22,18 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
             _random = new Random();
 
             // Arrange class - remove prior data
-            using var dbContext = _testUtilities.GetDbContext();
+            using var dbContext = _testUtilities.GetDbContext(connectionString, databaseName, backwardCompatibility: backwardCompatibility);
             try
             {
-                dbContext.UserRoles.RemoveRange(dbContext.UserRoles.ToList());
-                dbContext.Roles.RemoveRange(dbContext.Roles.ToList());
-                dbContext.RoleClaims.RemoveRange(dbContext.RoleClaims.ToList());
-                dbContext.UserClaims.RemoveRange(dbContext.UserClaims.ToList());
-                dbContext.UserLogins.RemoveRange(dbContext.UserLogins.ToList());
-                dbContext.Users.RemoveRange(dbContext.Users.ToList());
+                var task = dbContext.Database.EnsureCreatedAsync();
+                task.Wait();
+
+                //dbContext.UserRoles.RemoveRange(dbContext.UserRoles.ToListAsync().Result);
+                //dbContext.Roles.RemoveRange(dbContext.Roles.ToListAsync().Result);
+                //dbContext.RoleClaims.RemoveRange(dbContext.RoleClaims.ToListAsync().Result);
+                //dbContext.UserClaims.RemoveRange(dbContext.UserClaims.ToListAsync().Result);
+                //dbContext.UserLogins.RemoveRange(dbContext.UserLogins.ToListAsync().Result);
+                //dbContext.Users.RemoveRange(dbContext.Users.ToListAsync().Result);
             }
             catch (Exception ex)
             {

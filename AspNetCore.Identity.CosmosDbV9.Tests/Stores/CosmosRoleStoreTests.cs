@@ -7,11 +7,15 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
     [TestClass()]
     public class CosmosRoleStoreTests : CosmosIdentityTestsBase
     {
+        private static string connectionString;
+        private static string databaseName;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            InitializeClass();
+            connectionString = TestUtilities.GetKeyValue("ApplicationDbContextConnection");
+            databaseName = TestUtilities.GetKeyValue("CosmosIdentityDbName");
+            InitializeClass(connectionString, databaseName);
         }
 
         /// <summary>
@@ -22,7 +26,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         {
             var role = new IdentityRole($"HUB{GetNextRandomNumber(1000, 9999)}");
             role.NormalizedName = role.Name.ToUpper();
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var result = await roleStore.CreateAsync(role);
             Assert.IsTrue(result.Succeeded);
             return role;
@@ -33,7 +37,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         {
             // Act
             // Create a bunch of roles in rapid succession
-            using var dbContext = _testUtilities.GetDbContext();
+            using var dbContext = _testUtilities.GetDbContext(connectionString, databaseName);
             var currentCount = await dbContext.Roles.CountAsync();
             for (int i = 0; i < 35; i++)
             {
@@ -49,9 +53,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task DeleteAsyncTest()
         {
             // Arrange
-            using var roleStore = _testUtilities.GetRoleStore();
-            using var userStore = _testUtilities.GetUserStore();
-            using var dbContext = _testUtilities.GetDbContext();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
+            using var userStore = _testUtilities.GetUserStore(connectionString, databaseName);
+            using var dbContext = _testUtilities.GetDbContext(connectionString, databaseName);
             var role = await GetMockRandomRoleAsync(roleStore);
             var user = await GetMockRandomUserAsync(userStore);
             var roleClaim = GetMockClaim();
@@ -74,7 +78,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task FindByIdAsyncTest()
         {
             // Arrange
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var role = await GetMockRandomRoleAsync();
 
             // Act
@@ -88,7 +92,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task FindByNameAsyncTest()
         {
             // Arrange
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var role = await GetMockRandomRoleAsync();
 
             // Act
@@ -102,7 +106,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetNormalizedRoleNameAsyncTest()
         {
             // Arrange
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var role = await GetMockRandomRoleAsync();
 
             // Act
@@ -116,7 +120,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetRoleIdAsyncTest()
         {
             // Arrange
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var role = await GetMockRandomRoleAsync();
 
             // Act
@@ -130,7 +134,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetRoleNameAsyncTest()
         {
             // Arrange
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var role = await GetMockRandomRoleAsync();
 
             // Act
@@ -144,7 +148,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task SetNormalizedRoleNameAsyncTest()
         {
             // Arrange
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var role = await GetMockRandomRoleAsync();
             var newName = $"WOW{Guid.NewGuid().ToString()}";
 
@@ -160,7 +164,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task SetRoleNameAsyncTest()
         {
             // Arrange
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var role = await GetMockRandomRoleAsync();
             var newName = $"WOW{Guid.NewGuid().ToString()}";
 
@@ -177,7 +181,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task UpdateAsyncTest()
         {
             // Arrange
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var role = await GetMockRandomRoleAsync(roleStore);
             var newName = $"WOW{Guid.NewGuid().ToString()}";
 
@@ -198,7 +202,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task GetClaimsAsyncTest()
         {
             // Arrange
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var claims = new Claim[] { GetMockClaim(), GetMockClaim(), GetMockClaim() };
             var role = await GetMockRandomRoleAsync();
             await roleStore.AddClaimAsync(role, claims[0], default);
@@ -216,7 +220,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task AddClaimAsyncTest()
         {
             // Assert
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var role = await GetMockRandomRoleAsync();
             var claim = GetMockClaim();
 
@@ -232,7 +236,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task RemoveClaimAsyncTest()
         {
             // Assert
-            using var roleStore = _testUtilities.GetRoleStore();
+            using var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var role = await GetMockRandomRoleAsync();
             var claim = GetMockClaim();
             await roleStore.AddClaimAsync(role, claim, default);
@@ -251,7 +255,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
         public async Task QueryRolesTest()
         {
             // Arrange
-            using var roletore = _testUtilities.GetRoleStore();
+            using var roletore = _testUtilities.GetRoleStore(connectionString, databaseName);
             var user1 = await GetMockRandomRoleAsync(roletore);
 
             // Act

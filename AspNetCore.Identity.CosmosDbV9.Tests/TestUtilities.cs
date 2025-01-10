@@ -12,8 +12,6 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
 {
     public class TestUtilities
     {
-        private IConfigurationRoot _configuration;
-
         /// <summary>
         /// Non-normalized email address for user 1
         /// </summary>
@@ -36,10 +34,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// Gets the configuration
         /// </summary>
         /// <returns></returns>
-        public IConfigurationRoot GetConfig()
+        public static IConfigurationRoot GetConfig()
         {
-            if (_configuration != null) return _configuration;
-
             // the type specified here is just so the secrets library can 
             // find the UserSecretId we added in the csproj file
             var jsonConfig = Path.Combine(Environment.CurrentDirectory, "appsettings.json");
@@ -49,9 +45,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
                 .AddEnvironmentVariables() // Added to read environment variables from GitHub Actions
                 .AddUserSecrets(Assembly.GetExecutingAssembly(), true); // User secrets override all - put here
 
-            _configuration = Retry.Do(() => builder.Build(), TimeSpan.FromSeconds(1));
-
-            return _configuration;
+            return Retry.Do(() => builder.Build(), TimeSpan.FromSeconds(1)); ;
         }
 
         /// <summary>
@@ -59,12 +53,12 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string GetKeyValue(string key)
+        public static string GetKeyValue(string key)
         {
             return GetKeyValue(GetConfig(), key);
         }
 
-        private string GetKeyValue(IConfigurationRoot config, string key)
+        private static string GetKeyValue(IConfigurationRoot config, string key)
         {
             var data = config[key];
 
@@ -78,6 +72,19 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
                     // For Github Actions, secrets are forced upper case
                     data = Environment.GetEnvironmentVariable(key.ToUpper());
                 }
+
+                // Connection string maybe?
+                if (string.IsNullOrEmpty(data))
+                {
+                    data = config.GetConnectionString(key);
+                }
+
+
+                // Connection all caps string maybe?
+                if (string.IsNullOrEmpty(data))
+                {
+                    data = config.GetConnectionString(key.ToUpper());
+                }
             }
 
             return string.IsNullOrEmpty(data) ? string.Empty : data;
@@ -89,17 +96,10 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// <param name="connectionName"></param>
         /// <param name="dbName"></param>
         /// <returns></returns>
-        public DbContextOptions GetDbOptions(string connectionName = "ApplicationDbContextConnection", string dbName = "CosmosIdentityDbName")
+        public DbContextOptions GetDbOptions(string connectionString, string databaseName)
         {
-            var config = GetConfig();
-            var connectionString = config.GetConnectionString("ApplicationDbContextConnection");
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                connectionString = GetKeyValue("ApplicationDbContextConnection");
-            }
-
             var builder = new DbContextOptionsBuilder();
-            builder.UseCosmos(connectionString, GetKeyValue(dbName));
+            builder.UseCosmos(connectionString, databaseName);
 
             return builder.Options;
         }
@@ -109,17 +109,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// </summary>
         /// <param name="connectionName"></param>
         /// <returns></returns>
-        public ContainerUtilities GetContainerUtilities(string connectionName = "ApplicationDbContextConnection", string dbName = "CosmosIdentityDbName")
+        public ContainerUtilities GetContainerUtilities(string connectionString, string databaseName)
         {
-            var config = GetConfig();
-            var connectionString = config.GetConnectionString(connectionName);
-
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                connectionString = GetKeyValue("ApplicationDbContextConnection");
-            }
-
-            var utilities = new ContainerUtilities(connectionString, GetKeyValue(dbName));
+            var utilities = new ContainerUtilities(connectionString, databaseName);
             return utilities;
         }
 
@@ -130,10 +122,10 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// <param name="backwardCompatibility"
         /// <returns></returns>
         public CosmosIdentityDbContext<IdentityUser, IdentityRole, string> GetDbContext(
-            string connectionName = "ApplicationDbContextConnection", bool backwardCompatibility = false, string dbName = "CosmosIdentityDbName")
-        {
+            string connectionString, string databaseName, bool backwardCompatibility = false)
+        {                       
             var dbContext =
-                new CosmosIdentityDbContext<IdentityUser, IdentityRole, string>(GetDbOptions(connectionName, dbName), backwardCompatibility);
+                new CosmosIdentityDbContext<IdentityUser, IdentityRole, string>(GetDbOptions(connectionString, databaseName), backwardCompatibility);
             return dbContext;
         }
 
@@ -142,12 +134,11 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// </summary>
         /// <param name="connectionName"></param>
         /// <returns></returns>
-        public CosmosUserStore<IdentityUser, IdentityRole, string> GetUserStore(
-            string connectionName = "ApplicationDbContextConnection")
+        public CosmosUserStore<IdentityUser, IdentityRole, string> GetUserStore(string connectionString, string databaseName)
         {
             var repository =
                 new CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser, IdentityRole, string>, IdentityUser,
-                    IdentityRole, string>(GetDbContext());
+                    IdentityRole, string>(GetDbContext(connectionString, databaseName));
             var userStore = new CosmosUserStore<IdentityUser, IdentityRole, string>(repository);
             return userStore;
         }
@@ -156,11 +147,11 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// Get an instance of the Cosmos DB role store
         /// </summary>
         /// <returns></returns>
-        public CosmosRoleStore<IdentityUser, IdentityRole, string> GetRoleStore()
+        public CosmosRoleStore<IdentityUser, IdentityRole, string> GetRoleStore(string connectionString, string databaseName)
         {
             var repository =
                 new CosmosIdentityRepository<CosmosIdentityDbContext<IdentityUser, IdentityRole, string>, IdentityUser,
-                    IdentityRole, string>(GetDbContext());
+                    IdentityRole, string>(GetDbContext(connectionString, databaseName));
             var rolestore = new CosmosRoleStore<IdentityUser, IdentityRole, string>(repository);
             return rolestore;
         }
@@ -169,9 +160,9 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         /// Get an instance of the role manager
         /// </summary>
         /// <returns></returns>
-        public RoleManager<IdentityRole> GetRoleManager()
+        public RoleManager<IdentityRole> GetRoleManager(string connectionString, string databaseName)
         {
-            var userStore = GetRoleStore();
+            var userStore = GetRoleStore(connectionString, databaseName);
             var userManager =
                 new RoleManager<IdentityRole>(userStore, null, null, null, GetLogger<RoleManager<IdentityRole>>());
             return userManager;

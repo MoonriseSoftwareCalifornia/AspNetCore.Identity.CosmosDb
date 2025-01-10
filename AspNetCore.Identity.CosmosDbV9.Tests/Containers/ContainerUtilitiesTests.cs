@@ -20,7 +20,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Containers
             // Setup context.
             //
             utils = new TestUtilities();
-            containerUtilities = utils.GetContainerUtilities();
+            containerUtilities = utils.GetContainerUtilities(TestUtilities.GetKeyValue("ApplicationDbContextConnection"), TestUtilities.GetKeyValue("CosmosIdentityDbName"));
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Containers
         [TestMethod()]
         public async Task A1_DeleteDatabaseIfExistsTest()
         {
-            var result = await containerUtilities.DeleteDatabaseIfExists(utils.GetKeyValue("CosmosIdentityDbName"));
+            var result = await containerUtilities.DeleteDatabaseIfExists(TestUtilities.GetKeyValue("CosmosIdentityDbName"));
 
             Assert.IsTrue(result == null || result.StatusCode == System.Net.HttpStatusCode.OK || result.StatusCode == System.Net.HttpStatusCode.NoContent);
         }
@@ -57,7 +57,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Containers
         [TestMethod()]
         public async Task A2_CreateDatabaseIfExistsTest()
         {
-            var result = await containerUtilities.CreateDatabaseAsync(utils.GetKeyValue("CosmosIdentityDbName"));
+            var result = await containerUtilities.CreateDatabaseAsync(TestUtilities.GetKeyValue("CosmosIdentityDbName"));
 
             Assert.IsTrue(result.StatusCode == System.Net.HttpStatusCode.OK || result.StatusCode == System.Net.HttpStatusCode.NoContent || result.StatusCode == System.Net.HttpStatusCode.Created);
         }

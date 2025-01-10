@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AspNetCore.Identity.CosmosDb
 {

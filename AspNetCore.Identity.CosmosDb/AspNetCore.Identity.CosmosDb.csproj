@@ -2,11 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<Version>9.0.0.2</Version>
-		<AssemblyVersion>9.0.0.2</AssemblyVersion>
-		<FileVersion>9.0.0.2</FileVersion>
+		<Version>9.0.0.3</Version>
+		<AssemblyVersion>9.0.0.3</AssemblyVersion>
+		<FileVersion>9.0.0.3</FileVersion>
 		
-		<PackageVersion>9.0.0.2</PackageVersion>
+		<PackageVersion>9.0.0.3</PackageVersion>
 		
 		<Authors>toiyabe62</Authors>
 		<Nullable>enable</Nullable>
@@ -30,6 +30,10 @@
 		<PackageReleaseNotes>Updated for .Net 9 Entity Framework.</PackageReleaseNotes>
 		<NoWin32Manifest>true</NoWin32Manifest>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Include="..\AspNetCore.Identity.CosmosDbV9.Tests\Retry.cs" Link="Retry.cs" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />

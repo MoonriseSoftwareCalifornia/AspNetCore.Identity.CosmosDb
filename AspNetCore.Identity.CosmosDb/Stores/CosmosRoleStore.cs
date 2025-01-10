@@ -1,4 +1,5 @@
 ﻿using AspNetCore.Identity.CosmosDb.Contracts;
+using Duende.IdentityServer.EntityFramework.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -292,6 +293,13 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         // <inheritdoc />
         public async Task AddClaimAsync(TRoleEntity role, Claim claim, CancellationToken cancellationToken = default)
         {
+            // Since the IdentityRoleClaim requires an integer ID, we need to get the last ID used and increment by one.
+            // This means that if this fails, because of a concurrency issue, we need to retry.
+            await Retry.Do(async () => await InternalAddClaimAsync(role, claim, cancellationToken), TimeSpan.FromSeconds(1)).WaitAsync(cancellationToken);
+        }
+
+        private async Task InternalAddClaimAsync(TRoleEntity role, Claim claim, CancellationToken cancellationToken = default)
+        {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             if (role == null)
@@ -299,34 +307,15 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (claim == null)
                 throw new ArgumentNullException(nameof(claim));
 
-            var nextId = 1;
-
-            try
-            {
-                var keys = await _repo.Table<IdentityRoleClaim<TKey>>().Select(m => m.Id).ToListAsync(); // Convert to int list here.
-                if (keys.Any())
-                {
-                    nextId = keys.Max() + 1; // Max should now work.
-                }
-                else
-                {
-                    nextId = 1;
-                }
-            }
-            catch (Exception e)
-            {
-                var t = e; // for debugging
-            }
-
             var identityRoleClaim = new IdentityRoleClaim<TKey>()
             {
                 ClaimType = claim.Type,
                 ClaimValue = claim.Value,
                 RoleId = role.Id,
-                Id = nextId
+                Id = Utilities.GenerateRandomInt()
             };
 
-            _repo.Add<IdentityRoleClaim<TKey>>(identityRoleClaim);
+            _repo.Add(identityRoleClaim);
             await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
         }
 

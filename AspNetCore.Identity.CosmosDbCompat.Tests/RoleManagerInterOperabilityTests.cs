@@ -6,6 +6,8 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
     [TestClass()]
     public class RoleManagerInterOperabilityTests : CosmosIdentityTestsBase
     {
+        private static string connectionString;
+        private static string databaseName;
 
         // Creates a new test role using the mock RoleManager to do so
         private async Task<IdentityRole> GetTestRole(RoleManager<IdentityRole> roleManager)
@@ -22,13 +24,16 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            InitializeClass();
+            connectionString = TestUtilities.GetKeyValue("ApplicationDbContextConnection2");
+            databaseName = TestUtilities.GetKeyValue("CosmosIdentityDbName");
+            InitializeClass(connectionString, databaseName);
         }
+
         [TestMethod]
         public async Task Consolidated_ClaimsAsync_Tests()
         {
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
             var claim = new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
@@ -55,7 +60,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         {
 
             // Assert
-            var roleStore = _testUtilities.GetRoleStore();
+            var roleStore = _testUtilities.GetRoleStore(connectionString, databaseName);
             using var roleManager = GetTestRoleManager(roleStore);
             var role = new IdentityRole();
             role.Name = Guid.NewGuid().ToString();
@@ -76,7 +81,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         {
 
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
             var id = role.Id;
 
@@ -94,7 +99,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         {
 
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
             var id = role.Id;
 
@@ -112,7 +117,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         {
 
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
             var name = role.Name;
 
@@ -128,7 +133,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         public async Task GetClaimsAsyncTest()
         {
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
             var claim1 = new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
             var claim2 = new Claim(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
@@ -150,7 +155,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         {
 
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
 
             // Act
@@ -165,7 +170,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         {
 
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
 
             // Act
@@ -180,7 +185,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         {
 
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
             var key = Guid.NewGuid().ToString();
 
@@ -196,7 +201,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         {
 
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
 
             // Act
@@ -211,7 +216,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         {
 
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
             var name = Guid.NewGuid().ToString();
 
@@ -230,7 +235,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         {
 
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
 
             // Act
@@ -243,7 +248,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         public async Task UpdateNormalizedRoleNameAsyncTest()
         {
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
             var name = Guid.NewGuid().ToString();
             var result = await roleManager.SetRoleNameAsync(role, name);
@@ -264,7 +269,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
         {
 
             // Assert
-            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore());
+            using var roleManager = GetTestRoleManager(_testUtilities.GetRoleStore(connectionString, databaseName));
             var role = await GetTestRole(roleManager);
             role.Name = role.Name + "-A";
             role.NormalizedName = role.NormalizedName + "-A";

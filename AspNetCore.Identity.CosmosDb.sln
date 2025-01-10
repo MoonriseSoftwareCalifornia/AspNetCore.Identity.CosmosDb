@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Identity.CosmosD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Identity.CosmosDb.Example", "AspNetCore.Identity.CosmosDb.Example\AspNetCore.Identity.CosmosDb.Example.csproj", "{1E369D30-E081-4EFC-A5A6-2407FEEA8149}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Identity.CosmosDb.Tests", "AspNetCore.Identity.CosmosDb.Tests.Net7\AspNetCore.Identity.CosmosDb.Tests.csproj", "{C3ADD077-BDA8-4C33-ACAC-5405B1ADE02D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.Identity.CosmosDbV9.Tests", "AspNetCore.Identity.CosmosDbV9.Tests\AspNetCore.Identity.CosmosDbV9.Tests.csproj", "{8CD8B816-2FF7-453A-944D-CBE2571F0CF9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.Identity.CosmosDbCompat.Tests", "AspNetCore.Identity.CosmosDbCompat.Tests\AspNetCore.Identity.CosmosDbCompat.Tests.csproj", "{5F973B2C-4B72-47E9-AD8D-2C7C66E1FA71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +25,14 @@ Global
 		{1E369D30-E081-4EFC-A5A6-2407FEEA8149}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E369D30-E081-4EFC-A5A6-2407FEEA8149}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E369D30-E081-4EFC-A5A6-2407FEEA8149}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C3ADD077-BDA8-4C33-ACAC-5405B1ADE02D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C3ADD077-BDA8-4C33-ACAC-5405B1ADE02D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C3ADD077-BDA8-4C33-ACAC-5405B1ADE02D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C3ADD077-BDA8-4C33-ACAC-5405B1ADE02D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CD8B816-2FF7-453A-944D-CBE2571F0CF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CD8B816-2FF7-453A-944D-CBE2571F0CF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CD8B816-2FF7-453A-944D-CBE2571F0CF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CD8B816-2FF7-453A-944D-CBE2571F0CF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F973B2C-4B72-47E9-AD8D-2C7C66E1FA71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F973B2C-4B72-47E9-AD8D-2C7C66E1FA71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F973B2C-4B72-47E9-AD8D-2C7C66E1FA71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F973B2C-4B72-47E9-AD8D-2C7C66E1FA71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
