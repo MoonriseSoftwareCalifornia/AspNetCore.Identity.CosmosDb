@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace AspNetCore.Identity.CosmosDb.Tests.Net7
@@ -27,6 +28,15 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
             connectionString = TestUtilities.GetKeyValue("ApplicationDbContextConnection2");
             databaseName = TestUtilities.GetKeyValue("CosmosIdentityDbName");
             InitializeClass(connectionString, databaseName);
+
+            using var dbContext = _testUtilities.GetDbContext(connectionString, databaseName);
+
+            // Clean up claims for test.
+            var claims = dbContext.RoleClaims.ToListAsync().Result;
+            var uclaims = dbContext.UserClaims.ToListAsync().Result;
+            dbContext.RoleClaims.RemoveRange(claims);
+            dbContext.UserClaims.RemoveRange(uclaims);
+            var t = dbContext.SaveChangesAsync();
         }
 
         [TestMethod]
