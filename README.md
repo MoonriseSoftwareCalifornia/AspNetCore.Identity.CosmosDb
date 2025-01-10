@@ -5,20 +5,92 @@
 ![Net 9 Tests](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/donet9tests.yml/badge.svg)
 [![NuGet](https://img.shields.io/nuget/v/AspNetCore.Identity.CosmosDb.svg)](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb)
 
-This is a **Cosmos DB** implementation of an Identity provider that uses the ["Entity Framework Core, Azure Cosmos DB Provider"](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).
+This is a **Cosmos DB** implementation of an Identity provider that uses the ["Entity Framework Core, Azure Cosmos DB Provider"](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).  Please let us know if any changes need to be made to this document. Thank you!
 
-## Upgrading from 8.x to 9.x
+## Version 9 compatibility with version 8 databases
 
-Upgrading from 8.x to 9.x means you will have to update your projects to use .Net 9, and update other Nuget packages to 9 so that required dependencies will
-be found.
+Cosmos DB Entity Framework verion 9 had [important changes](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-9.0/breaking-changes#cosmos-breaking-changes) that required important changes to this project.  Listed below are the changes addressed in this project.
 
-Note: The Version 9.x of this project is not compatible with .Net 8 projects.
+### [The id property no longer contains the discriminator by default](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-9.0/breaking-changes#cosmos-id-property-changes)
 
-When upgrading the dependency [Microsoft.EntityFrameworkCore.Cosmos](https://github.com/dotnet/efcore/blob/main/src/EFCore.Cosmos) from version 8 to 9, two issues were encountered. These are important to be aware of for your own Cosmos DB entity framework projects:
 
-* [dotnet/efcore#35224](https://github.com/dotnet/efcore/issues/35224) Cosmos: EF Core 9 fails to find document with '|' character in it's id.
-* [dotnet/efcore#35264](https://github.com/dotnet/efcore/issues/35264) How do I handle: The Azure Cosmos DB provider for EF Core currently does not support index definitions.'
+This project **requires** the "Descriminator" to be part of the ID value like this:
 
+`IdentityUser|07c09eac-8815-43d3-9141-30876ef0e465`
+
+ However EF 9 does not include the descrimintator by default. To include it the following code `builder.HasDiscriminatorInJsonIds();` is added to the `OnModelCreating` method of the `CosmosIdentityDbContext` class:
+
+ ```csharp
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+
+            // dotnet/efcore#35224
+            // New behavior for Cosmos DB EF is new.  For backward compatibility,
+            // we need to add the following line to the OnModelCreating method.
+            builder.HasDiscriminatorInJsonIds();
+            .
+            .
+            .
+        }
+ ```
+
+### [The discriminator property is now named $type instead of Discriminator](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-9.0/breaking-changes#cosmos-discriminator-name-change)
+
+When using EF 9 to read a database created with EF 8 or earlier, there may not be any error thrown.  Instead, the read will return no records, which can be mystifying.  The reason is the Discriminator field name has changed from "Descriminator" to "$type".  Consequently, EF 9 does not find the descriminator value.
+
+This was fixed in the project by adding the following code `builder.HasEmbeddedDiscriminatorName("Discriminator")` to the `OnModelCreating` method of the `CosmosIdentityDbContext` class. Also note in the following code the field `_backwardCompatibility`.
+
+```csharp
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            .
+            .
+            .
+            if (_backwardCompatibility)
+            {
+                builder.HasEmbeddedDiscriminatorName("Discriminator");
+            }
+        }
+```
+
+To enable backward compatibility with the "Discriminator,"  set the `backwardCompatibility` field of the context constructor to `true` (note: default is `false`).  Here is an example:
+
+```csharp
+var options = new DbContextOptionsBuilder<CosmosIdentityDbContext>();
+options.UseCosmos(connectionString, databaseName);
+using var dbContext = new ApplicationDbContext(tempBuilder.Options, true); // True is set for backward compatibility
+
+```
+
+### [HasIndex now throws instead of being ignored](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-9.0/breaking-changes#cosmos-hasindex-throws)
+
+There are two ways to handle this: (1) Remove the index definitions on the entities, or (2), add the following code to 
+suppress the exception in the `OnConfiguring' method like this:
+
+```csharp
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+{
+    optionsBuilder.ConfigureWarnings(w => w.Ignore(CosmosEventId.SyncNotSupported));
+}
+```
+
+## Updates to unit tests
+
+A new unit test was added to test backward compatibility. The tests use two different Cosmos DB accounts. It is suggested to use "serverless" accounts to keep costs down.
+
+The "secrets" file now needs two database connection strings like this:
+
+```json
+{
+  "CosmosIdentityDbName": "localtests", // Both test projects use this database name.
+  "ConnectionStrings": {
+    // Database account used for backward compatibility tests.
+    "ApplicationDbContextConnection2": "AccountEndpoint=[YOUR CONNECTION STRING HERE]",
+    // Used for EF version 9 and above tests.
+    "ApplicationDbContextConnection": "AccountEndpoint=[YOUR CONNECTION STRING HERE]"
+  }
+}
+```
 
 ## Upgrading from version 2.x to 8.x
 
@@ -240,6 +312,11 @@ Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packa
 ## Changelog
 
 This change log notes major changes beyond routine documentation and NuGet dependency updates.
+
+### v9.0.0.3
+
+- Backward campatibility added for databases created EF version 8 or earlier.
+- Added unit tests for backward compatibility testing.
 
 ### v9.0.0.1
 
