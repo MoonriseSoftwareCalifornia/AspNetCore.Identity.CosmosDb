@@ -7,12 +7,17 @@
 
 This is a **Cosmos DB** implementation of an Identity provider that uses the ["Entity Framework Core, Azure Cosmos DB Provider"](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).  Please let us know if any changes need to be made to this document. Thank you!
 
+## Projects that use this library
+
+* [Cosmos](https://cosmos.moonrise.net/) ([GitHub](https://github.com/MoonriseSoftwareCalifornia/CosmosCMS))
+
+If you would like your project here, send us a note or log an issue.  Thanks!
+
 ## Version 9 compatibility with version 8 databases
 
 Cosmos DB Entity Framework verion 9 had [important changes](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-9.0/breaking-changes#cosmos-breaking-changes) that required important changes to this project.  Listed below are the changes addressed in this project.
 
 ### [The id property no longer contains the discriminator by default](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-9.0/breaking-changes#cosmos-id-property-changes)
-
 
 This project **requires** the "Descriminator" to be part of the ID value like this:
 
