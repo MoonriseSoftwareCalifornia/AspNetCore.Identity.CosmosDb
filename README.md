@@ -8,7 +8,7 @@ This is a **Cosmos DB** implementation of an Identity provider that uses the ["E
 
 ## Projects that use this library
 
-* [Cosmos](https://cosmos.moonrise.net/) ([GitHub](https://github.com/MoonriseSoftwareCalifornia/CosmosCMS))
+* [Cosmos CMS](https://cosmos.moonrise.net/) ([GitHub](https://github.com/MoonriseSoftwareCalifornia/CosmosCMS))
 
 If you would like your project here, send us a note or log an issue.  Thanks!
 
@@ -292,9 +292,9 @@ The above instructions showed how to modify the startup file to make use of this
 it is easier to see the end result rather than peicemeal.  Here is an example Asp.Net 6 Project.cs
 file configured to work with this provider, scaffolded identity web pages, and the SendGrid email provider:
 
-- [Program.cs](/AspNetCore.Identity.CosmosDb.Example/Program.cs)
+- [Program.cs](https://github.com/MoonriseSoftwareCalifornia/CosmosCMS/blob/main/Editor/Program.cs)
 
-An [example website](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/tree/master/AspNetCore.Identity.CosmosDb.Example) is available for you to download and try.
+An [example web application](https://github.com/MoonriseSoftwareCalifornia/CosmosCMS/tree/main) is also available.
 
 ## Supported LINQ Operators User and Role Stores
 
@@ -316,6 +316,11 @@ Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packa
 ## Changelog
 
 This change log notes major changes beyond routine documentation and NuGet dependency updates.
+
+### v9.0.1.0
+
+Removed the sample application included here as it was out of date.  In its place, an ongoing
+project ([Cosmos CMS](https://github.com/MoonriseSoftwareCalifornia/CosmosCMS)) that uses this package as an example.
 
 ### v9.0.0.3
 

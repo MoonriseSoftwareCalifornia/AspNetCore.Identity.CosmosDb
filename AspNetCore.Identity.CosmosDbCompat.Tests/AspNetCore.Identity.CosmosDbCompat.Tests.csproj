@@ -14,7 +14,7 @@
       -->
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
     <UserSecretsId>e5f1f76e-e6ac-4f45-ac55-02e401325c2b</UserSecretsId>
-    <Version>9.0.0.3</Version>
+    <Version>9.0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,11 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.13.1" />
-    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="1.5.0" />
-    <PackageReference Include="MSTest" Version="3.7.0" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="1.5.1" />
+    <PackageReference Include="MSTest" Version="3.7.1" />
 	<PackageReference Include="Moq" Version="4.20.72" />
   </ItemGroup>
 
