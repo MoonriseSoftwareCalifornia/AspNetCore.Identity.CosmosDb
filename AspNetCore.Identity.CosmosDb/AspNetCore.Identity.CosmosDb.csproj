@@ -1,12 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<Version>9.0.1.0</Version>
-		<AssemblyVersion>9.0.1.0</AssemblyVersion>
-		<FileVersion>9.0.1.0</FileVersion>
+		<Version>9.0.1.2</Version>
+		<AssemblyVersion>9.0.1.2</AssemblyVersion>
+		<FileVersion>9.0.1.2</FileVersion>
 		
-		<PackageVersion>9.0.1</PackageVersion>
+		<PackageVersion>9.0.1.2</PackageVersion>
 		
 		<Authors>toiyabe62</Authors>
 		<Nullable>enable</Nullable>
@@ -32,22 +32,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Include="..\AspNetCore.Identity.CosmosDbV9.Tests\Retry.cs" Link="Retry.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="9.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.1" />
-		<PackageReference Include="System.Text.Json" Version="9.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="9.0.8" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.8" />
+		<PackageReference Include="System.Text.Json" Version="9.0.8" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="B2C_BrandIcon_Black.png" />
 		<Content Include="_res\icons\B2C_BrandIcon_Black.png" />
 		<None Include="../README.md" Pack="true" PackagePath="\" />
-		<PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="7.1.0" />
+		<PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="7.2.4" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 

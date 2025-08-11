@@ -1,6 +1,6 @@
 ﻿using AspNetCore.Identity.CosmosDb.Containers;
 
-namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Containers
+namespace AspNetCore.Identity.CosmosDb.Tests.Net9.Containers
 {
     [TestClass()]
     public class ContainerUtilitiesTests

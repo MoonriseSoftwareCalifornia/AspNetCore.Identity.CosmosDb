@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Reflection;
 
-namespace AspNetCore.Identity.CosmosDb.Tests.Net7
+namespace AspNetCore.Identity.CosmosDb.Tests.Net9
 {
     public class TestUtilities
     {
@@ -45,7 +45,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net7
                 .AddEnvironmentVariables() // Added to read environment variables from GitHub Actions
                 .AddUserSecrets(Assembly.GetExecutingAssembly(), true); // User secrets override all - put here
 
-            return Retry.Do(() => builder.Build(), TimeSpan.FromSeconds(1)); ;
+            return Retry.Do(() => builder.Build(), TimeSpan.FromSeconds(1));
         }
 
         /// <summary>

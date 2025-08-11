@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
-namespace AspNetCore.Identity.CosmosDb.Tests.Net7
+namespace AspNetCore.Identity.CosmosDb.Tests.Net9
 {
     /// <summary>
     /// Tests the <see cref="UserManager{TUser}"/> when hooked up to Cosmos user and role stores.

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using System.Security.Claims;
 
-namespace AspNetCore.Identity.CosmosDb.Tests.Net7
+namespace AspNetCore.Identity.CosmosDb.Tests.Net9
 {
     public abstract class CosmosIdentityTestsBase
     {

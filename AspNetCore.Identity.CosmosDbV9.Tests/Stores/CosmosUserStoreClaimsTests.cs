@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace AspNetCore.Identity.CosmosDb.Tests.Net7.Stores
+namespace AspNetCore.Identity.CosmosDb.Tests.Net9.Stores
 {
     [TestClass()]
     public class CosmosUserStoreClaimsTests : CosmosIdentityTestsBase
