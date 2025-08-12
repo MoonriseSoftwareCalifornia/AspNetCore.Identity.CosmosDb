@@ -48,46 +48,55 @@ namespace AspNetCore.Identity.CosmosDb
         /// <param name="builder"></param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            if (this.Database.IsCosmos())
+            {
+                // Configurations for Cosmos DB.
 
-            // dotnet/efcore#35224
-            // New behavior for Cosmos DB EF is new.  For backward compatibility,
-            // we need to add the following line to the OnModelCreating method.
-            builder.HasDiscriminatorInJsonIds();
+                // dotnet/efcore#35224
+                // New behavior for Cosmos DB EF is new.  For backward compatibility,
+                // we need to add the following line to the OnModelCreating method.
+                builder.HasDiscriminatorInJsonIds();
 
-            // dotnet/efcore#35264
-            // New behavior for Cosmos DB EF is to throw an error whenever it detects
-            // an entity has an index.  This means we have to completely override the base
-            // OnModelCreating method and not call it.
+                // dotnet/efcore#35264
+                // New behavior for Cosmos DB EF is to throw an error whenever it detects
+                // an entity has an index.  This means we have to completely override the base
+                // OnModelCreating method and not call it.
 #pragma warning disable S125 // Sections of code should not be commented out
-            // base.OnModelCreating(builder);
+                // base.OnModelCreating(builder);
 #pragma warning restore S125 // Sections of code should not be commented out
 
 
-            // The following code is from the base.OnModelCreating method.
-            var storeOptions = GetStoreOptions();
-            var maxKeyLength = storeOptions?.MaxLengthForKeys ?? 0;
+                // The following code is from the base.OnModelCreating method.
+                var storeOptions = GetStoreOptions();
+                var maxKeyLength = storeOptions?.MaxLengthForKeys ?? 0;
 
-            if (maxKeyLength == 0)
-            {
-                maxKeyLength = 128;
+                if (maxKeyLength == 0)
+                {
+                    maxKeyLength = 128;
+                }
+
+                var encryptPersonalData = storeOptions?.ProtectPersonalData ?? false;
+                PersonalDataConverter? dataConverter = null;
+
+                if (encryptPersonalData)
+                {
+                    dataConverter = new PersonalDataConverter(this.GetService<IPersonalDataProtector>());
+                }
+
+                // Cosmos DB Modifications
+                builder.ApplyIdentityMappings<TUser, TRole, TKey>(dataConverter, maxKeyLength);
+
+                if (_backwardCompatibility)
+                {
+                    builder.HasEmbeddedDiscriminatorName("Discriminator");
+                }
             }
-
-            var encryptPersonalData = storeOptions?.ProtectPersonalData ?? false;
-            PersonalDataConverter? dataConverter = null;
-
-            if (encryptPersonalData)
+            else
             {
-                dataConverter = new PersonalDataConverter(this.GetService<IPersonalDataProtector>());
-            }
-
-            // Cosmos DB Modifications
-            builder.ApplyIdentityMappings<TUser, TRole, TKey>(dataConverter, maxKeyLength);
-
-            if (_backwardCompatibility)
-            {
-                builder.HasEmbeddedDiscriminatorName("Discriminator");
+                // Not Cosmos DB, so just call the base method.
+                // Test with our own database provider if you use this option.
+                base.OnModelCreating(builder);
             }
         }
-
     }
 }

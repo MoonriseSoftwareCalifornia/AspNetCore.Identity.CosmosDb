@@ -162,7 +162,7 @@ namespace AspNetCore.Identity.CosmosDb.Stores
         }
 
         // <inheritdoc />
-        public async Task<TUserEntity> FindByIdAsync(string userId,
+        public async Task<TUserEntity?> FindByIdAsync(string userId,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -171,15 +171,31 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (userId == null)
                 throw new ArgumentNullException(nameof(userId));
 
-            var user = await _repo.Table<TUserEntity>()
-                .WithPartitionKey(userId)
-                .SingleOrDefaultAsync(cancellationToken);
+            if (_repo.ProviderName == "Microsoft.EntityFrameworkCore.Cosmos")
+            {
+                // Cosmos DB requires partition key to be specified for lookups.
+                // Assuming userId is the partition key.
+                // return await _repo.Table<TUserEntity>()
+                //     .WithPartitionKey(userId)
+                //     .SingleOrDefaultAsync(cancellationToken);
+                var user = await _repo.Table<TUserEntity>().WithPartitionKey(userId).SingleOrDefaultAsync(cancellationToken);
+                return user;
+            }
+            else if (_repo.ProviderName == "MySql.EntityFrameworkCore")
+            {
+                var user = await _repo.Table<IdentityUser>()
+                    .FirstOrDefaultAsync(_ => _.Id == userId, cancellationToken: cancellationToken);
+                
+                return (TUserEntity?)(object?)user;
+            }
 
-            return user;
+            return await _repo.Table<TUserEntity>()
+                   .SingleOrDefaultAsync(_ => _.Id.ToString() == userId, cancellationToken: cancellationToken);
+
         }
 
         // <inheritdoc />
-        public async Task<TUserEntity> FindByNameAsync(string normalizedUserName,
+        public async Task<TUserEntity?> FindByNameAsync(string normalizedUserName,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -188,8 +204,10 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (string.IsNullOrEmpty(normalizedUserName))
                 throw new ArgumentNullException(nameof(normalizedUserName));
 
-            return await _repo.Table<TUserEntity>()
+            var user = await _repo.Table<TUserEntity>()
                 .SingleOrDefaultAsync(_ => _.NormalizedUserName == normalizedUserName || _.NormalizedEmail == normalizedUserName);
+
+            return user;
         }
 
         // <inheritdoc />
@@ -839,14 +857,28 @@ namespace AspNetCore.Identity.CosmosDb.Stores
 
         private async Task InternalAddClaimAsync(TUserEntity user, Claim claim, CancellationToken cancellationToken)
         {
-            var identityUserClaim = new IdentityUserClaim<TKey>()
+            if (_repo.ProviderName == "Microsoft.EntityFrameworkCore.Cosmos")
             {
-                ClaimType = claim.Type,
-                ClaimValue = claim.Value,
-                UserId = user.Id,
-                Id = Utilities.GenerateRandomInt()
-            };
-            _repo.Add(identityUserClaim);
+                var identityUserClaim = new IdentityUserClaim<TKey>()
+                {
+                    ClaimType = claim.Type,
+                    ClaimValue = claim.Value,
+                    UserId = user.Id,
+                    Id = Utilities.GenerateRandomInt()
+                };
+                _repo.Add(identityUserClaim);
+            }
+            else
+            {
+                var identityUserClaim = new IdentityUserClaim<TKey>()
+                {
+                    ClaimType = claim.Type,
+                    ClaimValue = claim.Value,
+                    UserId = user.Id
+                };
+                _repo.Add(identityUserClaim);
+            }
+
             await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
         }
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -13,22 +13,19 @@
       For more information, visit https://learn.microsoft.com/dotnet/core/testing/unit-testing-platform-integration-dotnet-test#show-failure-per-test
       -->
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
-    <UserSecretsId>e5f1f76e-e6ac-4f45-ac55-02e401325c2b</UserSecretsId>
+    <UserSecretsId>fa92612c-6497-4bf0-a4d4-21467a22b504</UserSecretsId>
     <Version>9.1.1.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\AspNetCore.Identity.CosmosDbV9.Tests\CosmosIdentityTestsBase.cs" Link="CosmosIdentityTestsBase.cs" />
-    <Compile Include="..\AspNetCore.Identity.CosmosDbV9.Tests\TestUtilities.cs" Link="TestUtilities.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.8" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.14.2" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="1.8.1" />
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="MSTest" Version="3.10.1" />
-	<PackageReference Include="Moq" Version="4.20.72" />
   </ItemGroup>
 
   <ItemGroup>

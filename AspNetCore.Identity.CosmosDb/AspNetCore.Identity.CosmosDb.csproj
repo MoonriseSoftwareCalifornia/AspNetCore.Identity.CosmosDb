@@ -2,11 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<Version>9.0.1.2</Version>
-		<AssemblyVersion>9.0.1.2</AssemblyVersion>
-		<FileVersion>9.0.1.2</FileVersion>
+		<Version>10.0.0.0</Version>
+		<AssemblyVersion>10.0.0.0</AssemblyVersion>
+		<FileVersion>10.0.0.0</FileVersion>
 		
-		<PackageVersion>9.0.1.2</PackageVersion>
+		<PackageVersion>10.0.0.0-preview</PackageVersion>
 		
 		<Authors>toiyabe62</Authors>
 		<Nullable>enable</Nullable>
@@ -35,7 +35,9 @@
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="9.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.8" />
+		<PackageReference Include="MySql.EntityFrameworkCore" Version="9.0.6" />
 		<PackageReference Include="System.Text.Json" Version="9.0.8" />
 	</ItemGroup>
 

@@ -16,6 +16,15 @@ namespace AspNetCore.Identity.CosmosDb.Repositories
     {
         protected TDbContext _db;
 
+        public string ProviderName
+        {
+            get
+            {
+                var provider = _db.Database.ProviderName;
+                return string.IsNullOrEmpty(provider) ? "unknown" : provider;
+            }
+        }
+
         public IQueryable Users
         {
             get { return _db.Users.AsQueryable(); }
@@ -65,7 +74,11 @@ namespace AspNetCore.Identity.CosmosDb.Repositories
         public TEntity GetById<TEntity>(string id)
             where TEntity : class, new()
         {
-            return _db.Set<TEntity>().WithPartitionKey(id).Single();
+            if (_db.Database.ProviderName == "Microsoft.EntityFrameworkCore.Cosmos")
+            {
+                return _db.Set<TEntity>().WithPartitionKey(id).Single();
+            }
+            return _db.Set<TEntity>().Find(id); // Cosmos provider does not support WithPartitionKey in queries
         }
 
         public TEntity TryFindOne<TEntity>(Expression<Func<TEntity, bool>> predicate)

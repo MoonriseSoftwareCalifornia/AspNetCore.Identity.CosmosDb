@@ -11,6 +11,8 @@ namespace AspNetCore.Identity.CosmosDb.Contracts
     /// </summary>
     public interface IRepository
     {
+        string ProviderName { get; }
+
         IQueryable Users { get; }
         IQueryable Roles { get; }
 

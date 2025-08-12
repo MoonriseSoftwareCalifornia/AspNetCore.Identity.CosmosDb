@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.Identity.CosmosD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.Identity.CosmosDbCompat.Tests", "AspNetCore.Identity.CosmosDbCompat.Tests\AspNetCore.Identity.CosmosDbCompat.Tests.csproj", "{5F973B2C-4B72-47E9-AD8D-2C7C66E1FA71}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore.Identity.CosmosDbSqlServerStore.Tests", "AspNetCore.Identity.CosmosDbSqlServerStore.Tests\AspNetCore.Identity.CosmosDbSqlServerStore.Tests.csproj", "{1CEF0171-9365-4113-80EB-35C5E544CC89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5F973B2C-4B72-47E9-AD8D-2C7C66E1FA71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F973B2C-4B72-47E9-AD8D-2C7C66E1FA71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F973B2C-4B72-47E9-AD8D-2C7C66E1FA71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CEF0171-9365-4113-80EB-35C5E544CC89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CEF0171-9365-4113-80EB-35C5E544CC89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CEF0171-9365-4113-80EB-35C5E544CC89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CEF0171-9365-4113-80EB-35C5E544CC89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,19 +1,20 @@
 ﻿using AspNetCore.Identity.CosmosDb.Stores;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using System.Security.Claims;
 
-namespace AspNetCore.Identity.CosmosDb.Tests.Net9
+namespace AspNetCore.Identity.CosmosDbSqlServerStore.Tests
 {
     public abstract class CosmosIdentityTestsBase
     {
         protected static TestUtilities _testUtilities;
         protected static Random _random;
 
-        protected static void InitializeClass(string connectionString, string databaseName, bool backwardCompatibility = false)
+        protected static void InitializeClass(string connectionString)
         {
             //
             // Setup context.
@@ -22,7 +23,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net9
             _random = new Random();
 
             // Arrange class - remove prior data
-            using var dbContext = _testUtilities.GetDbContext(connectionString, databaseName, backwardCompatibility: backwardCompatibility);
+            using var dbContext = _testUtilities.GetDbContext(connectionString);
             try
             {
                 var task = dbContext.Database.EnsureCreatedAsync();
@@ -60,7 +61,7 @@ namespace AspNetCore.Identity.CosmosDb.Tests.Net9
         protected async Task<IdentityRole> GetMockRandomRoleAsync(
             CosmosRoleStore<IdentityUser, IdentityRole, string> roleStore, bool saveToDatabase = true)
         {
-            var role = new IdentityRole(GetNextRandomNumber(1, 9999).ToString());
+            var role = new IdentityRole(GetNextRandomNumber(1000, 9999).ToString());
             role.NormalizedName = role.Name.ToUpper();
 
             if (roleStore != null && saveToDatabase)

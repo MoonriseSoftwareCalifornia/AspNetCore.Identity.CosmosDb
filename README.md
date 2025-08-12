@@ -317,6 +317,10 @@ Find a bug? Let us know by contacting us [via NuGet](https://www.nuget.org/packa
 
 This change log notes major changes beyond routine documentation and NuGet dependency updates.
 
+### v10.0.0.0-preview
+
+Cosmos CMS has a need to be multi-cloud compatible. To that end this library is being modified to be able to use Cosmos DB, Azure or MS SQL, or MySQL databases.
+
 ### v9.0.1.0
 
 Removed the sample application included here as it was out of date.  In its place, an ongoing

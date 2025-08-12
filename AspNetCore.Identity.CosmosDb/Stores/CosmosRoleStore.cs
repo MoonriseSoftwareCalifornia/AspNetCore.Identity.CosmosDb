@@ -307,16 +307,29 @@ namespace AspNetCore.Identity.CosmosDb.Stores
             if (claim == null)
                 throw new ArgumentNullException(nameof(claim));
 
-            var identityRoleClaim = new IdentityRoleClaim<TKey>()
-            {
-                ClaimType = claim.Type,
-                ClaimValue = claim.Value,
-                RoleId = role.Id,
-                Id = Utilities.GenerateRandomInt()
-            };
 
-            _repo.Add(identityRoleClaim);
-            await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
+            if (_repo.ProviderName == "Microsoft.EntityFrameworkCore.Cosmos")
+            {
+                var identityRoleClaim = new IdentityRoleClaim<TKey>()
+                {
+                    ClaimType = claim.Type,
+                    ClaimValue = claim.Value,
+                    RoleId = role.Id,
+                    Id = Utilities.GenerateRandomInt()
+                };
+                _repo.Add(identityRoleClaim);
+            }
+            else
+            {
+                var identityRoleClaim = new IdentityRoleClaim<TKey>()
+                {
+                    ClaimType = claim.Type,
+                    ClaimValue = claim.Value,
+                    RoleId = role.Id
+                };
+                _repo.Add(identityRoleClaim);
+            }
+                await _repo.SaveChangesAsync().WaitAsync(cancellationToken);
         }
 
         // <inheritdoc />
