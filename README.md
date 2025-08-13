@@ -1,18 +1,12 @@
-# Cosmos DB Provider for ASP.NET Core Identity
+# Cosmos DB, MySQL and MS SQL Provider for ASP.NET Core Identity
 
 [![CodeQL](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/codeql-analysis.yml)
 ![Net 9 Tests (192)](https://github.com/MoonriseSoftwareCalifornia/AspNetCore.Identity.CosmosDb/actions/workflows/donet9tests.yml/badge.svg)
 [![NuGet](https://img.shields.io/nuget/v/AspNetCore.Identity.CosmosDb.svg)](https://www.nuget.org/packages/AspNetCore.Identity.CosmosDb)
 
-This is a **Cosmos DB** implementation of an Identity provider that uses the ["Entity Framework Core, Azure Cosmos DB Provider"](https://docs.microsoft.com/en-us/ef/core/providers/cosmos/?tabs=dotnet-core-cli).  Please let us know if any changes need to be made to this document. Thank you!
+This is an ASP.NET Core Identity provider built for **Cosmos DB, MySQL and MS SQL**. It automatically loads the correct provider based on the connection string provided. It is used for the open source project [Cosmos CMS](https://cosmos.moonrise.net/) ([GitHub](https://github.com/MoonriseSoftwareCalifornia/CosmosCMS)).
 
-## Projects that use this library
-
-* [Cosmos CMS](https://cosmos.moonrise.net/) ([GitHub](https://github.com/MoonriseSoftwareCalifornia/CosmosCMS))
-
-If you would like your project here, send us a note or log an issue.  Thanks!
-
-## Version 9 compatibility with version 8 databases
+## Version 9 compatibility with version 8 Cosmos DB databases
 
 Cosmos DB Entity Framework verion 9 had [important changes](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-9.0/breaking-changes#cosmos-breaking-changes) that required important changes to this project.  Listed below are the changes addressed in this project.
 
