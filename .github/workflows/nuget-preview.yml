@@ -1,4 +1,4 @@
-name: NuGet Push
+name: NuGet Preview Push
 
 on:
   # workflow_dispatch
