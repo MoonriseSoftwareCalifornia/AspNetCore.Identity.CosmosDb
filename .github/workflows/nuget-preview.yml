@@ -1,0 +1,27 @@
+name: NuGet Push
+
+on:
+  # workflow_dispatch
+  push:
+    branches: [ "Flex-MSSql" ]
+  pull_request:
+    branches: [ "Flex-MSSql" ]
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 9.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore -c Release
+   
+    - name: Publish NuGet
+      run: dotnet nuget push /home/runner/work/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/AspNetCore.Identity.CosmosDb/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
