@@ -15,7 +15,7 @@ namespace AspNetCore.Identity.CosmosDbSqlServerStore.Tests
             var random = new Random();
 
             // Arrange class - remove prior data
-            using var dbContext = testUtilities.GetDbContext(TestUtilities.GetConnectionString("ApplicationDbContextConnection4"));
+            using var dbContext = testUtilities.GetDbContext(TestUtilities.GetConnectionString(TestUtilities.MYSQLCONNECTIONNAME));
             try
             {
                 var task = dbContext.Database.EnsureCreatedAsync();

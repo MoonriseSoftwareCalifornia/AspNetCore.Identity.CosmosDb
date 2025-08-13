@@ -28,7 +28,7 @@ namespace AspNetCore.Identity.CosmosDbSqlServerStore.Tests
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            connectionString = TestUtilities.GetKeyValue("ApplicationDbContextConnection4");
+            connectionString = TestUtilities.GetKeyValue(TestUtilities.MYSQLCONNECTIONNAME);
             InitializeClass(connectionString);
         }
 

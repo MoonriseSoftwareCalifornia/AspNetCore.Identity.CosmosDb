@@ -24,6 +24,9 @@ namespace AspNetCore.Identity.CosmosDbSqlServerStore.Tests
         /// </summary>
         public const string IDENUSER2EMAIL = "Foo2@acme.com";
 
+        public const string MYSQLCONNECTIONNAME = "ApplicationDbContextConnection4";
+
+        public const string SQLSERVERCONNECTIONNAME = "ApplicationDbContextConnection3";
 
         public const string IDENUSER1ID = "507b7565-493e-49d7-94c7-d60e21036b4a";
 
@@ -102,7 +105,7 @@ namespace AspNetCore.Identity.CosmosDbSqlServerStore.Tests
         /// <returns></returns>
         public DbContextOptions GetDbOptions(string connectionString)
         {
-            var options = DbOptionsBuilder.GetDbOptions(connectionString);
+            var options = DbOptionsBuilder.GetDbOptions<CosmosIdentityDbContext<IdentityUser, IdentityRole, string>>(connectionString);
 
             return options;
         }

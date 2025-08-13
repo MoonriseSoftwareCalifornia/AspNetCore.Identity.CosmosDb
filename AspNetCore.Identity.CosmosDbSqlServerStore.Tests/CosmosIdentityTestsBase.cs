@@ -1,6 +1,5 @@
 ﻿using AspNetCore.Identity.CosmosDb.Stores;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
