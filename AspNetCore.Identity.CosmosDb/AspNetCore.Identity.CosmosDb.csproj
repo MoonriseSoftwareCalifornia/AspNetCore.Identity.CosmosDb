@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<Version>10.0.0.0</Version>
-		<AssemblyVersion>10.0.0.0</AssemblyVersion>
-		<FileVersion>10.0.0.0</FileVersion>
+		<Version>9.1.0.0</Version>
+		<AssemblyVersion>9.1.0.0</AssemblyVersion>
+		<FileVersion>9.1.0.0</FileVersion>
 		
-		<PackageVersion>10.0.0.0-preview</PackageVersion>
+		<PackageVersion>9.1.0.0-preview</PackageVersion>
 		
 		<Authors>toiyabe62</Authors>
 		<Nullable>enable</Nullable>

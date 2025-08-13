@@ -102,18 +102,9 @@ namespace AspNetCore.Identity.CosmosDbSqlServerStore.Tests
         /// <returns></returns>
         public DbContextOptions GetDbOptions(string connectionString)
         {
-            var builder = new DbContextOptionsBuilder();
+            var options = DbOptionsBuilder.GetDbOptions(connectionString);
 
-            if (connectionString.Contains("User ID", StringComparison.InvariantCultureIgnoreCase))
-            {
-                builder.UseSqlServer(connectionString);
-            }
-            else
-            {
-                builder.UseMySQL(connectionString);
-            }
-
-            return builder.Options;
+            return options;
         }
 
         /// <summary>
