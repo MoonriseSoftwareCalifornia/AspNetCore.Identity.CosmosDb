@@ -22,7 +22,7 @@ namespace AspNetCore.Identity.CosmosDb
         /// <para><b>SQL Server:</b> Server=tcp:{your_server}.database.windows.net,1433;Initial Catalog={your_database};Persist Security Info=False;User ID={your_user};Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;</para>
         /// <para><b>MySQL:</b> Server={your_server};Port=3306;uid={your_user};pwd={your_password};database={your_database};</para>
         /// </remarks>
-        public static DbContextOptions GetDbOptions<TContext>(string connectionString) where TContext : DbContext
+        public static DbContextOptions<TContext> GetDbOptions<TContext>(string connectionString) where TContext : DbContext
         {
             var optionsBuilder = new DbContextOptionsBuilder<TContext>();
             if (connectionString.Contains("User ID", StringComparison.InvariantCultureIgnoreCase))
