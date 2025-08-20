@@ -1,15 +1,11 @@
 ﻿using Azure.Identity;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Tls;
 using System;
 using System.Linq;
 
 namespace AspNetCore.Identity.CosmosDb
 {
-    /// <summary>
-    /// Database options builder for Entity Framework Core supporting Cosmos DB, SQL Server, and MySQL.
-    /// </summary>
-    public static class DbOptionsBuilder
+    public class CosmosDbOptionsBuilder : DbContextOptionsBuilder
     {
         /// <summary>
         /// Automatically builds <see cref="DbContextOptions"/> for either Cosmos DB, SQL Server, or MySQL based on the connection string provided.
@@ -25,11 +21,7 @@ namespace AspNetCore.Identity.CosmosDb
         public static DbContextOptions<TContext> GetDbOptions<TContext>(string connectionString) where TContext : DbContext
         {
             var optionsBuilder = new DbContextOptionsBuilder<TContext>();
-            if (connectionString.Contains("User ID", StringComparison.InvariantCultureIgnoreCase))
-            {
-                optionsBuilder.UseSqlServer(connectionString);
-            }
-            else if (connectionString.Contains("uid=", StringComparison.InvariantCultureIgnoreCase))
+            if (connectionString.Contains("uid=", StringComparison.InvariantCultureIgnoreCase))
             {
                 optionsBuilder.UseMySQL(connectionString);
             }
@@ -49,7 +41,10 @@ namespace AspNetCore.Identity.CosmosDb
                 }
                 else
                 {
-                    optionsBuilder.UseCosmos(accountEndpoint: endpointPart[1].ToString(), accountKey: keyPart[1].ToString(), databaseName: dbNamePart[1].ToString());
+                    var accountEndpoint = endpointPart.Split("=")[1].ToString();
+                    var accountKey = keyPart.Split("=")[1].ToString();
+                    var databaseName = dbNamePart.Split("=")[1].ToString();
+                    optionsBuilder.UseCosmos(accountEndpoint, accountKey, databaseName: databaseName);
                 }
             }
             else

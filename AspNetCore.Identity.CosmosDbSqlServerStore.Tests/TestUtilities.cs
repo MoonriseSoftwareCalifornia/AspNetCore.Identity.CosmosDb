@@ -105,9 +105,10 @@ namespace AspNetCore.Identity.CosmosDbSqlServerStore.Tests
         /// <returns></returns>
         public DbContextOptions GetDbOptions(string connectionString)
         {
-            var options = DbOptionsBuilder.GetDbOptions<CosmosIdentityDbContext<IdentityUser, IdentityRole, string>>(connectionString);
+            var optionsBuilder = new DbContextOptionsBuilder<CosmosIdentityDbContext<IdentityUser, IdentityRole, string>>();
+            CosmosOptionsBuilder.SetOptions(optionsBuilder, connectionString);
 
-            return options;
+            return optionsBuilder.Options;
         }
 
         /// <summary>
